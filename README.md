@@ -1,6 +1,6 @@
 # AfrikaBurn 2026 — interactive map
 
-A hover-to-identify overlay for the official AfrikaBurn 2026 map. Instead of bouncing between the map's tiny 3-letter codes and the index on the side, just hover any marker to see the camp or artwork name.
+A hover-to-identify overlay for the official AfrikaBurn 2026 map. Instead of bouncing between the map's tiny 3-letter codes and the index on the side, just hover any marker to see the camp, artwork, service, plaza, or toilet location.
 
 **Live:** https://bernardbravenboer.github.io/afrikaburnmap-2026/
 
@@ -22,6 +22,7 @@ Placing the hotspots was the interesting bit. The map has ~180 camps and artwork
 - Running OCR on the map image at multiple resolutions to locate the 3-letter camp codes
 - Detecting the stylized pink diamond markers for artworks visually (by color/shape) since OCR couldn't read the pink-on-pink text
 - Matching each code to its nearest detected position, with grid-cell fallback for the handful that couldn't be auto-located
+- Digitizing service, plaza, and toilet regions from the visual map
 
 About 97% of markers are pinned to their exact pixel positions on the map. The rest use the grid cell as an approximate location (tooltip says "approximate position" when that's the case).
 
