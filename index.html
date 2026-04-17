@@ -4,6 +4,12 @@
 <meta charset="utf-8">
 <title>AfrikaBurn 2026 — interactive map</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#111111">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="AB Map 2026">
+<link rel="apple-touch-icon" href="icon-180.png">
 <style>
   :root {
     --bg:#111;
@@ -107,6 +113,48 @@
   .badge-art   { color: var(--art); }
   .zoom-label { position:absolute; bottom:8px; right:12px; z-index:20;
     font-size:11px; color:#888; background:rgba(0,0,0,0.5); padding:2px 6px; border-radius:4px; }
+
+  /* install / offline banner */
+  #install-banner {
+    position:fixed; left:12px; right:12px; bottom:12px; z-index:200;
+    background:#ff3d8a; color:#111; padding:10px 14px; border-radius:8px;
+    font-size:13px; line-height:1.35;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+    display:none; gap:10px; align-items:center;
+  }
+  #install-banner.show { display:flex; }
+  #install-banner strong { font-weight:700; }
+  #install-banner button {
+    background:#111; color:#fff; border:none; padding:6px 12px; border-radius:4px;
+    font-size:13px; font-weight:600; cursor:pointer;
+  }
+  #install-banner button.ghost { background:transparent; color:#111; font-weight:500; }
+  #install-banner .bmsg { flex:1; }
+  @media (max-width: 520px) {
+    #install-banner { flex-direction:column; align-items:stretch; }
+    #install-banner .row { display:flex; gap:8px; justify-content:flex-end; }
+  }
+
+  #ios-help {
+    position:fixed; inset:0; z-index:300; background:rgba(0,0,0,0.8);
+    display:none; align-items:center; justify-content:center; padding:20px;
+  }
+  #ios-help.show { display:flex; }
+  #ios-help .panel {
+    background:#1a1a1a; color:#eee; border-radius:10px; padding:18px 20px;
+    max-width:360px; font-size:14px; line-height:1.45; border:1px solid #333;
+  }
+  #ios-help h3 { margin:0 0 8px 0; font-size:15px; color:var(--accent); }
+  #ios-help ol { margin:6px 0 12px 20px; padding:0; }
+  #ios-help li { margin:4px 0; }
+  #ios-help button { background:var(--accent); color:#111; border:none;
+    padding:8px 14px; border-radius:5px; font-weight:600; cursor:pointer; float:right; }
+  .offline-badge {
+    position:absolute; bottom:8px; left:12px; z-index:20;
+    font-size:11px; color:#0a0; background:rgba(0,0,0,0.5);
+    padding:2px 6px; border-radius:4px; display:none;
+  }
+  .offline-badge.show { display:inline-block; }
 </style>
 </head>
 <body>
@@ -130,7 +178,29 @@
   <button id="zreset" title="Reset">⌂</button>
 </div>
 <div class="zoom-label" id="zlabel">100%</div>
+<div class="offline-badge" id="offline-badge">✓ saved for offline</div>
 <div id="tip" role="tooltip"></div>
+
+<div id="install-banner">
+  <div class="bmsg"><strong>Save for offline</strong> — install this map on your home screen so it works in the Karoo with no signal.</div>
+  <div class="row">
+    <button id="install-ghost" class="ghost" aria-label="Dismiss">Not now</button>
+    <button id="install-btn">Install</button>
+  </div>
+</div>
+
+<div id="ios-help">
+  <div class="panel">
+    <h3>Save to home screen</h3>
+    <p>To use this map offline:</p>
+    <ol>
+      <li>Tap the <strong>Share</strong> button <span style="opacity:.7">(square with an up-arrow)</span> at the bottom of Safari.</li>
+      <li>Scroll and tap <strong>Add to Home Screen</strong>.</li>
+      <li>Tap <strong>Add</strong>. You'll get an icon that works offline.</li>
+    </ol>
+    <button id="ios-help-close">Got it</button>
+  </div>
+</div>
 
 <script src="data.js"></script>
 <script>
@@ -471,6 +541,84 @@
   });
 })();
 </script>
+
+<script>
+// PWA: register service worker and offer install.
+(() => {
+  // Register SW (only on https or localhost)
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("sw.js").then((reg) => {
+        // When the SW finishes caching everything, flash the "saved for offline" badge briefly.
+        if (reg.active && !localStorage.getItem("ab-map-cached")) {
+          const b = document.getElementById("offline-badge");
+          b.classList.add("show");
+          setTimeout(() => b.classList.remove("show"), 4000);
+          localStorage.setItem("ab-map-cached", "1");
+        }
+      }).catch(() => {});
+    });
+  }
+
+  const banner = document.getElementById("install-banner");
+  const btn = document.getElementById("install-btn");
+  const ghost = document.getElementById("install-ghost");
+  const iosHelp = document.getElementById("ios-help");
+  const iosClose = document.getElementById("ios-help-close");
+
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  const isStandalone = window.matchMedia("(display-mode: standalone)").matches
+                    || window.navigator.standalone === true;
+  const dismissedAt = parseInt(localStorage.getItem("ab-install-dismissed") || "0", 10);
+  const dismissedRecently = (Date.now() - dismissedAt) < 1000*60*60*24*14; // 14 days
+
+  function showBanner() {
+    if (isStandalone || dismissedRecently) return;
+    banner.classList.add("show");
+  }
+  function dismiss() {
+    banner.classList.remove("show");
+    localStorage.setItem("ab-install-dismissed", String(Date.now()));
+  }
+
+  ghost.addEventListener("click", dismiss);
+  iosClose.addEventListener("click", () => iosHelp.classList.remove("show"));
+
+  // Android / desktop Chrome: beforeinstallprompt event
+  let deferredPrompt = null;
+  window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    showBanner();
+  });
+  btn.addEventListener("click", async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      deferredPrompt = null;
+      if (outcome === "accepted") dismiss();
+      else banner.classList.remove("show");
+    } else if (isIOS) {
+      iosHelp.classList.add("show");
+    } else {
+      // Fallback: give generic text
+      iosHelp.querySelector("h3").textContent = "Save this page";
+      iosHelp.querySelector("ol").innerHTML =
+        "<li>Open your browser's menu.</li><li>Choose <strong>Install app</strong> or <strong>Add to Home Screen</strong>.</li>";
+      iosHelp.classList.add("show");
+    }
+  });
+
+  // On iOS there's no beforeinstallprompt, so show the banner after a short delay
+  if (isIOS && !isStandalone && !dismissedRecently) {
+    setTimeout(showBanner, 2000);
+  }
+
+  // Hide banner if app becomes installed
+  window.addEventListener("appinstalled", dismiss);
+})();
+</script>
+
 <script data-goatcounter="https://bernardbravenboer.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>
 </body>
