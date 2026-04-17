@@ -18,6 +18,7 @@
     --theme:#39c2ff;
     --art:#ff3d8a;
     --occ:#00a0d7;
+    --plaza:#78d64b;
     --tip-bg: rgba(15,15,15,0.95);
   }
   * { box-sizing: border-box; }
@@ -113,6 +114,7 @@
   .badge-theme { color: var(--theme); }
   .badge-art   { color: var(--art); }
   .badge-occ   { color: var(--occ); }
+  .badge-plaza { color: var(--plaza); }
   .zoom-label { position:absolute; bottom:8px; right:12px; z-index:20;
     font-size:11px; color:#888; background:rgba(0,0,0,0.5); padding:2px 6px; border-radius:4px; }
 
@@ -167,6 +169,7 @@
     <label><input type="checkbox" id="f_theme" checked> <span class="badge-theme">theme camps</span></label>
     <label><input type="checkbox" id="f_art" checked> <span class="badge-art">artworks</span></label>
     <label><input type="checkbox" id="f_occ" checked> <span class="badge-occ">OCC</span></label>
+    <label><input type="checkbox" id="f_plaza" checked> <span class="badge-plaza">plazas</span></label>
     <input type="search" id="q" placeholder="search name or code…">
   </div>
 </header>
@@ -430,6 +433,7 @@
   const fTheme = document.getElementById("f_theme");
   const fArt   = document.getElementById("f_art");
   const fOcc   = document.getElementById("f_occ");
+  const fPlaza = document.getElementById("f_plaza");
   const q      = document.getElementById("q");
 
   // Pin/overlay nodes are re-used across searches
@@ -480,14 +484,16 @@
   }
 
   function applyFilter() {
-    const showTheme = fTheme.checked, showArt = fArt.checked, showOcc = fOcc.checked;
+    const showTheme = fTheme.checked, showArt = fArt.checked,
+          showOcc = fOcc.checked, showPlaza = fPlaza.checked;
     const qs = q.value.trim().toLowerCase();
     const hits = [];
     for (const el of hotspots) {
       const sec = el.dataset.section;
       const sectionOk = (sec === "theme" && showTheme)
                      || (sec === "art" && showArt)
-                     || (sec === "occ" && showOcc);
+                     || (sec === "occ" && showOcc)
+                     || (sec === "plaza" && showPlaza);
       const searchOk = !qs || el.dataset.code.toLowerCase().includes(qs)
                            || el.dataset.name.toLowerCase().includes(qs);
       const visible = sectionOk && searchOk;
