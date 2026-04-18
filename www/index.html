@@ -3,7 +3,14 @@
 <head>
 <link rel="manifest" href="./manifest.json">
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AfrikaBurn 2026 — interactive map</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#111111">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="AB Map 2026">
+<link rel="apple-touch-icon" href="icon-180.png">
 <style>
   :root {
     --bg:#111;
@@ -107,6 +114,48 @@
   .badge-art   { color: var(--art); }
   .zoom-label { position:absolute; bottom:8px; right:12px; z-index:20;
     font-size:11px; color:#888; background:rgba(0,0,0,0.5); padding:2px 6px; border-radius:4px; }
+
+  /* install / offline banner */
+  #install-banner {
+    position:fixed; left:12px; right:12px; bottom:12px; z-index:200;
+    background:#ff3d8a; color:#111; padding:10px 14px; border-radius:8px;
+    font-size:13px; line-height:1.35;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+    display:none; gap:10px; align-items:center;
+  }
+  #install-banner.show { display:flex; }
+  #install-banner strong { font-weight:700; }
+  #install-banner button {
+    background:#111; color:#fff; border:none; padding:6px 12px; border-radius:4px;
+    font-size:13px; font-weight:600; cursor:pointer;
+  }
+  #install-banner button.ghost { background:transparent; color:#111; font-weight:500; }
+  #install-banner .bmsg { flex:1; }
+  @media (max-width: 520px) {
+    #install-banner { flex-direction:column; align-items:stretch; }
+    #install-banner .row { display:flex; gap:8px; justify-content:flex-end; }
+  }
+
+  #ios-help {
+    position:fixed; inset:0; z-index:300; background:rgba(0,0,0,0.8);
+    display:none; align-items:center; justify-content:center; padding:20px;
+  }
+  #ios-help.show { display:flex; }
+  #ios-help .panel {
+    background:#1a1a1a; color:#eee; border-radius:10px; padding:18px 20px;
+    max-width:360px; font-size:14px; line-height:1.45; border:1px solid #333;
+  }
+  #ios-help h3 { margin:0 0 8px 0; font-size:15px; color:var(--accent); }
+  #ios-help ol { margin:6px 0 12px 20px; padding:0; }
+  #ios-help li { margin:4px 0; }
+  #ios-help button { background:var(--accent); color:#111; border:none;
+    padding:8px 14px; border-radius:5px; font-weight:600; cursor:pointer; float:right; }
+  .offline-badge {
+    position:absolute; bottom:8px; left:12px; z-index:20;
+    font-size:11px; color:#0a0; background:rgba(0,0,0,0.5);
+    padding:2px 6px; border-radius:4px; display:none;
+  }
+  .offline-badge.show { display:inline-block; }
 </style>
 </head>
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -125,7 +174,7 @@
 </header>
 <div class="viewport" id="viewport">
   <div class="map" id="map">
-    <img id="mapimg" src="2026_AfrikaBurnMap-scaled.jpg" alt="AfrikaBurn 2026 map" draggable="false">
+    <img id="mapimg" src="2026_map_landscape.svg" alt="AfrikaBurn 2026 map" draggable="false">
   </div>
 </div>
 <div class="zoom-ctl">
@@ -134,7 +183,35 @@
   <button id="zreset" title="Reset">⌂</button>
 </div>
 <div class="zoom-label" id="zlabel">100%</div>
+<div class="offline-badge" id="offline-badge">✓ saved for offline</div>
 <div id="tip" role="tooltip"></div>
+
+<div id="install-banner">
+  <div class="bmsg"><strong>Save for offline</strong> — install this map on your home screen so it works in the Tankwa with no signal.</div>
+  <div class="row">
+    <button id="install-ghost" class="ghost" aria-label="Dismiss">Not now</button>
+    <button id="install-btn">Install</button>
+  </div>
+</div>
+
+<div id="ios-help">
+  <div class="panel">
+    <h3 id="ios-help-title">Save to home screen</h3>
+    <div id="ios-help-body">
+      <p>To use this map offline:</p>
+      <ol>
+        <li>Tap the <strong>Share</strong> button <span style="opacity:.7">(square with an up-arrow)</span> at the bottom of Safari.</li>
+        <li>Scroll and tap <strong>Add to Home Screen</strong>.</li>
+        <li>Tap <strong>Add</strong>. You'll get an icon that works offline.</li>
+      </ol>
+    </div>
+    <div id="ios-inapp-warning" style="display:none; background:rgba(255,61,138,0.15); border:1px solid #ff3d8a; border-radius:6px; padding:10px; margin:8px 0;">
+      <strong style="color:#ff9cc1;">You're in an in-app browser.</strong><br>
+      iOS only lets you install from <strong>Safari</strong> itself. Tap the <strong>⋯</strong> menu at the top and choose <strong>Open in Safari</strong>, then try Install again.
+    </div>
+    <button id="ios-help-close">Got it</button>
+  </div>
+</div>
 
 <script src="data.js"></script>
 <script>
@@ -146,16 +223,37 @@
   const tip = document.getElementById("tip");
   const zlabel = document.getElementById("zlabel");
 
-  const NAT_W = data.map_w || 2560;
-  const NAT_H = data.map_h || 1424;
+  // ── Coordinate system ────────────────────────────────────
+  // data.js coords are in portrait SVG viewBox space (185x211.7 units).
+  // We render both SVGs at large pixel dimensions so they look sharp.
+  // Scale factors convert viewBox units to pixel dimensions.
+  const imgSrc = img.getAttribute("src").split("/").pop();
 
-  // Set the map element to natural image size; we scale via transform.
-  img.style.width = NAT_W + "px";
+  // Portrait SVG: render at 6985x8000px (viewBox 185x211.7, scale=37.76)
+  // Landscape SVG: render at 6372x3554px (viewBox 540x300.9, scale=11.8)
+  // Hotspot coords (in portrait viewBox space) need different transforms per image.
+  const CONF = {
+    '2026_map_portrait.png':  { W:4000, H:4577, ax:18.257951, bx:0.014781,  cx:0.4550,  ay:0.009115, by:18.183899, cy:2.2144 },
+    '2026_map_landscape.png': { W:4000, H:2229, ax:14.243256, bx:-0.010784, cx:-2.2727, ay:0.007199, by:14.185738, cy:4.2435 },
+    '2026_map_landscape.svg': { W:6372, H:3554, ax:0.600939*6985/185.00001, bx:-0.000455*6985/185.00001, cx:-3.6204, ay:0.000304*8000/211.69999, by:0.599091*8000/211.69999, cy:6.7660 },
+  };
+  const C = CONF[imgSrc] || CONF['2026_map_landscape.svg'];
+  const NAT_W = C.W;
+  const NAT_H = C.H;
+
+  img.style.width  = NAT_W + "px";
   img.style.height = NAT_H + "px";
-  mapDiv.style.width = NAT_W + "px";
+  mapDiv.style.width  = NAT_W + "px";
   mapDiv.style.height = NAT_H + "px";
 
-  // Hotspots in natural-pixel coords. They sit inside mapDiv so they inherit its transform.
+  function toImg(px, py) {
+    return {
+      x: C.ax * px + C.bx * py + C.cx,
+      y: C.ay * px + C.by * py + C.cy
+    };
+  }
+
+  // Hotspots sit inside mapDiv and inherit its CSS transform.
   const hotspots = [];
   for (const e of data.entries) {
     const el = document.createElement("div");
@@ -166,10 +264,11 @@
     el.dataset.section = e.section;
     el.dataset.src = e.src || "ocr";
     const padX = 4, padY = 4;
-    const nx = (e.x ?? 0) - padX;
-    const ny = (e.y ?? 0) - padY;
-    const nw = Math.max(20, (e.w ?? 24)) + padX*2;
-    const nh = Math.max(16, (e.h ?? 18)) + padY*2;
+    const mapped = toImg(e.x ?? 0, e.y ?? 0);
+    const nx = mapped.x - padX;
+    const ny = mapped.y - padY;
+    const nw = Math.max(20, (e.w ?? 0.6) * C.ax) + padX*2;
+    const nh = Math.max(16, (e.h ?? 0.4) * C.by) + padY*2;
     el.style.left = nx + "px";
     el.style.top  = ny + "px";
     el.style.width  = nw + "px";
@@ -422,7 +521,7 @@
   }
 
   function frameHits(hits) {
-    // Compute bounding box of hit hotspots in natural coords
+    // Pan to centre the hits without changing zoom level
     let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
     for (const el of hits) {
       const x = parseFloat(el.style.left), y = parseFloat(el.style.top);
@@ -430,17 +529,8 @@
       if (x < minX) minX = x; if (y < minY) minY = y;
       if (x + w > maxX) maxX = x + w; if (y + h > maxY) maxY = y + h;
     }
-    const pad = 80; // natural-pixel padding around the hit region
-    minX -= pad; minY -= pad; maxX += pad; maxY += pad;
-    const rw = maxX - minX, rh = maxY - minY;
-    const vw = viewport.clientWidth, vh = viewport.clientHeight;
-    // Target scale: fit region, but don't zoom out below current fit, or too far in
-    const targetScale = Math.min(vw / rw, vh / rh);
-    const minS = fitScale();
-    const ns = Math.max(minS, Math.min(MAX_SCALE, targetScale));
-    scl = ns;
-    // Center the region
     const cx = (minX + maxX) / 2, cy = (minY + maxY) / 2;
+    const vw = viewport.clientWidth, vh = viewport.clientHeight;
     tx = vw / 2 - cx * scl;
     ty = vh / 2 - cy * scl;
     clampPan();
@@ -463,7 +553,7 @@
     if (m) { q.value = decodeURIComponent(m[1]); applyFilter(); }
   }
 
-  // Init once image loads (for accurate clamping — actually we use NAT_W/H so can init now)
+  // Init
   function init() { resetView(); readHash(); }
   if (img.complete) init(); else img.addEventListener("load", init);
   window.addEventListener("resize", () => {
@@ -475,7 +565,121 @@
   });
 })();
 </script>
+
+<script>
+// PWA: register service worker and offer install.
+(() => {
+  // Register SW (only on https or localhost)
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("sw.js").then((reg) => {
+        // When the SW finishes caching everything, flash the "saved for offline" badge briefly.
+        if (reg.active && !localStorage.getItem("ab-map-cached")) {
+          const b = document.getElementById("offline-badge");
+          b.classList.add("show");
+          setTimeout(() => b.classList.remove("show"), 4000);
+          localStorage.setItem("ab-map-cached", "1");
+        }
+      }).catch(() => {});
+    });
+  }
+
+  const banner = document.getElementById("install-banner");
+  const btn = document.getElementById("install-btn");
+  const ghost = document.getElementById("install-ghost");
+  const iosHelp = document.getElementById("ios-help");
+  const iosClose = document.getElementById("ios-help-close");
+
+  const ua = navigator.userAgent;
+  const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
+  const isStandalone = window.matchMedia("(display-mode: standalone)").matches
+                    || window.navigator.standalone === true;
+  // In-app browsers (Telegram, Facebook, Instagram, etc.) don't allow "Add to Home Screen"
+  // on iOS — iOS reserves that for Safari. Detect them so we can nudge the user to Safari.
+  const inAppMatch = /FBAN|FBAV|Instagram|Twitter|Line|LinkedIn|MicroMessenger|Snapchat|WhatsApp|TelegramBot|Telegram/i.test(ua);
+  // iOS WebKit in-app webviews often lack the standard "Version/X Safari/..." tail
+  const looksLikeIOSWebView = isIOS && !/Version\/\d+.*Safari\//.test(ua);
+  const isInAppBrowser = inAppMatch || looksLikeIOSWebView;
+  const dismissedAt = parseInt(localStorage.getItem("ab-install-dismissed") || "0", 10);
+  const dismissedRecently = (Date.now() - dismissedAt) < 1000*60*60*24*14; // 14 days
+
+  function showBanner() {
+    if (isStandalone || dismissedRecently) return;
+    // If we know the user is in an in-app browser (Telegram, FB, etc.),
+    // swap the banner copy up-front so they don't bounce off a broken Install button.
+    if (isInAppBrowser) {
+      const msg = banner.querySelector(".bmsg");
+      msg.innerHTML = "<strong>Save for offline</strong> — open this in " +
+        (isIOS ? "Safari" : "your browser") +
+        " first (tap <strong>⋯</strong> → <strong>Open in " +
+        (isIOS ? "Safari" : "browser") + "</strong>), then install from there.";
+      btn.textContent = "How?";
+    }
+    banner.classList.add("show");
+  }
+  function dismiss() {
+    banner.classList.remove("show");
+    localStorage.setItem("ab-install-dismissed", String(Date.now()));
+  }
+
+  ghost.addEventListener("click", dismiss);
+  iosClose.addEventListener("click", () => iosHelp.classList.remove("show"));
+
+  // Android / desktop Chrome: beforeinstallprompt event
+  let deferredPrompt = null;
+  window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    showBanner();
+  });
+  btn.addEventListener("click", async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      deferredPrompt = null;
+      if (outcome === "accepted") dismiss();
+      else banner.classList.remove("show");
+    } else if (isIOS) {
+      // Show the iOS instructions. If we think the user is in an in-app browser
+      // (Telegram, FB, etc.), also show the "Open in Safari" warning on top.
+      const warning = document.getElementById("ios-inapp-warning");
+      warning.style.display = isInAppBrowser ? "block" : "none";
+      iosHelp.classList.add("show");
+    } else if (isInAppBrowser) {
+      // Non-iOS in-app (e.g. Android Telegram). Similar fix: open in real browser.
+      document.getElementById("ios-help-title").textContent = "Open in your browser";
+      document.getElementById("ios-help-body").innerHTML =
+        "<p>In-app browsers can't install web apps. Tap the <strong>⋯</strong> menu and choose <strong>Open in browser</strong> (or Chrome/Firefox), then try Install again.</p>";
+      iosHelp.classList.add("show");
+    } else {
+      // Fallback generic text
+      document.getElementById("ios-help-title").textContent = "Save this page";
+      document.getElementById("ios-help-body").innerHTML =
+        "<p>Open your browser's menu and choose <strong>Install app</strong> or <strong>Add to Home Screen</strong>.</p>";
+      iosHelp.classList.add("show");
+    }
+  });
+
+  // On iOS there's no beforeinstallprompt, so show the banner after a short delay
+  if (isIOS && !isStandalone && !dismissedRecently) {
+    setTimeout(showBanner, 2000);
+  }
+
+  // Hide banner if app becomes installed
+  window.addEventListener("appinstalled", dismiss);
+})();
+</script>
+
 <script data-goatcounter="https://bernardbravenboer.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>
+<script src="location-pin.js"></script>
 </body>
 </html>
+<script>
+// Force reset view when app resumes from background
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') {
+    window.location.reload();
+  }
+});
+</script>

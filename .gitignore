@@ -3,3 +3,5 @@ android/app/build/
 android/.gradle/
 *.apk
 *.aab
+keystore.properties
+afrikaburn.keystore
