@@ -54,7 +54,6 @@
   .map {
     position:absolute; top:0; left:0;
     transform-origin: 0 0;
-    will-change: transform;
     overflow: hidden;
   }
   .map img {
@@ -286,7 +285,7 @@
 </header>
 <div class="viewport" id="viewport">
   <div class="map" id="map">
-    <img id="mapimg" src="2026_Site_map_highres_mobile.jpg" alt="AfrikaBurn 2026 map" draggable="false">
+    <img id="mapimg" src="2026_Site_map_highres_tiny.jpg" alt="AfrikaBurn 2026 map" draggable="false">
   </div>
 </div>
 <div class="zoom-ctl">
@@ -364,7 +363,12 @@
     highres: {
       id: "highres",
       src: "2026_Site_map_highres.jpg",
-      mobileSrc: "2026_Site_map_highres_mobile.jpg",
+      rasters: [
+        { id: "tiny", src: "2026_Site_map_highres_tiny.jpg", w: 620, h: 710, minZoom: 0 },
+        { id: "overview", src: "2026_Site_map_highres_overview.jpg", w: 1240, h: 1420, minZoom: 1.2 },
+        { id: "mobile", src: "2026_Site_map_highres_mobile.jpg", w: 2480, h: 2841, minZoom: 2 },
+        { id: "full", src: "2026_Site_map_highres.jpg", w: 4961, h: 5682, minZoom: 3 },
+      ],
       viewW: 4961,
       viewH: 5682,
       imageW: 4961,
@@ -379,24 +383,48 @@
   };
   let currentMap = MAP_SOURCES.highres;
   const mobileRasterQuery = window.matchMedia("(max-width: 700px), (pointer: coarse)");
-  const FULL_RASTER_AT_REL_ZOOM = 1.7;
-  const MOBILE_RASTER_BELOW_REL_ZOOM = 1.25;
+  const MOBILE_RASTER_HYSTERESIS = 0.1;
   let currentRelativeZoom = 1;
-  let highresRasterMode = "mobile";
+  let highresRasterIndex = 0;
+  let currentRaster = null;
 
-  function sourceForMap(source) {
-    if (!source.mobileSrc || !mobileRasterQuery.matches) return source.src;
-    if (highresRasterMode === "full") {
-      if (currentRelativeZoom <= MOBILE_RASTER_BELOW_REL_ZOOM) highresRasterMode = "mobile";
-    } else if (currentRelativeZoom >= FULL_RASTER_AT_REL_ZOOM) {
-      highresRasterMode = "full";
+  function rasterForMap(source) {
+    if (!source.rasters || !mobileRasterQuery.matches) return null;
+    const maxIndex = source.rasters.length - 1;
+    highresRasterIndex = Math.min(highresRasterIndex, maxIndex);
+    while (
+      highresRasterIndex < maxIndex &&
+      currentRelativeZoom >= source.rasters[highresRasterIndex + 1].minZoom + MOBILE_RASTER_HYSTERESIS
+    ) {
+      highresRasterIndex++;
     }
-    return highresRasterMode === "full" ? source.src : source.mobileSrc;
+    while (
+      highresRasterIndex > 0 &&
+      currentRelativeZoom < source.rasters[highresRasterIndex].minZoom - MOBILE_RASTER_HYSTERESIS
+    ) {
+      highresRasterIndex--;
+    }
+    return source.rasters[highresRasterIndex];
   }
 
   function updateMapRaster() {
-    const nextSrc = sourceForMap(currentMap);
+    currentRaster = rasterForMap(currentMap);
+    const nextSrc = currentRaster ? currentRaster.src : currentMap.src;
     if (!img.src.endsWith(nextSrc)) img.src = nextSrc;
+    applyMapImageLayout();
+  }
+
+  function applyMapImageLayout() {
+    const imgW = currentRaster ? currentRaster.w : currentMap.imageW;
+    const imgH = currentRaster ? currentRaster.h : currentMap.imageH;
+    const imgScaleX = currentMap.imageW / imgW;
+    const imgScaleY = currentMap.imageH / imgH;
+    img.style.left = currentMap.imageX + "px";
+    img.style.top = currentMap.imageY + "px";
+    img.style.width = imgW + "px";
+    img.style.height = imgH + "px";
+    img.style.transformOrigin = "0 0";
+    img.style.transform = `scale(${imgScaleX}, ${imgScaleY})`;
   }
 
   function mapX(x) { return x * currentMap.coordScaleX + currentMap.coordShiftX; }
@@ -406,16 +434,12 @@
 
   function applyMapSourceLayout() {
     updateMapRaster();
-    img.style.left = currentMap.imageX + "px";
-    img.style.top = currentMap.imageY + "px";
-    img.style.width = currentMap.imageW + "px";
-    img.style.height = currentMap.imageH + "px";
     mapDiv.style.width = currentMap.viewW + "px";
     mapDiv.style.height = currentMap.viewH + "px";
   }
   applyMapSourceLayout();
   function handleMobileRasterChange() {
-    highresRasterMode = "mobile";
+    highresRasterIndex = 0;
     updateMapRaster();
   }
   if (mobileRasterQuery.addEventListener) {
@@ -922,7 +946,7 @@
   fToilet.addEventListener("change", applyFilter);
   fHighRes.addEventListener("change", () => {
     currentMap = fHighRes.checked ? MAP_SOURCES.highres : MAP_SOURCES.standard;
-    highresRasterMode = "mobile";
+    highresRasterIndex = 0;
     applyMapSourceLayout();
     positionAllHotspots();
     updateIndexHotspotsVisibility();
