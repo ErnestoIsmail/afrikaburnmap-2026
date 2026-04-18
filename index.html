@@ -185,13 +185,13 @@
     <label><input type="checkbox" id="f_plaza" checked> <span class="badge-plaza">plazas</span></label>
     <label><input type="checkbox" id="f_support" checked> <span class="badge-support">support camps</span></label>
     <label><input type="checkbox" id="f_toilet" checked> <span class="badge-toilet">toilets</span></label>
-    <label><input type="checkbox" id="f_highres"> high-res map</label>
+    <label><input type="checkbox" id="f_highres" checked> high-res map</label>
     <input type="search" id="q" placeholder="search name or code…">
   </div>
 </header>
 <div class="viewport" id="viewport">
   <div class="map" id="map">
-    <img id="mapimg" src="2026_AfrikaBurnMap-scaled.jpg" alt="AfrikaBurn 2026 map" draggable="false">
+    <img id="mapimg" src="2026_Site_map_highres.jpg" alt="AfrikaBurn 2026 map" draggable="false">
   </div>
 </div>
 <div class="zoom-ctl">
@@ -273,7 +273,7 @@
       coordShiftY: 13.300929537181313,
     },
   };
-  let currentMap = MAP_SOURCES.standard;
+  let currentMap = MAP_SOURCES.highres;
 
   function mapX(x) { return x * currentMap.coordScaleX + currentMap.coordShiftX; }
   function mapY(y) { return y * currentMap.coordScaleY + currentMap.coordShiftY; }
