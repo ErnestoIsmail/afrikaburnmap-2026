@@ -140,6 +140,74 @@
   .zoom-label { position:absolute; bottom:8px; right:12px; z-index:20;
     font-size:11px; color:#888; background:rgba(0,0,0,0.5); padding:2px 6px; border-radius:4px; }
 
+  .details-panel {
+    position:fixed; z-index:90; pointer-events:none;
+    top:70px; right:12px; bottom:12px; width:min(390px, calc(100vw - 24px));
+    --details-mobile-height:46vh;
+  }
+  .details-card {
+    height:100%; display:flex; flex-direction:column; pointer-events:auto;
+    background:rgba(18,18,18,0.96); color:#eee; border:1px solid #333;
+    border-radius:8px; box-shadow:0 10px 32px rgba(0,0,0,0.55);
+    transform:translateX(calc(100% + 16px)); transition:transform .18s ease;
+  }
+  .details-panel.open .details-card { transform:translateX(0); }
+  .details-grip {
+    display:none; width:44px; height:5px; border:0; border-radius:5px;
+    background:#555; margin:8px auto 2px; padding:0; cursor:grab;
+  }
+  .details-panel.dragging .details-card { transition:none; }
+  .details-panel.dragging .details-grip { cursor:grabbing; }
+  .details-head { padding:12px 14px 8px; border-bottom:1px solid #333; }
+  .details-kicker {
+    color:#aaa; font-size:11px; letter-spacing:.04em; text-transform:uppercase;
+    display:flex; gap:7px; flex-wrap:wrap; align-items:center;
+  }
+  .details-title { margin:5px 0 0; font-size:18px; line-height:1.2; }
+  .details-actions {
+    display:flex; gap:6px; align-items:center; justify-content:flex-end;
+    margin-top:10px;
+  }
+  .details-actions button {
+    background:#222; color:#eee; border:1px solid #444; border-radius:5px;
+    padding:5px 9px; font-size:12px; cursor:pointer;
+  }
+  .details-actions button:hover { border-color:#777; }
+  .details-body { padding:12px 14px 16px; overflow:auto; line-height:1.42; font-size:13px; }
+  .details-empty { color:#aaa; }
+  .detail-section { margin:0 0 13px; }
+  .detail-label { color:#aaa; font-size:11px; text-transform:uppercase; letter-spacing:.04em; margin-bottom:3px; }
+  .detail-text { margin:0; white-space:pre-line; }
+  .detail-tags { display:flex; flex-wrap:wrap; gap:5px; margin:10px 0 0; }
+  .detail-tag {
+    background:#262626; color:#ddd; border:1px solid #3b3b3b; border-radius:4px;
+    padding:2px 6px; font-size:11px;
+  }
+  .detail-links { display:flex; flex-direction:column; gap:4px; }
+  .detail-source a { color:#9edcff; text-decoration:none; }
+  .detail-source a:hover { text-decoration:underline; }
+
+  @media (max-width: 640px) {
+    .details-panel {
+      top:auto; left:0; right:0; bottom:0; width:auto;
+    }
+    .details-card {
+      border-radius:8px 8px 0 0;
+      height:var(--details-mobile-height);
+      transform:translateY(100%);
+      transition:transform .18s ease, height .18s ease;
+    }
+    .details-panel.open .details-card { transform:translateY(0); }
+    .details-panel.full .details-card { height:calc(100vh - 12px); }
+    .details-panel.minimized .details-card { height:92px; }
+    .details-panel:not(.full) .detail-extra { display:none; }
+    .details-panel.minimized .details-body { display:none; }
+    .details-grip { display:block; touch-action:none; }
+    .details-head { padding-top:5px; }
+    .details-title { font-size:17px; }
+    .details-actions { justify-content:space-between; }
+  }
+
   /* install / offline banner */
   #install-banner {
     position:fixed; left:12px; right:12px; bottom:12px; z-index:200;
@@ -297,6 +365,22 @@
 <div class="offline-badge" id="offline-badge">✓ saved for offline</div>
 <div id="tip" role="tooltip"></div>
 
+<aside class="details-panel" id="details-panel" aria-hidden="true">
+  <div class="details-card" role="dialog" aria-labelledby="details-title">
+    <button type="button" class="details-grip" id="details-grip" aria-label="Drag details panel"></button>
+    <div class="details-head">
+      <div class="details-kicker" id="details-kicker"></div>
+      <h2 class="details-title" id="details-title">Project details</h2>
+      <div class="details-actions">
+        <button type="button" id="details-half">Min</button>
+        <button type="button" id="details-full">Full</button>
+        <button type="button" id="details-close">Close</button>
+      </div>
+    </div>
+    <div class="details-body" id="details-body"></div>
+  </div>
+</aside>
+
 <div id="install-banner">
   <div class="bmsg"><strong>Save for offline</strong> — install this map on your home screen so it works in the Tankwa with no signal.</div>
   <div class="row">
@@ -325,15 +409,30 @@
 </div>
 
 <script src="data.js"></script>
+<script src="project_details.js"></script>
+<script src="old_wtf_details.js"></script>
 <script>
 (() => {
   const data = DATA_INLINE;
+  const projectDetails = typeof PROJECT_DETAILS !== "undefined" ? PROJECT_DETAILS : { byCode: {} };
+  const oldWtfDetails = typeof OLD_WTF_DETAILS !== "undefined" ? OLD_WTF_DETAILS : { byCode: {} };
   const viewport = document.getElementById("viewport");
   const mapDiv = document.getElementById("map");
   const img = document.getElementById("mapimg");
   const tip = document.getElementById("tip");
   const zlabel = document.getElementById("zlabel");
   const header = document.querySelector("header");
+  const detailsPanel = document.getElementById("details-panel");
+  const detailsCard = detailsPanel.querySelector(".details-card");
+  const detailsGrip = document.getElementById("details-grip");
+  const detailsKicker = document.getElementById("details-kicker");
+  const detailsTitle = document.getElementById("details-title");
+  const detailsBody = document.getElementById("details-body");
+  const detailsHalf = document.getElementById("details-half");
+  const detailsFull = document.getElementById("details-full");
+  const detailsClose = document.getElementById("details-close");
+  let detailsMode = "fit";
+  let detailsDrag = null;
 
   function updateHeaderOffset() {
     document.documentElement.style.setProperty("--header-h", header.offsetHeight + "px");
@@ -482,6 +581,7 @@
     el.addEventListener("click", (ev) => {
       highlightIndexForEntry(e);
       showTip(ev);
+      openDetails(el, "half");
       ev.stopPropagation();
     });
   }
@@ -598,6 +698,7 @@
             if (el.dataset.mapSource !== currentMap.id) return;
             markHits([target]);
             showTip(ev);
+            openDetails(target, "half");
             ev.stopPropagation();
           });
           mapDiv.appendChild(el);
@@ -819,11 +920,209 @@
   function escapeHtml(s) {
     return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
   }
+  function detailSection(label, text, extraClass = "") {
+    if (!text) return "";
+    return `
+      <section class="detail-section ${extraClass}">
+        <div class="detail-label">${escapeHtml(label)}</div>
+        <p class="detail-text">${escapeHtml(text)}</p>
+      </section>
+    `;
+  }
+  function detailFor(el) {
+    const current = projectDetails.byCode?.[el.dataset.code] || null;
+    const oldWtf = oldWtfDetails.byCode?.[el.dataset.code] || null;
+    if (!current && !oldWtf) return null;
+    if (!current) {
+      return {
+        code: oldWtf.code,
+        title: oldWtf.title || el.dataset.name,
+        type: oldWtf.type || el.dataset.section,
+        tags: oldWtf.tags || [],
+        oldWtf: oldWtf.oldWtf || [],
+        links: oldWtf.links || [],
+        sourceTag: oldWtf.sourceTag || "old-wtf",
+        sourceLabel: oldWtf.sourceLabel || "Old WTF",
+      };
+    }
+    return current;
+  }
+  function oldWtfSection(items, extraClass = "detail-extra") {
+    if (!items?.length) return "";
+    return items.map((item) => `
+      <section class="detail-section ${extraClass}">
+        <div class="detail-label">Old WTF ${escapeHtml(item.year)}</div>
+        <p class="detail-text">${escapeHtml(item.summary)}</p>
+      </section>
+    `).join("");
+  }
+  function relatedMutantVehicleSection(items, extraClass = "detail-extra") {
+    if (!items?.length) return "";
+    const body = items.map((item) => {
+      const title = item.name || item.title || "Mutant Vehicle";
+      return `${title}\n${item.description || ""}`.trim();
+    }).join("\n\n");
+    return detailSection("Related Mutant Vehicles", body, extraClass);
+  }
+  function isMobileDetails() {
+    return window.matchMedia("(max-width: 640px)").matches;
+  }
+  function clampDetailsHeight(h) {
+    const min = 92;
+    const max = Math.max(min, window.innerHeight - 12);
+    return Math.max(min, Math.min(max, h));
+  }
+  function setMobileDetailsHeight(h) {
+    detailsPanel.style.setProperty("--details-mobile-height", `${Math.round(clampDetailsHeight(h))}px`);
+  }
+  function fitMobileDetails() {
+    if (!isMobileDetails() || !detailsPanel.classList.contains("open")) return;
+    requestAnimationFrame(() => {
+      detailsPanel.classList.remove("full", "minimized");
+      detailsBody.style.display = "";
+      const natural = detailsGrip.offsetHeight + detailsCard.querySelector(".details-head").offsetHeight + detailsBody.scrollHeight + 14;
+      const minFit = Math.min(260, Math.max(180, Math.round(window.innerHeight * 0.28)));
+      const maxFit = Math.max(minFit, Math.round(window.innerHeight * 0.68));
+      setMobileDetailsHeight(Math.min(Math.max(natural, minFit), maxFit));
+    });
+  }
+  function updateDetailsButtons() {
+    detailsHalf.textContent = detailsMode === "minimized" || detailsMode === "full" ? "Fit" : "Min";
+    detailsFull.textContent = detailsMode === "full" ? "Fit" : "Full";
+  }
+  function setDetailsMode(mode) {
+    const normalized = mode === "half" ? "fit" : mode;
+    detailsMode = normalized;
+    detailsPanel.classList.toggle("full", normalized === "full");
+    detailsPanel.classList.toggle("minimized", normalized === "minimized");
+    if (isMobileDetails()) {
+      if (normalized === "full") {
+        detailsPanel.style.removeProperty("--details-mobile-height");
+      } else if (normalized === "minimized") {
+        setMobileDetailsHeight(92);
+      } else {
+        fitMobileDetails();
+      }
+    }
+    updateDetailsButtons();
+  }
+  function closeDetails() {
+    detailsPanel.classList.remove("open", "full", "minimized", "dragging");
+    detailsPanel.setAttribute("aria-hidden", "true");
+    detailsMode = "fit";
+    updateDetailsButtons();
+  }
+  function openDetails(el, mode = "half") {
+    const detail = detailFor(el);
+    const code = el.dataset.code;
+    const grid = el.dataset.grid;
+    const section = el.dataset.section;
+    const title = detail?.title || el.dataset.name;
+    detailsKicker.innerHTML = `
+      <span>${escapeHtml(code)}</span>
+      <span>${escapeHtml(grid)}</span>
+      <span class="badge-${section}">${escapeHtml(detail?.type || section)}</span>
+    `;
+    detailsTitle.textContent = title;
+    const sourceTag = detail?.sourceTag || projectDetails.sourceTag || "community-project-directory";
+    const sourceLabel = detail?.sourceLabel || projectDetails.sourceLabel || sourceTag;
+    const tags = detail ? [sourceTag, ...(detail.tags || [])] : [sourceTag];
+    const tagHtml = tags.map((tag) => `<span class="detail-tag">${escapeHtml(tag)}</span>`).join("");
+    const sourceLinks = detail?.links?.length
+      ? detail.links
+      : detail?.sourceUrl
+        ? [{ label: sourceLabel, url: detail.sourceUrl }]
+        : [];
+    const hasPrimaryDetail = Boolean(
+      detail?.description ||
+      detail?.summary ||
+      detail?.gift ||
+      detail?.additionalDetails ||
+      detail?.artist ||
+      detail?.familyFriendly ||
+      detail?.times ||
+      detail?.relatedMutantVehicles?.length
+    );
+    const sourceHtml = sourceLinks.length ? `
+      <section class="detail-section detail-source detail-extra">
+        <div class="detail-label">Links</div>
+        <div class="detail-links">
+          ${sourceLinks.map((link) => `<a href="${escapeHtml(link.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(link.label || link.url)}</a>`).join("")}
+        </div>
+      </section>
+    ` : "";
+    detailsBody.innerHTML = detail ? `
+      <div class="detail-tags">${tagHtml}</div>
+      ${detailSection("Project Description", detail.description || detail.summary)}
+      ${detailSection("Details of Gift", detail.gift)}
+      ${detailSection("Artist", detail.artist, "detail-extra")}
+      ${detailSection("Family Friendly", detail.familyFriendly, "detail-extra")}
+      ${detailSection("Operating Times", detail.times, "detail-extra")}
+      ${relatedMutantVehicleSection(detail.relatedMutantVehicles)}
+      ${detailSection("Additional Details", detail.additionalDetails, "detail-extra")}
+      ${oldWtfSection(detail.oldWtf, hasPrimaryDetail ? "detail-extra" : "")}
+      ${sourceHtml}
+    ` : `
+      <div class="detail-tags">${tagHtml}</div>
+      <p class="details-empty">No ${escapeHtml(sourceTag)} details have been linked for this item yet.</p>
+    `;
+    setDetailsMode(mode);
+    detailsPanel.classList.add("open");
+    detailsPanel.setAttribute("aria-hidden", "false");
+    if (mode === "half" || mode === "fit") fitMobileDetails();
+  }
+  detailsHalf.addEventListener("click", () => {
+    setDetailsMode(detailsMode === "minimized" || detailsMode === "full" ? "fit" : "minimized");
+  });
+  detailsFull.addEventListener("click", () => {
+    setDetailsMode(detailsMode === "full" ? "fit" : "full");
+  });
+  detailsClose.addEventListener("click", closeDetails);
+  detailsGrip.addEventListener("pointerdown", (ev) => {
+    if (!isMobileDetails() || !detailsPanel.classList.contains("open")) return;
+    detailsDrag = {
+      startY: ev.clientY,
+      startHeight: detailsCard.getBoundingClientRect().height,
+      pointerId: ev.pointerId,
+    };
+    detailsPanel.classList.add("dragging");
+    detailsGrip.setPointerCapture(ev.pointerId);
+    ev.preventDefault();
+  });
+  detailsGrip.addEventListener("pointermove", (ev) => {
+    if (!detailsDrag || ev.pointerId !== detailsDrag.pointerId) return;
+    const delta = detailsDrag.startY - ev.clientY;
+    setMobileDetailsHeight(detailsDrag.startHeight + delta);
+  });
+  function finishDetailsDrag(ev) {
+    if (!detailsDrag || ev.pointerId !== detailsDrag.pointerId) return;
+    const height = detailsCard.getBoundingClientRect().height;
+    const vh = window.innerHeight;
+    detailsPanel.classList.remove("dragging");
+    detailsGrip.releasePointerCapture(ev.pointerId);
+    detailsDrag = null;
+    if (height < 130) {
+      setDetailsMode("minimized");
+    } else if (height > vh * 0.78) {
+      setDetailsMode("full");
+    } else {
+      detailsMode = "fit";
+      detailsPanel.classList.remove("full", "minimized");
+      setMobileDetailsHeight(height);
+      updateDetailsButtons();
+    }
+  }
+  detailsGrip.addEventListener("pointerup", finishDetailsDrag);
+  detailsGrip.addEventListener("pointercancel", finishDetailsDrag);
+  window.addEventListener("resize", () => {
+    if (detailsPanel.classList.contains("open") && detailsMode === "fit") fitMobileDetails();
+  });
   // Hide tip on click outside / drag start
   viewport.addEventListener("pointerdown", (ev) => {
     if (!ev.target.classList.contains("hotspot") && !ev.target.classList.contains("index-hotspot")) {
       hideTip();
       clearIndexHighlights();
+      closeDetails();
     }
   });
 
