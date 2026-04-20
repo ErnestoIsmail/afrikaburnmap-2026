@@ -3548,7 +3548,7 @@ const PROJECT_DETAILS = (() => {
       "artwork"
     ],
     "artist": "Jonathan Lotter",
-    "description": "",
+    "description": "In the middle of nowhere, through intention, we close the circle. The Oe-aa-sieS is sometimes a place to rest, sometimes anything but. When the Oe-aa-sies-sa-wA connects, it turns into a full Ossewa boot party. Built by the same slightly obsessed crew that brought you Oe-aa-sieS, it's a laer with rhythm. Buckle up. Or don't. Just hold on.",
     "additionalDetails": "Artist: Jonathan Lotter",
     "links": [
       {
@@ -6169,11 +6169,12 @@ const PROJECT_DETAILS = (() => {
     "sourceLabel": "WTF Guide 2026",
     "sourceUrl": "./WTF-%202026%20-%20Through%20The%20Prism.pdf",
     "tags": [
+      "landmark",
       "occ",
       "service"
     ],
-    "description": "Off-Centre Camp landmark and gathering point.",
-    "additionalDetails": "The WTF copy does not include a dedicated 2026 entry for The Bus, but it is part of the Off-Centre Camp service cluster.",
+    "description": "The WTF guide does not include a dedicated 2026 section for The Bus as a service, but it is used as an OCC/Site Office landmark in the guide. The Outreach section notes bike donation racks by the Site Office: look for the big bus.",
+    "additionalDetails": "OCC/Site Office landmark; no dedicated WTF service section found.",
     "links": [
       {
         "label": "WTF Guide 2026",
@@ -6193,8 +6194,8 @@ const PROJECT_DETAILS = (() => {
       "occ",
       "service"
     ],
-    "description": "Radio Free Tankwa is part of OCC's volunteer and after-hours life.",
-    "additionalDetails": "The WTF guide mentions burners helping run Radio Free Tankwa, and describes it as a place that might still be broadcasting bedtime stories or chaotic nonsense at 2 am.",
+    "description": "Tune into 99.9FM anywhere in the dust. RFT is Tankwa Town's pirate broadcast station, live on air every day from 9-ish to 5-ish with weather updates, Burn schedules, interviews with artists and participants, and a rotating lineup of DJs, tunes, and general kakpraat.\n\nIf something serious happens, Radio Free Tankwa is the primary way information gets out across the city. Emergency updates, weather warnings, and important announcements are broadcast here, so if things start getting weird, tune in.\n\nEvery morning at 10-ish the schedule chalkboard gets wiped clean. During the day, hour-long broadcast slots open up until about 5 pm. If you and your crew want to take over the airwaves, play music, talk nonsense, interview your campmates, or unleash your finest ukelele nonsense, swing past and chat to the crew about signing up.\n\nGot something happening? Bring the details to the caravan and the crew will happily announce it on air. They are also always keen for quick interviews with artists, camps, and participants.",
+    "additionalDetails": "Tune into 99.9FM. Usually live 9-ish to 5-ish. After-hours, RFT might still be broadcasting bedtime stories or chaotic nonsense at 2 am.",
     "links": [
       {
         "label": "WTF Guide 2026",
@@ -6214,8 +6215,8 @@ const PROJECT_DETAILS = (() => {
       "occ",
       "service"
     ],
-    "description": "The Theme Camp Saloon is the OCC stop for Theme Camp Saloon business.",
-    "additionalDetails": "The WTF guide notes that media accreditation registration happens at the Theme Camp Saloon at Off-Centre Camp around 10 am-ish with Sweet Lollipop.",
+    "description": "The Theme Camp Saloon is an Off-Centre Camp stop for theme-camp business and community coordination. The WTF guide mentions it as the place to register media accreditation with Sweet Lollipop around 10 am-ish.",
+    "additionalDetails": "At Off-Centre Camp around 10 am-ish for the media-accreditation note in the WTF guide.",
     "links": [
       {
         "label": "WTF Guide 2026",
@@ -6235,8 +6236,8 @@ const PROJECT_DETAILS = (() => {
       "occ",
       "service"
     ],
-    "description": "Arteria is the hub where artists register creations and get support to plant their dreams in the dust. The Artifactory is a museum packed with stories, treasures, and artefacts from Burns past.",
-    "additionalDetails": "Arteria helps artists with registration and Art Department support. The Artifactory acts as a time capsule of Burn memories, with exhibition hosts sharing knowledge and pointing out hidden gems.",
+    "description": "The Artifactory is a white, quiet time capsule between OCC and Tankwa Town. The story of AfrikaBurn unfolds here: the history of the organisation, the evolution of the community, and the moments that shaped us. Tucked into corners and layered across the space are tangible memories: MOOP stories, collateral, archival news, photographs, and moving visuals that capture the dust, the fire, and the feeling.\n\nArteria is where the magic gets its coordinates. This is where artists check in with the Art Team to get advice on placement and assistance from volunteers. It is also where you can find a generally updated large map of registered artworks, the Burn Schedule chalkboard, burn times, and a chalkboard for performances and happenings.\n\nBringing a Creative Project, burning artwork, managing fuel or gas, looking for creative-project information, or wanting to volunteer on fire perimeter? Come to Arteria.",
+    "additionalDetails": "Artifactory operating hours: 9 am-late. Arteria is open 9 am to 3 pm every day during the event.",
     "links": [
       {
         "label": "WTF Guide 2026",
@@ -6256,8 +6257,8 @@ const PROJECT_DETAILS = (() => {
       "occ",
       "service"
     ],
-    "description": "The DMV is where Mutant Vehicles come to license themselves to drive in Tankwa Town.",
-    "additionalDetails": "Bring your registration number. The DMV is located between 5ish and 6ish and is home to mutant registration, orientation, the Skollie Patrollie, the smell of LRP and relatively delicious craft beer.",
+    "description": "If you have brought a Mutant Vehicle, this is where you come to license it to drive in Tankwa Town. The DMV is Tankwa Town's version of a safari HQ: volunteers welcome the Mutants, register them, rally the crews, and orientate them into the team.\n\nRemember to bring your registration number. Meet sporty, horny creatives in short skirts handing out traffic fines at light speed.\n\nThe DMV is home to Skollie Patrollie, the smell of LRP, and relatively delicious craft beer.",
+    "additionalDetails": "Located between 5ish and 6ish.",
     "links": [
       {
         "label": "WTF Guide 2026",
@@ -6277,8 +6278,8 @@ const PROJECT_DETAILS = (() => {
       "occ",
       "service"
     ],
-    "description": "The Volunteer Booth is your get-involved HQ at Off-Centre Camp.",
-    "additionalDetails": "The team points burners towards shifts, projects and current dust intel. It is also a cosy corner with music, games, fireside chats, and occasional nature documentaries or AfrikaBurn art films. Open daily from 10 am to 7 pm where Welcome Road meets the Binnekring.",
+    "description": "The Volunteer Booth is your get-involved HQ. Check in for your shifts, sign up for something new, or grab the latest intel on what's happening in the dust.\n\nPeople arrive here curious, dusty, and a little unsure about what they have signed up for. The Volunteer Booth points them towards projects, shifts, and general mischief. It is also a lekker cosy corner where you will find an outdoor cinema showing the odd nature doccie and AfrikaBurn art film.\n\nVolunteering is one of the fastest ways to feel like you actually belong here. It takes almost 4,000 volunteer shifts to keep Tankwa Town running, from greeting mense at the gate to helping run Radio Free Tankwa, keeping mutant vehicles in line, or joining the Leave No Trace crew on a MOOP Swoop.",
+    "additionalDetails": "Find the Volunteer Booth at Off-Centre Camp where Welcome Road meets the Binnekring. Open daily from 10 am to 7 pm.",
     "links": [
       {
         "label": "WTF Guide 2026",
@@ -6298,8 +6299,8 @@ const PROJECT_DETAILS = (() => {
       "occ",
       "service"
     ],
-    "description": "The field hospital is at Off-Centre Camp. Look for the Big Red Cross.",
-    "additionalDetails": "Real trauma only, please. The WTF guide reminds burners that hangovers, hangnails and small issues are for Radical Self-Reliance: pack a proper first aid kit and take chronic meds as prescribed. No IV bars or rogue camp doctor services.",
+    "description": "Real trauma only, please. The desert does not have a reset button, and the medics are not here to tuck you in after a tequila-induced poor decision. AfrikaBurn has a world-class field hospital at Off-Centre Camp: look for the Big Red Cross.\n\nHangovers, hangnails, and hol-pyn are not emergencies. Practice Radical Self-Reliance. Pack a proper First Aid Kit for the small stuff and take your chronic meds as prescribed.\n\nAbsolutely no IV bars or rogue camp doctor services.",
+    "additionalDetails": "Field hospital at OCC. Look for the Big Red Cross.",
     "links": [
       {
         "label": "WTF Guide 2026",
@@ -6319,8 +6320,8 @@ const PROJECT_DETAILS = (() => {
       "occ",
       "service"
     ],
-    "description": "The Sanctuary is a safe, supportive space at OCC for anyone who needs a break from overwhelm or some quiet.",
-    "additionalDetails": "Find the blue-and-white sign between Medics and Rangers. Volunteers offer peer support for challenging psychedelic or emotional experiences, with rest, refreshment and company available. It is not an alternative sleeping space.",
+    "description": "The Sanctuary is a safe, supportive space for anyone who needs a break from overwhelm or some quiet. You can find it at OCC on Binnekring Road between Medics and Rangers; the blue-and-white sign is visible day and night.\n\nVolunteers offer peer support for challenging psychedelic or emotional experiences, with rest, refreshment, and company available inside or around the fire. Guests can stay for a few hours, after which campmates can help them return to camp. The Sanctuary is not an alternative sleeping space if your camp is noisy or annoying.\n\nThe Hub at the Sanctuary offers harm reduction and safety education, including information and testing. Testing takes place daily from 10 am to 12 pm and 3 pm to 5 pm. Free breathalysers are available if you are worried about driving home or operating your body safely.",
+    "additionalDetails": "Between Medics and Rangers at OCC. Testing: daily 10 am-12 pm and 3 pm-5 pm.",
     "links": [
       {
         "label": "WTF Guide 2026",
@@ -6340,8 +6341,8 @@ const PROJECT_DETAILS = (() => {
       "occ",
       "service"
     ],
-    "description": "Rangers are burners in orange shirts who help keep the peace when Tankwa Town gets complicated.",
-    "additionalDetails": "They listen, de-escalate and help people figure things out before desert drama takes over. Ranger HQ is the bright orange container on the Binnekring near 6ish.",
+    "description": "When things in Tankwa Town go sideways, look for the orange shirts. Rangers are fellow burners who volunteer to help keep the peace. They listen, step in when situations get heated, and help people figure things out before it turns into full-blown desert drama.\n\nThey are not security and definitely not die polisie; just calm humans in the dust when things get complicated. Swing past Ranger HQ, the bright orange container on the Binnekring near 6ish, and say hello to the crew.\n\nTraining runs at 9 am on Monday 27 April, Tuesday 28 April, and Wednesday 29 April.",
+    "additionalDetails": "Ranger HQ is the bright orange container on the Binnekring near 6ish.",
     "links": [
       {
         "label": "WTF Guide 2026",
@@ -6361,8 +6362,8 @@ const PROJECT_DETAILS = (() => {
       "occ",
       "service"
     ],
-    "description": "Lost & Found is where wandering treasures and their humans reunite.",
-    "additionalDetails": "If you find sunglasses, earrings, jackets or the occasional mysterious object, bring them here. The WTF guide also calls this hut Just In(e).",
+    "description": "The desert has a way of hoarding things: sunglasses, earrings, jackets, and the occasional object nobody can explain. If you pick up a wandering treasure in the dust, bring it here. This is where orphaned items and their humans eventually reunite.\n\nAt OCC this hut is also called Just In(e): the local Lost & Found. If you have misplaced your favourite hat, or your dignity, check here.",
+    "additionalDetails": "Lost & Found is part of the OCC logistics hub.",
     "links": [
       {
         "label": "WTF Guide 2026",
@@ -6382,8 +6383,8 @@ const PROJECT_DETAILS = (() => {
       "occ",
       "service"
     ],
-    "description": "Die Yskas is the only place in Tankwa Town where commerce happens, and only for ice.",
-    "additionalDetails": "Open Monday to Saturday, 11 am to 1 pm. Ice is R100 per 5 kg bag. The entrance is at OCC on the Binnekring. Leave vehicles at camp, bring a friend or bag to carry ice, and keep the vibes chilled with the volunteer crew.",
+    "description": "In the only city where money is of no use to you, Die Yskas is the one exception. It is the only place in Tankwa Town where commerce actually happens, and for good reason: lukewarm gin and vrot boerewors are the enemies of a good Burn.\n\nThe cold hard facts: open daily from 11 am to 1 pm, Monday to Saturday. Ice is R100 per 5 kg bag. The entrance is at Off-Centre Camp on the Binnekring; follow the sound of rattling coins and the sight of melting dreams.\n\nIce etiquette: leave your bike on the rack and your car at your campsite. A 5 kg bag gets surprisingly heavy when trekking through 38 C dust, so bring a friend, gym bag, backpack, or foldable cooler. By Wednesday or Thursday, the crew inside Die Yskas has explained the process roughly 4,000 times. Please keep the vibes chilled and remember that the beasts of Die Yskas are volunteers too.",
+    "additionalDetails": "Open Monday to Saturday, 11 am-1 pm. R100 per 5 kg bag.",
     "links": [
       {
         "label": "WTF Guide 2026",
@@ -6403,8 +6404,8 @@ const PROJECT_DETAILS = (() => {
       "occ",
       "service"
     ],
-    "description": "Chillaz is part of OCC's after-hours pulse.",
-    "additionalDetails": "The WTF guide says Chillaz might be jamming until 10 pm while OCC keeps the pulse of the city alive after office hours.",
+    "description": "Chillaz is AfrikaBurn's official Off-Centre Camp stage and a platform of expression for artists. In the volunteer copy it is described as the soul of the Burn: an Afrocentric creative hub for storytelling, live performance, and rootsy vibes.\n\nIt is a ground-up community effort where many hands make light work. OCC after-hours keeps the pulse of the city alive; Chillaz might be jamming until 10 pm.",
+    "additionalDetails": "Look out for the neon-blue Chillaz sign. Part of the OCC after-hours vibe.",
     "links": [
       {
         "label": "WTF Guide 2026",
@@ -7048,7 +7049,7 @@ const PROJECT_DETAILS = (() => {
     "tags": [
       "mutant-vehicle"
     ],
-    "description": "",
+    "description": "When the Oe-aa-sies-sa-wA connects with Oe-aa-sieS, it turns into a full Ossewa boot party. Built by the same slightly obsessed crew that brought you Oe-aa-sieS, it's a laer with rhythm.",
     "links": [
       {
         "label": "WTF Guide 2026",
@@ -7373,7 +7374,7 @@ const PROJECT_DETAILS = (() => {
     "tags": [
       "plaza"
     ],
-    "description": "11ish Plaza is a named plaza on the 2026 site map.",
+    "description": "11ish Plaza is one of the named plaza landmarks on the 2026 site map. Use plazas as orientation points when navigating the Binnekring and surrounding camping areas.",
     "additionalDetails": "Map grid: X3",
     "links": [
       {
@@ -7393,7 +7394,7 @@ const PROJECT_DETAILS = (() => {
     "tags": [
       "plaza"
     ],
-    "description": "2ish Plaza is a named plaza on the 2026 site map.",
+    "description": "2ish Plaza is one of the named plaza landmarks on the 2026 site map. Use plazas as orientation points when navigating the Binnekring and surrounding camping areas.",
     "additionalDetails": "Map grid: S7",
     "links": [
       {
@@ -7413,8 +7414,8 @@ const PROJECT_DETAILS = (() => {
     "tags": [
       "plaza"
     ],
-    "description": "5ish Plaza is a named plaza on the 2026 site map.",
-    "additionalDetails": "Map grid: S5",
+    "description": "5ish Plaza is one of the named plaza landmarks on the 2026 site map. Use plazas as orientation points when navigating the Binnekring and surrounding camping areas.",
+    "additionalDetails": "Map grid: S5\nNearby civic note: the DMV is located between 5ish and 6ish.",
     "links": [
       {
         "label": "WTF Guide 2026",
@@ -7433,7 +7434,7 @@ const PROJECT_DETAILS = (() => {
     "tags": [
       "plaza"
     ],
-    "description": "8ish Plaza is a named plaza on the 2026 site map.",
+    "description": "8ish Plaza is one of the named plaza landmarks on the 2026 site map. Use plazas as orientation points when navigating the Binnekring and surrounding camping areas.",
     "additionalDetails": "Map grid: U3",
     "links": [
       {
@@ -7451,9 +7452,10 @@ const PROJECT_DETAILS = (() => {
     "sourceLabel": "WTF Guide 2026 / 2026 site map",
     "sourceUrl": "./WTF-%202026%20-%20Through%20The%20Prism.pdf",
     "tags": [
+      "associated-project",
       "support-camp"
     ],
-    "description": "Support camp listed on the 2026 site map.",
+    "description": "Associated Artwork: 8Doc (8th Day of Creation)\nArtist: Richard Thomas\nCome and let your spirit be REBORN! Our 'Birthing Arena' is a place to remind people of their childlike, vibrant state of being. Be embraced by the melodies of incredible musicians/ DJs and by workshops/ performances that ignite the mind and stir the heart! EVERYONE IS WELCOMED HOME.",
     "additionalDetails": "Map grid: Y3",
     "links": [
       {
@@ -7471,9 +7473,10 @@ const PROJECT_DETAILS = (() => {
     "sourceLabel": "WTF Guide 2026 / 2026 site map",
     "sourceUrl": "./WTF-%202026%20-%20Through%20The%20Prism.pdf",
     "tags": [
+      "associated-project",
       "support-camp"
     ],
-    "description": "Support camp listed on the 2026 site map.",
+    "description": "Associated Mutant Vehicle: Oupa and the Jellyfish\nFloat through Oupa's mind where Jellyfish glow, wandering memories drift through dust, and hypnotic desert tunes pulse from Ancestral Bloom.",
     "additionalDetails": "Map grid: R3",
     "links": [
       {
@@ -7491,9 +7494,10 @@ const PROJECT_DETAILS = (() => {
     "sourceLabel": "WTF Guide 2026 / 2026 site map",
     "sourceUrl": "./WTF-%202026%20-%20Through%20The%20Prism.pdf",
     "tags": [
+      "associated-project",
       "support-camp"
     ],
-    "description": "Support camp listed on the 2026 site map.",
+    "description": "Associated Mutant Vehicle: Allure\nLo and behold, a mobile party with a lure to entice lost stragglers out of the desert.",
     "additionalDetails": "Map grid: U1",
     "links": [
       {
@@ -7531,9 +7535,10 @@ const PROJECT_DETAILS = (() => {
     "sourceLabel": "WTF Guide 2026 / 2026 site map",
     "sourceUrl": "./WTF-%202026%20-%20Through%20The%20Prism.pdf",
     "tags": [
+      "associated-project",
       "support-camp"
     ],
-    "description": "Support camp listed on the 2026 site map.",
+    "description": "Associated Mutant Vehicle: Bahari | The Woven Wave\nFrom the dust rises a living wave of light, sound, and movement. Bahari carries its crew across the Binnekring, turning strangers into shipmates and the desert into an ocean. Find the wave, climb aboard, and dance with us as the desert starts to move.\n\nAssociated Mutant Vehicle: Bahari Ride | The Desert Boat\nA roaming vessel sailing the sands. Climb aboard, share the journey, and drift through the night with the Bahari crew.\n\nAssociated Mutant Vehicle: Bahari Ski - The Desert Jet Ski\nWhen the sea of dust calls, the Bahari Ski answers. The groove cruise - playful and impossible to miss, it's the spark that keeps the wave moving.",
     "additionalDetails": "Map grid: S2",
     "links": [
       {
@@ -7551,9 +7556,10 @@ const PROJECT_DETAILS = (() => {
     "sourceLabel": "WTF Guide 2026 / 2026 site map",
     "sourceUrl": "./WTF-%202026%20-%20Through%20The%20Prism.pdf",
     "tags": [
+      "associated-project",
       "support-camp"
     ],
-    "description": "Support camp listed on the 2026 site map.",
+    "description": "Associated Mutant Vehicle: Boomicorn\nBoomicorn has a kickass laser shining out of its horn, a fantastic LED-lit fibre mane and a tail that invites burners to get in and cuddle.",
     "additionalDetails": "Map grid: V1",
     "links": [
       {
@@ -7711,9 +7717,10 @@ const PROJECT_DETAILS = (() => {
     "sourceLabel": "WTF Guide 2026 / 2026 site map",
     "sourceUrl": "./WTF-%202026%20-%20Through%20The%20Prism.pdf",
     "tags": [
+      "associated-project",
       "support-camp"
     ],
-    "description": "Support camp listed on the 2026 site map.",
+    "description": "Associated Mutant Vehicle: Crawler\nThe Desert Crawler waits where the highway dissolves into dust. Its ribs of rust and bone grin at the sun, a single headlight staring like an unblinking eye. Wind whistles through its hollow grill, telling stories of long-lost travellers. Some say it moves at night, coughing to life, searching for fuel, for souls, for one last endless ride.",
     "additionalDetails": "Map grid: S7",
     "links": [
       {
@@ -7731,9 +7738,10 @@ const PROJECT_DETAILS = (() => {
     "sourceLabel": "WTF Guide 2026 / 2026 site map",
     "sourceUrl": "./WTF-%202026%20-%20Through%20The%20Prism.pdf",
     "tags": [
+      "associated-project",
       "support-camp"
     ],
-    "description": "Support camp listed on the 2026 site map.",
+    "description": "Associated Artwork: Clan Ubuntu\nArtist: Neo Monnapule\nA series of figures stand in a triangular formation, their hands joined in a circle of unity. Clad in reclaimed plywood etched with the Tree of Life pattern, the figures embody the philosophy of \"Motho ke otho ka Batho\" ... I am because we are.\nThe space beneath welcomes you to gather, rest, and connect with each other.",
     "additionalDetails": "Map grid: S5",
     "links": [
       {
@@ -7771,9 +7779,10 @@ const PROJECT_DETAILS = (() => {
     "sourceLabel": "WTF Guide 2026 / 2026 site map",
     "sourceUrl": "./WTF-%202026%20-%20Through%20The%20Prism.pdf",
     "tags": [
+      "associated-project",
       "support-camp"
     ],
-    "description": "Support camp listed on the 2026 site map.",
+    "description": "Associated Mutant Vehicle: The Dung Beetle\nMore plastic, more fuel, more flame, and a bigger fire.",
     "additionalDetails": "Map grid: V1",
     "links": [
       {
@@ -7811,9 +7820,10 @@ const PROJECT_DETAILS = (() => {
     "sourceLabel": "WTF Guide 2026 / 2026 site map",
     "sourceUrl": "./WTF-%202026%20-%20Through%20The%20Prism.pdf",
     "tags": [
+      "associated-project",
       "support-camp"
     ],
-    "description": "Support camp listed on the 2026 site map.",
+    "description": "Associated Artwork: Dischord\nArtist: Pieter Human\nThe team of the Dead Piano Society gave discarded and unusable pianos a last-chance performance opportunity in this art piece assembled from the parts of 10 pianos. The history, the love, the memories, and the joy they brought through decades of magical sound ends in their transformation into one more beautiful piece for a thousand to enjoy!",
     "additionalDetails": "Map grid: R6",
     "links": [
       {
@@ -7831,9 +7841,10 @@ const PROJECT_DETAILS = (() => {
     "sourceLabel": "WTF Guide 2026 / 2026 site map",
     "sourceUrl": "./WTF-%202026%20-%20Through%20The%20Prism.pdf",
     "tags": [
+      "associated-project",
       "support-camp"
     ],
-    "description": "Support camp listed on the 2026 site map.",
+    "description": "Associated Artwork: Drifters Landing\nArtist: Brendan Hurner\nBuilt from the dust up, Drifters Landing features a Crow's Nest to see the world and a plank to let it go. This landing is designed as a heart-centred hub for people to gather and engage. Ascend our mast for a view of the Tankwa before taking a literal leap of faith into our softest of airbags below. Should you wish to sail on, look out for us Drifters - wanderers and pirates floating the Binnekring on our Viking ship.",
     "additionalDetails": "Map grid: V1",
     "links": [
       {
@@ -7851,9 +7862,10 @@ const PROJECT_DETAILS = (() => {
     "sourceLabel": "WTF Guide 2026 / 2026 site map",
     "sourceUrl": "./WTF-%202026%20-%20Through%20The%20Prism.pdf",
     "tags": [
+      "associated-project",
       "support-camp"
     ],
-    "description": "Support camp listed on the 2026 site map.",
+    "description": "Associated Mutant Vehicle: The Flying Dutchman\nA pirate ship with DJ decks over the driver's seat, a dance floor on the front and back of the ship, and music all night, every night on the Binnekring.",
     "additionalDetails": "Map grid: U1",
     "links": [
       {
@@ -7911,9 +7923,10 @@ const PROJECT_DETAILS = (() => {
     "sourceLabel": "WTF Guide 2026 / 2026 site map",
     "sourceUrl": "./WTF-%202026%20-%20Through%20The%20Prism.pdf",
     "tags": [
+      "associated-project",
       "support-camp"
     ],
-    "description": "Support camp listed on the 2026 site map.",
+    "description": "Associated Mutant Vehicle: Quaggasmilk\nTankwa's iconic self-sustained electric truck roams the Binnekring again. Craving a slow, decadent journey? Hitch a ride, join the conversation, and find your frequency Through the Prism.",
     "additionalDetails": "Map grid: V2",
     "links": [
       {
@@ -7938,9 +7951,10 @@ const PROJECT_DETAILS = (() => {
     "sourceLabel": "WTF Guide 2026 / 2026 site map",
     "sourceUrl": "./WTF-%202026%20-%20Through%20The%20Prism.pdf",
     "tags": [
+      "associated-project",
       "support-camp"
     ],
-    "description": "Support camp listed on the 2026 site map.",
+    "description": "Associated Mutant Vehicle: The Love Box\nCome in our box. Voluptuous and bright, The Love Box rolls across the dust, gifting Love. The cost to ride - a hug and a vibe. Climb aboard and receive love that should probably require a permit. Side effects may include sweating, weak knees, and falling a little bit in love with absolutely everyone.",
     "additionalDetails": "Map grid: R7",
     "links": [
       {
@@ -7985,9 +7999,10 @@ const PROJECT_DETAILS = (() => {
     "sourceLabel": "WTF Guide 2026 / 2026 site map",
     "sourceUrl": "./WTF-%202026%20-%20Through%20The%20Prism.pdf",
     "tags": [
+      "associated-project",
       "support-camp"
     ],
-    "description": "Support camp listed on the 2026 site map.",
+    "description": "Associated Mutant Vehicle: Loki\nLoki The Rhino is the EDM-loving god of mischief. Legend has it that if you tickle his chin just right, you might score yourself a little gift.\n\nAssociated Mutant Vehicle: The Dusk Scout\nDust Scout is a baby rhino designed to serve as Loki's support vehicle this year. The shell of this mutant vehicle was used for a major cycling charity event a few years ago to raise awareness and funds for rhino conservation in South Africa. We are recycling the shell and powering it with a 21-year-old Vespa. We are giving it new life as Dust Scout. Loki's baby.",
     "additionalDetails": "Map grid: S4",
     "links": [
       {
@@ -8037,9 +8052,10 @@ const PROJECT_DETAILS = (() => {
     "sourceLabel": "WTF Guide 2026 / 2026 site map",
     "sourceUrl": "./WTF-%202026%20-%20Through%20The%20Prism.pdf",
     "tags": [
+      "associated-project",
       "support-camp"
     ],
-    "description": "Support camp listed on the 2026 site map.",
+    "description": "Associated Mutant Vehicle: MS Mayday\nAs the Tankwa sea dried and became desert sand, strange, amphibious mutations crawled out onto her shores. Adapted for land, by necessity, but still enjoys a good splash when she can. After a couple of years in dry dock, the MS Mayday is back. Still rescuing lost souls from long walks in the wilderness.",
     "additionalDetails": "Map grid: V1",
     "links": [
       {
@@ -8064,9 +8080,10 @@ const PROJECT_DETAILS = (() => {
     "sourceLabel": "WTF Guide 2026 / 2026 site map",
     "sourceUrl": "./WTF-%202026%20-%20Through%20The%20Prism.pdf",
     "tags": [
+      "associated-project",
       "support-camp"
     ],
-    "description": "Support camp listed on the 2026 site map.",
+    "description": "Associated Artwork: Mankala\nArtist: Cian McClelland\nMankala is a living circle of rhythm and exchange, inspired by the ancient African game. It’s a space where drummers, dancers, and dreamers share pulse and breath – where stories move like seeds through many hands. There are no spectators here, only participants. Energy flows in all directions, creating a communal heartbeat that captures the spirit of AfrikaBurn: connection, play, and transformation.",
     "additionalDetails": "Map grid: V2",
     "links": [
       {
@@ -8086,12 +8103,19 @@ const PROJECT_DETAILS = (() => {
     "tags": [
       "support-camp"
     ],
-    "description": "Support camp listed on the 2026 site map.",
+    "description": "Support camp for Oe-aa-sieS, the crew behind Oe-aa-sie-sA and the Oe-aa-sie-sa-wA mutant vehicle.",
     "additionalDetails": "Map grid: S1",
     "links": [
       {
         "label": "WTF Guide 2026",
         "url": "./WTF-%202026%20-%20Through%20The%20Prism.pdf"
+      }
+    ],
+    "relatedMutantVehicles": [
+      {
+        "name": "Oe-aa-sie-sa-wA",
+        "description": "When the Oe-aa-sies-sa-wA connects with Oe-aa-sieS, it turns into a full Ossewa boot party.",
+        "type": "Mutant Vehicle"
       }
     ]
   },
@@ -8104,9 +8128,10 @@ const PROJECT_DETAILS = (() => {
     "sourceLabel": "WTF Guide 2026 / 2026 site map",
     "sourceUrl": "./WTF-%202026%20-%20Through%20The%20Prism.pdf",
     "tags": [
+      "associated-project",
       "support-camp"
     ],
-    "description": "Support camp listed on the 2026 site map.",
+    "description": "Associated Mutant Vehicle: Ossewa Nova\nRising from the dust, a handcrafted gypsy wagon drawn by a buggy, a moving sanctuary of Delightenment. We gather jugglers, musicians, and fellow gypsies into a participatory caravan across the Binnekring.",
     "additionalDetails": "Map grid: R5",
     "links": [
       {
@@ -8131,9 +8156,10 @@ const PROJECT_DETAILS = (() => {
     "sourceLabel": "WTF Guide 2026 / 2026 site map",
     "sourceUrl": "./WTF-%202026%20-%20Through%20The%20Prism.pdf",
     "tags": [
+      "associated-project",
       "support-camp"
     ],
-    "description": "Support camp listed on the 2026 site map.",
+    "description": "Associated Artwork: The Old Skool\nArtist: Chris Shield\nThe school bell tolls... calling us back to the soundtrack of our youth. As the sun begins to set ... 70s, 80s, 90s, and 00s anthems echo down the school corridors as we sing and dance into the night. Check the chalkboard for the timetable!",
     "additionalDetails": "Map grid: R7",
     "links": [
       {
@@ -8151,9 +8177,10 @@ const PROJECT_DETAILS = (() => {
     "sourceLabel": "WTF Guide 2026 / 2026 site map",
     "sourceUrl": "./WTF-%202026%20-%20Through%20The%20Prism.pdf",
     "tags": [
+      "associated-project",
       "support-camp"
     ],
-    "description": "Support camp listed on the 2026 site map.",
+    "description": "Associated Mutant Vehicle: Elephant Herd\nThe original Phantom (fire-breathing matriarch), Snort (rebellious fire-belching teen), and Slurpee (unruly calf). Climb aboard, raise your arm like a trunk, and dance wildly.",
     "additionalDetails": "Map grid: V2",
     "links": [
       {
@@ -8178,9 +8205,10 @@ const PROJECT_DETAILS = (() => {
     "sourceLabel": "WTF Guide 2026 / 2026 site map",
     "sourceUrl": "./WTF-%202026%20-%20Through%20The%20Prism.pdf",
     "tags": [
+      "associated-project",
       "support-camp"
     ],
-    "description": "Support camp listed on the 2026 site map.",
+    "description": "Associated Mutant Vehicle: Punkupine\nA glowing, spiky troublemaker of the Binnekring. Climb on, grab a drink, and get quill with it. Good vibes, bad decisions, and quills for thrills. Party hard. Ride sharp.",
     "additionalDetails": "Map grid: X3",
     "links": [
       {
@@ -8245,9 +8273,10 @@ const PROJECT_DETAILS = (() => {
     "sourceLabel": "WTF Guide 2026 / 2026 site map",
     "sourceUrl": "./WTF-%202026%20-%20Through%20The%20Prism.pdf",
     "tags": [
+      "associated-project",
       "support-camp"
     ],
-    "description": "Support camp listed on the 2026 site map.",
+    "description": "Associated Mutant Vehicle: Quaggasmilk\nTankwa's iconic self-sustained electric truck roams the Binnekring again. Craving a slow, decadent journey? Hitch a ride, join the conversation, and find your frequency Through the Prism.",
     "additionalDetails": "Map grid: R7",
     "links": [
       {
@@ -8265,9 +8294,10 @@ const PROJECT_DETAILS = (() => {
     "sourceLabel": "WTF Guide 2026 / 2026 site map",
     "sourceUrl": "./WTF-%202026%20-%20Through%20The%20Prism.pdf",
     "tags": [
+      "associated-project",
       "support-camp"
     ],
-    "description": "Support camp listed on the 2026 site map.",
+    "description": "Associated OCC Service: Rangers\nWhen things in Tankwa Town go sideways, look for the orange shirts. Rangers are fellow burners who volunteer to help keep the peace. They listen, step in when situations get heated, and help people figure things out before it turns into full-blown desert drama.\n\nThey are not security and definitely not die polisie; just calm humans in the dust when things get complicated. Swing past Ranger HQ, the bright orange container on the Binnekring near 6ish, and say hello to the crew.\n\nTraining runs at 9 am on Monday 27 April, Tuesday 28 April, and Wednesday 29 April.",
     "additionalDetails": "Map grid: T4",
     "links": [
       {
@@ -8285,9 +8315,10 @@ const PROJECT_DETAILS = (() => {
     "sourceLabel": "WTF Guide 2026 / 2026 site map",
     "sourceUrl": "./WTF-%202026%20-%20Through%20The%20Prism.pdf",
     "tags": [
+      "associated-project",
       "support-camp"
     ],
-    "description": "Support camp listed on the 2026 site map.",
+    "description": "Associated Artwork: Rainbow PHLUPH\nArtist: Thomas Heidemann\nRed, orange, yellow, green, indigo, violet, blue, whichever way you are inclined and whatever your shade or hue, magical beings congregate where the colours meet the clouds, and you may just discover a pot of gold where the sunlight pierces through.",
     "additionalDetails": "Map grid: S4\nShared marker code names: Rainbow Phluph, Rat Pie Camp",
     "links": [
       {
@@ -8325,9 +8356,10 @@ const PROJECT_DETAILS = (() => {
     "sourceLabel": "WTF Guide 2026 / 2026 site map",
     "sourceUrl": "./WTF-%202026%20-%20Through%20The%20Prism.pdf",
     "tags": [
+      "associated-project",
       "support-camp"
     ],
-    "description": "Support camp listed on the 2026 site map.",
+    "description": "Associated Artwork: SongCatcher: The Continuum\nArtist: Charles Starling\nFrom the ashes of The Birth of Song comes The Continuum. A quiet dreamcatcher reborn in metal and light. Join sunrise meditations, gentle yoga, or simply sit and listen for the echo within. A place for peace, stillness, and renewal.",
     "additionalDetails": "Map grid: V2",
     "links": [
       {
@@ -8385,9 +8417,10 @@ const PROJECT_DETAILS = (() => {
     "sourceLabel": "WTF Guide 2026 / 2026 site map",
     "sourceUrl": "./WTF-%202026%20-%20Through%20The%20Prism.pdf",
     "tags": [
+      "associated-project",
       "support-camp"
     ],
-    "description": "Support camp listed on the 2026 site map.",
+    "description": "Associated Mutant Vehicle: Spikey\nSpikey is an organic creature that cocoons and croons to Non-Conventional Seekers of melodic, funky, uplifting Dance Tunes. Emerges daily at 15:30.\n\nAssociated Artwork: Spikey's Burrow\nArtist: Francois Riley\nA series of sculptural prisms arranged to define a temporary dance floor. Each prism has a flame that's triggered on the beat of the music. A warm, ambient space that can be seen from afar.",
     "additionalDetails": "Map grid: S7",
     "links": [
       {
@@ -8412,9 +8445,10 @@ const PROJECT_DETAILS = (() => {
     "sourceLabel": "WTF Guide 2026 / 2026 site map",
     "sourceUrl": "./WTF-%202026%20-%20Through%20The%20Prism.pdf",
     "tags": [
+      "associated-project",
       "support-camp"
     ],
-    "description": "Support camp listed on the 2026 site map.",
+    "description": "Associated Artwork: Sweet Synchronicity\nArtist: Alan Brett Powell\nCome play with us in Tankwa Town, where synchronicities run wild as you follow your feet, open to the magic of who you might meet. Join us in celebratory ceremonies and weave your magic into the field of infinite possibility.",
     "additionalDetails": "Map grid: S4",
     "links": [
       {
@@ -8432,9 +8466,10 @@ const PROJECT_DETAILS = (() => {
     "sourceLabel": "WTF Guide 2026 / 2026 site map",
     "sourceUrl": "./WTF-%202026%20-%20Through%20The%20Prism.pdf",
     "tags": [
+      "associated-project",
       "support-camp"
     ],
-    "description": "Support camp listed on the 2026 site map.",
+    "description": "Associated Artwork: Switch Off to Switch On\nArtist: Nicholas Garrett\nSwitch Off to Switch On is an eight-metre-tall transformative mindspace. Climb above the dust. Enter a brain-shaped sanctuary of sound and light. Pause. Breathe. Reset. When ready, descend the spiral helix slide back into the Burn. It's a full-body loop from noise to stillness and back to movement.",
     "additionalDetails": "Map grid: S4",
     "links": [
       {
@@ -8472,9 +8507,10 @@ const PROJECT_DETAILS = (() => {
     "sourceLabel": "WTF Guide 2026 / 2026 site map",
     "sourceUrl": "./WTF-%202026%20-%20Through%20The%20Prism.pdf",
     "tags": [
+      "associated-project",
       "support-camp"
     ],
-    "description": "Support camp listed on the 2026 site map.",
+    "description": "Associated Artwork: Temple Embo \"Masibuyele eMbo\"\nArtist: Ceduma Qamata\nA sonic sanctuary rooted in Xhosa ancestral tradition. Inspired by an Indlunkulu sacred family-gathering hut, the artwork is a series of interconnected rondavels that combine to form a village of sound. Each room is an instrument, inviting you to play, feel, and most importantly, to heal. A living tribute to ancestry, community, and ceremony.",
     "additionalDetails": "Map grid: S5",
     "links": [
       {
@@ -8572,9 +8608,10 @@ const PROJECT_DETAILS = (() => {
     "sourceLabel": "WTF Guide 2026 / 2026 site map",
     "sourceUrl": "./WTF-%202026%20-%20Through%20The%20Prism.pdf",
     "tags": [
+      "associated-project",
       "support-camp"
     ],
-    "description": "Support camp listed on the 2026 site map.",
+    "description": "Associated Mutant Vehicle: Die Wildebeest\nComing in hot and confused! Built for endurance, not elegance, we move as a Confusion – stubborn, glowing, and surprisingly powerful. With a luminous skull leading the charge, we bring lights, lekka beats, humour, and wholehearted connection to the dust.",
     "additionalDetails": "Map grid: T2",
     "links": [
       {
@@ -8641,7 +8678,7 @@ const PROJECT_DETAILS = (() => {
     "tags": [
       "toilet"
     ],
-    "description": "Look for the chimneys and lights. If it did not come out of your body, it does not go in the potty. Throne toilets are located around the edges of the camping areas and some are in the Binnekring. The toilets include bins for tampons, wet wipes and condoms; use those rather than putting them in the toilets. Please put the paper back in the bucket so the wind does not create toilet snakes across the Tankwa.",
+    "description": "Look for the chimneys and lights. If it did not come out of your body, it does not go in the potty. The throne toilets are located around the edges of the camping areas and some are in the Binnekring. Use them. No more longdrops or porta potties.\n\nThe toilets are kitted with tampon, wet wipes, or condom bins. Use those rather than putting those items in the toilets. Please put the paper back in the bucket. If you do not, the wind will create toilet snakes across the Tankwa, which is severely kak for the Leave No Trace crew.\n\nDuring Build Week and early event rollout, some toilets are kept battened shut to reduce pumping, cleaning, maintenance, and smell. Please respect closed loos and do not open them for general use. There are also toilets placed specifically for disabled participants, requested ahead of time by those who need them.",
     "additionalDetails": "Map grid: W6",
     "links": [
       {
@@ -8661,7 +8698,7 @@ const PROJECT_DETAILS = (() => {
     "tags": [
       "toilet"
     ],
-    "description": "Look for the chimneys and lights. If it did not come out of your body, it does not go in the potty. Throne toilets are located around the edges of the camping areas and some are in the Binnekring. The toilets include bins for tampons, wet wipes and condoms; use those rather than putting them in the toilets. Please put the paper back in the bucket so the wind does not create toilet snakes across the Tankwa.",
+    "description": "Look for the chimneys and lights. If it did not come out of your body, it does not go in the potty. The throne toilets are located around the edges of the camping areas and some are in the Binnekring. Use them. No more longdrops or porta potties.\n\nThe toilets are kitted with tampon, wet wipes, or condom bins. Use those rather than putting those items in the toilets. Please put the paper back in the bucket. If you do not, the wind will create toilet snakes across the Tankwa, which is severely kak for the Leave No Trace crew.\n\nDuring Build Week and early event rollout, some toilets are kept battened shut to reduce pumping, cleaning, maintenance, and smell. Please respect closed loos and do not open them for general use. There are also toilets placed specifically for disabled participants, requested ahead of time by those who need them.",
     "additionalDetails": "Map grid: T7",
     "links": [
       {
@@ -8681,7 +8718,7 @@ const PROJECT_DETAILS = (() => {
     "tags": [
       "toilet"
     ],
-    "description": "Look for the chimneys and lights. If it did not come out of your body, it does not go in the potty. Throne toilets are located around the edges of the camping areas and some are in the Binnekring. The toilets include bins for tampons, wet wipes and condoms; use those rather than putting them in the toilets. Please put the paper back in the bucket so the wind does not create toilet snakes across the Tankwa.",
+    "description": "Look for the chimneys and lights. If it did not come out of your body, it does not go in the potty. The throne toilets are located around the edges of the camping areas and some are in the Binnekring. Use them. No more longdrops or porta potties.\n\nThe toilets are kitted with tampon, wet wipes, or condom bins. Use those rather than putting those items in the toilets. Please put the paper back in the bucket. If you do not, the wind will create toilet snakes across the Tankwa, which is severely kak for the Leave No Trace crew.\n\nDuring Build Week and early event rollout, some toilets are kept battened shut to reduce pumping, cleaning, maintenance, and smell. Please respect closed loos and do not open them for general use. There are also toilets placed specifically for disabled participants, requested ahead of time by those who need them.",
     "additionalDetails": "Map grid: S7",
     "links": [
       {
@@ -8701,7 +8738,7 @@ const PROJECT_DETAILS = (() => {
     "tags": [
       "toilet"
     ],
-    "description": "Look for the chimneys and lights. If it did not come out of your body, it does not go in the potty. Throne toilets are located around the edges of the camping areas and some are in the Binnekring. The toilets include bins for tampons, wet wipes and condoms; use those rather than putting them in the toilets. Please put the paper back in the bucket so the wind does not create toilet snakes across the Tankwa.",
+    "description": "Look for the chimneys and lights. If it did not come out of your body, it does not go in the potty. The throne toilets are located around the edges of the camping areas and some are in the Binnekring. Use them. No more longdrops or porta potties.\n\nThe toilets are kitted with tampon, wet wipes, or condom bins. Use those rather than putting those items in the toilets. Please put the paper back in the bucket. If you do not, the wind will create toilet snakes across the Tankwa, which is severely kak for the Leave No Trace crew.\n\nDuring Build Week and early event rollout, some toilets are kept battened shut to reduce pumping, cleaning, maintenance, and smell. Please respect closed loos and do not open them for general use. There are also toilets placed specifically for disabled participants, requested ahead of time by those who need them.",
     "additionalDetails": "Map grid: R6",
     "links": [
       {
@@ -8721,7 +8758,7 @@ const PROJECT_DETAILS = (() => {
     "tags": [
       "toilet"
     ],
-    "description": "Look for the chimneys and lights. If it did not come out of your body, it does not go in the potty. Throne toilets are located around the edges of the camping areas and some are in the Binnekring. The toilets include bins for tampons, wet wipes and condoms; use those rather than putting them in the toilets. Please put the paper back in the bucket so the wind does not create toilet snakes across the Tankwa.",
+    "description": "Look for the chimneys and lights. If it did not come out of your body, it does not go in the potty. The throne toilets are located around the edges of the camping areas and some are in the Binnekring. Use them. No more longdrops or porta potties.\n\nThe toilets are kitted with tampon, wet wipes, or condom bins. Use those rather than putting those items in the toilets. Please put the paper back in the bucket. If you do not, the wind will create toilet snakes across the Tankwa, which is severely kak for the Leave No Trace crew.\n\nDuring Build Week and early event rollout, some toilets are kept battened shut to reduce pumping, cleaning, maintenance, and smell. Please respect closed loos and do not open them for general use. There are also toilets placed specifically for disabled participants, requested ahead of time by those who need them.",
     "additionalDetails": "Map grid: R6",
     "links": [
       {
@@ -8741,7 +8778,7 @@ const PROJECT_DETAILS = (() => {
     "tags": [
       "toilet"
     ],
-    "description": "Look for the chimneys and lights. If it did not come out of your body, it does not go in the potty. Throne toilets are located around the edges of the camping areas and some are in the Binnekring. The toilets include bins for tampons, wet wipes and condoms; use those rather than putting them in the toilets. Please put the paper back in the bucket so the wind does not create toilet snakes across the Tankwa.",
+    "description": "Look for the chimneys and lights. If it did not come out of your body, it does not go in the potty. The throne toilets are located around the edges of the camping areas and some are in the Binnekring. Use them. No more longdrops or porta potties.\n\nThe toilets are kitted with tampon, wet wipes, or condom bins. Use those rather than putting those items in the toilets. Please put the paper back in the bucket. If you do not, the wind will create toilet snakes across the Tankwa, which is severely kak for the Leave No Trace crew.\n\nDuring Build Week and early event rollout, some toilets are kept battened shut to reduce pumping, cleaning, maintenance, and smell. Please respect closed loos and do not open them for general use. There are also toilets placed specifically for disabled participants, requested ahead of time by those who need them.",
     "additionalDetails": "Map grid: R5",
     "links": [
       {
@@ -8761,7 +8798,7 @@ const PROJECT_DETAILS = (() => {
     "tags": [
       "toilet"
     ],
-    "description": "Look for the chimneys and lights. If it did not come out of your body, it does not go in the potty. Throne toilets are located around the edges of the camping areas and some are in the Binnekring. The toilets include bins for tampons, wet wipes and condoms; use those rather than putting them in the toilets. Please put the paper back in the bucket so the wind does not create toilet snakes across the Tankwa.",
+    "description": "Look for the chimneys and lights. If it did not come out of your body, it does not go in the potty. The throne toilets are located around the edges of the camping areas and some are in the Binnekring. Use them. No more longdrops or porta potties.\n\nThe toilets are kitted with tampon, wet wipes, or condom bins. Use those rather than putting those items in the toilets. Please put the paper back in the bucket. If you do not, the wind will create toilet snakes across the Tankwa, which is severely kak for the Leave No Trace crew.\n\nDuring Build Week and early event rollout, some toilets are kept battened shut to reduce pumping, cleaning, maintenance, and smell. Please respect closed loos and do not open them for general use. There are also toilets placed specifically for disabled participants, requested ahead of time by those who need them.",
     "additionalDetails": "Map grid: R4",
     "links": [
       {
@@ -8781,7 +8818,7 @@ const PROJECT_DETAILS = (() => {
     "tags": [
       "toilet"
     ],
-    "description": "Look for the chimneys and lights. If it did not come out of your body, it does not go in the potty. Throne toilets are located around the edges of the camping areas and some are in the Binnekring. The toilets include bins for tampons, wet wipes and condoms; use those rather than putting them in the toilets. Please put the paper back in the bucket so the wind does not create toilet snakes across the Tankwa.",
+    "description": "Look for the chimneys and lights. If it did not come out of your body, it does not go in the potty. The throne toilets are located around the edges of the camping areas and some are in the Binnekring. Use them. No more longdrops or porta potties.\n\nThe toilets are kitted with tampon, wet wipes, or condom bins. Use those rather than putting those items in the toilets. Please put the paper back in the bucket. If you do not, the wind will create toilet snakes across the Tankwa, which is severely kak for the Leave No Trace crew.\n\nDuring Build Week and early event rollout, some toilets are kept battened shut to reduce pumping, cleaning, maintenance, and smell. Please respect closed loos and do not open them for general use. There are also toilets placed specifically for disabled participants, requested ahead of time by those who need them.",
     "additionalDetails": "Map grid: R5",
     "links": [
       {
@@ -8801,7 +8838,7 @@ const PROJECT_DETAILS = (() => {
     "tags": [
       "toilet"
     ],
-    "description": "Look for the chimneys and lights. If it did not come out of your body, it does not go in the potty. Throne toilets are located around the edges of the camping areas and some are in the Binnekring. The toilets include bins for tampons, wet wipes and condoms; use those rather than putting them in the toilets. Please put the paper back in the bucket so the wind does not create toilet snakes across the Tankwa.",
+    "description": "Look for the chimneys and lights. If it did not come out of your body, it does not go in the potty. The throne toilets are located around the edges of the camping areas and some are in the Binnekring. Use them. No more longdrops or porta potties.\n\nThe toilets are kitted with tampon, wet wipes, or condom bins. Use those rather than putting those items in the toilets. Please put the paper back in the bucket. If you do not, the wind will create toilet snakes across the Tankwa, which is severely kak for the Leave No Trace crew.\n\nDuring Build Week and early event rollout, some toilets are kept battened shut to reduce pumping, cleaning, maintenance, and smell. Please respect closed loos and do not open them for general use. There are also toilets placed specifically for disabled participants, requested ahead of time by those who need them.",
     "additionalDetails": "Map grid: S5",
     "links": [
       {
@@ -8821,7 +8858,7 @@ const PROJECT_DETAILS = (() => {
     "tags": [
       "toilet"
     ],
-    "description": "Look for the chimneys and lights. If it did not come out of your body, it does not go in the potty. Throne toilets are located around the edges of the camping areas and some are in the Binnekring. The toilets include bins for tampons, wet wipes and condoms; use those rather than putting them in the toilets. Please put the paper back in the bucket so the wind does not create toilet snakes across the Tankwa.",
+    "description": "Look for the chimneys and lights. If it did not come out of your body, it does not go in the potty. The throne toilets are located around the edges of the camping areas and some are in the Binnekring. Use them. No more longdrops or porta potties.\n\nThe toilets are kitted with tampon, wet wipes, or condom bins. Use those rather than putting those items in the toilets. Please put the paper back in the bucket. If you do not, the wind will create toilet snakes across the Tankwa, which is severely kak for the Leave No Trace crew.\n\nDuring Build Week and early event rollout, some toilets are kept battened shut to reduce pumping, cleaning, maintenance, and smell. Please respect closed loos and do not open them for general use. There are also toilets placed specifically for disabled participants, requested ahead of time by those who need them.",
     "additionalDetails": "Map grid: S4",
     "links": [
       {
@@ -8841,7 +8878,7 @@ const PROJECT_DETAILS = (() => {
     "tags": [
       "toilet"
     ],
-    "description": "Look for the chimneys and lights. If it did not come out of your body, it does not go in the potty. Throne toilets are located around the edges of the camping areas and some are in the Binnekring. The toilets include bins for tampons, wet wipes and condoms; use those rather than putting them in the toilets. Please put the paper back in the bucket so the wind does not create toilet snakes across the Tankwa.",
+    "description": "Look for the chimneys and lights. If it did not come out of your body, it does not go in the potty. The throne toilets are located around the edges of the camping areas and some are in the Binnekring. Use them. No more longdrops or porta potties.\n\nThe toilets are kitted with tampon, wet wipes, or condom bins. Use those rather than putting those items in the toilets. Please put the paper back in the bucket. If you do not, the wind will create toilet snakes across the Tankwa, which is severely kak for the Leave No Trace crew.\n\nDuring Build Week and early event rollout, some toilets are kept battened shut to reduce pumping, cleaning, maintenance, and smell. Please respect closed loos and do not open them for general use. There are also toilets placed specifically for disabled participants, requested ahead of time by those who need them.",
     "additionalDetails": "Map grid: T4",
     "links": [
       {
@@ -8861,7 +8898,7 @@ const PROJECT_DETAILS = (() => {
     "tags": [
       "toilet"
     ],
-    "description": "Look for the chimneys and lights. If it did not come out of your body, it does not go in the potty. Throne toilets are located around the edges of the camping areas and some are in the Binnekring. The toilets include bins for tampons, wet wipes and condoms; use those rather than putting them in the toilets. Please put the paper back in the bucket so the wind does not create toilet snakes across the Tankwa.",
+    "description": "Look for the chimneys and lights. If it did not come out of your body, it does not go in the potty. The throne toilets are located around the edges of the camping areas and some are in the Binnekring. Use them. No more longdrops or porta potties.\n\nThe toilets are kitted with tampon, wet wipes, or condom bins. Use those rather than putting those items in the toilets. Please put the paper back in the bucket. If you do not, the wind will create toilet snakes across the Tankwa, which is severely kak for the Leave No Trace crew.\n\nDuring Build Week and early event rollout, some toilets are kept battened shut to reduce pumping, cleaning, maintenance, and smell. Please respect closed loos and do not open them for general use. There are also toilets placed specifically for disabled participants, requested ahead of time by those who need them.",
     "additionalDetails": "Map grid: R3",
     "links": [
       {
@@ -8881,7 +8918,7 @@ const PROJECT_DETAILS = (() => {
     "tags": [
       "toilet"
     ],
-    "description": "Look for the chimneys and lights. If it did not come out of your body, it does not go in the potty. Throne toilets are located around the edges of the camping areas and some are in the Binnekring. The toilets include bins for tampons, wet wipes and condoms; use those rather than putting them in the toilets. Please put the paper back in the bucket so the wind does not create toilet snakes across the Tankwa.",
+    "description": "Look for the chimneys and lights. If it did not come out of your body, it does not go in the potty. The throne toilets are located around the edges of the camping areas and some are in the Binnekring. Use them. No more longdrops or porta potties.\n\nThe toilets are kitted with tampon, wet wipes, or condom bins. Use those rather than putting those items in the toilets. Please put the paper back in the bucket. If you do not, the wind will create toilet snakes across the Tankwa, which is severely kak for the Leave No Trace crew.\n\nDuring Build Week and early event rollout, some toilets are kept battened shut to reduce pumping, cleaning, maintenance, and smell. Please respect closed loos and do not open them for general use. There are also toilets placed specifically for disabled participants, requested ahead of time by those who need them.",
     "additionalDetails": "Map grid: S3",
     "links": [
       {
@@ -8901,7 +8938,7 @@ const PROJECT_DETAILS = (() => {
     "tags": [
       "toilet"
     ],
-    "description": "Look for the chimneys and lights. If it did not come out of your body, it does not go in the potty. Throne toilets are located around the edges of the camping areas and some are in the Binnekring. The toilets include bins for tampons, wet wipes and condoms; use those rather than putting them in the toilets. Please put the paper back in the bucket so the wind does not create toilet snakes across the Tankwa.",
+    "description": "Look for the chimneys and lights. If it did not come out of your body, it does not go in the potty. The throne toilets are located around the edges of the camping areas and some are in the Binnekring. Use them. No more longdrops or porta potties.\n\nThe toilets are kitted with tampon, wet wipes, or condom bins. Use those rather than putting those items in the toilets. Please put the paper back in the bucket. If you do not, the wind will create toilet snakes across the Tankwa, which is severely kak for the Leave No Trace crew.\n\nDuring Build Week and early event rollout, some toilets are kept battened shut to reduce pumping, cleaning, maintenance, and smell. Please respect closed loos and do not open them for general use. There are also toilets placed specifically for disabled participants, requested ahead of time by those who need them.",
     "additionalDetails": "Map grid: T3",
     "links": [
       {
@@ -8921,7 +8958,7 @@ const PROJECT_DETAILS = (() => {
     "tags": [
       "toilet"
     ],
-    "description": "Look for the chimneys and lights. If it did not come out of your body, it does not go in the potty. Throne toilets are located around the edges of the camping areas and some are in the Binnekring. The toilets include bins for tampons, wet wipes and condoms; use those rather than putting them in the toilets. Please put the paper back in the bucket so the wind does not create toilet snakes across the Tankwa.",
+    "description": "Look for the chimneys and lights. If it did not come out of your body, it does not go in the potty. The throne toilets are located around the edges of the camping areas and some are in the Binnekring. Use them. No more longdrops or porta potties.\n\nThe toilets are kitted with tampon, wet wipes, or condom bins. Use those rather than putting those items in the toilets. Please put the paper back in the bucket. If you do not, the wind will create toilet snakes across the Tankwa, which is severely kak for the Leave No Trace crew.\n\nDuring Build Week and early event rollout, some toilets are kept battened shut to reduce pumping, cleaning, maintenance, and smell. Please respect closed loos and do not open them for general use. There are also toilets placed specifically for disabled participants, requested ahead of time by those who need them.",
     "additionalDetails": "Map grid: S2",
     "links": [
       {
@@ -8941,7 +8978,7 @@ const PROJECT_DETAILS = (() => {
     "tags": [
       "toilet"
     ],
-    "description": "Look for the chimneys and lights. If it did not come out of your body, it does not go in the potty. Throne toilets are located around the edges of the camping areas and some are in the Binnekring. The toilets include bins for tampons, wet wipes and condoms; use those rather than putting them in the toilets. Please put the paper back in the bucket so the wind does not create toilet snakes across the Tankwa.",
+    "description": "Look for the chimneys and lights. If it did not come out of your body, it does not go in the potty. The throne toilets are located around the edges of the camping areas and some are in the Binnekring. Use them. No more longdrops or porta potties.\n\nThe toilets are kitted with tampon, wet wipes, or condom bins. Use those rather than putting those items in the toilets. Please put the paper back in the bucket. If you do not, the wind will create toilet snakes across the Tankwa, which is severely kak for the Leave No Trace crew.\n\nDuring Build Week and early event rollout, some toilets are kept battened shut to reduce pumping, cleaning, maintenance, and smell. Please respect closed loos and do not open them for general use. There are also toilets placed specifically for disabled participants, requested ahead of time by those who need them.",
     "additionalDetails": "Map grid: T3",
     "links": [
       {
@@ -8961,7 +8998,7 @@ const PROJECT_DETAILS = (() => {
     "tags": [
       "toilet"
     ],
-    "description": "Look for the chimneys and lights. If it did not come out of your body, it does not go in the potty. Throne toilets are located around the edges of the camping areas and some are in the Binnekring. The toilets include bins for tampons, wet wipes and condoms; use those rather than putting them in the toilets. Please put the paper back in the bucket so the wind does not create toilet snakes across the Tankwa.",
+    "description": "Look for the chimneys and lights. If it did not come out of your body, it does not go in the potty. The throne toilets are located around the edges of the camping areas and some are in the Binnekring. Use them. No more longdrops or porta potties.\n\nThe toilets are kitted with tampon, wet wipes, or condom bins. Use those rather than putting those items in the toilets. Please put the paper back in the bucket. If you do not, the wind will create toilet snakes across the Tankwa, which is severely kak for the Leave No Trace crew.\n\nDuring Build Week and early event rollout, some toilets are kept battened shut to reduce pumping, cleaning, maintenance, and smell. Please respect closed loos and do not open them for general use. There are also toilets placed specifically for disabled participants, requested ahead of time by those who need them.",
     "additionalDetails": "Map grid: U3",
     "links": [
       {
@@ -8981,7 +9018,7 @@ const PROJECT_DETAILS = (() => {
     "tags": [
       "toilet"
     ],
-    "description": "Look for the chimneys and lights. If it did not come out of your body, it does not go in the potty. Throne toilets are located around the edges of the camping areas and some are in the Binnekring. The toilets include bins for tampons, wet wipes and condoms; use those rather than putting them in the toilets. Please put the paper back in the bucket so the wind does not create toilet snakes across the Tankwa.",
+    "description": "Look for the chimneys and lights. If it did not come out of your body, it does not go in the potty. The throne toilets are located around the edges of the camping areas and some are in the Binnekring. Use them. No more longdrops or porta potties.\n\nThe toilets are kitted with tampon, wet wipes, or condom bins. Use those rather than putting those items in the toilets. Please put the paper back in the bucket. If you do not, the wind will create toilet snakes across the Tankwa, which is severely kak for the Leave No Trace crew.\n\nDuring Build Week and early event rollout, some toilets are kept battened shut to reduce pumping, cleaning, maintenance, and smell. Please respect closed loos and do not open them for general use. There are also toilets placed specifically for disabled participants, requested ahead of time by those who need them.",
     "additionalDetails": "Map grid: U3",
     "links": [
       {
@@ -9001,7 +9038,7 @@ const PROJECT_DETAILS = (() => {
     "tags": [
       "toilet"
     ],
-    "description": "Look for the chimneys and lights. If it did not come out of your body, it does not go in the potty. Throne toilets are located around the edges of the camping areas and some are in the Binnekring. The toilets include bins for tampons, wet wipes and condoms; use those rather than putting them in the toilets. Please put the paper back in the bucket so the wind does not create toilet snakes across the Tankwa.",
+    "description": "Look for the chimneys and lights. If it did not come out of your body, it does not go in the potty. The throne toilets are located around the edges of the camping areas and some are in the Binnekring. Use them. No more longdrops or porta potties.\n\nThe toilets are kitted with tampon, wet wipes, or condom bins. Use those rather than putting those items in the toilets. Please put the paper back in the bucket. If you do not, the wind will create toilet snakes across the Tankwa, which is severely kak for the Leave No Trace crew.\n\nDuring Build Week and early event rollout, some toilets are kept battened shut to reduce pumping, cleaning, maintenance, and smell. Please respect closed loos and do not open them for general use. There are also toilets placed specifically for disabled participants, requested ahead of time by those who need them.",
     "additionalDetails": "Map grid: U1",
     "links": [
       {
@@ -9021,7 +9058,7 @@ const PROJECT_DETAILS = (() => {
     "tags": [
       "toilet"
     ],
-    "description": "Look for the chimneys and lights. If it did not come out of your body, it does not go in the potty. Throne toilets are located around the edges of the camping areas and some are in the Binnekring. The toilets include bins for tampons, wet wipes and condoms; use those rather than putting them in the toilets. Please put the paper back in the bucket so the wind does not create toilet snakes across the Tankwa.",
+    "description": "Look for the chimneys and lights. If it did not come out of your body, it does not go in the potty. The throne toilets are located around the edges of the camping areas and some are in the Binnekring. Use them. No more longdrops or porta potties.\n\nThe toilets are kitted with tampon, wet wipes, or condom bins. Use those rather than putting those items in the toilets. Please put the paper back in the bucket. If you do not, the wind will create toilet snakes across the Tankwa, which is severely kak for the Leave No Trace crew.\n\nDuring Build Week and early event rollout, some toilets are kept battened shut to reduce pumping, cleaning, maintenance, and smell. Please respect closed loos and do not open them for general use. There are also toilets placed specifically for disabled participants, requested ahead of time by those who need them.",
     "additionalDetails": "Map grid: V2",
     "links": [
       {
@@ -9041,7 +9078,7 @@ const PROJECT_DETAILS = (() => {
     "tags": [
       "toilet"
     ],
-    "description": "Look for the chimneys and lights. If it did not come out of your body, it does not go in the potty. Throne toilets are located around the edges of the camping areas and some are in the Binnekring. The toilets include bins for tampons, wet wipes and condoms; use those rather than putting them in the toilets. Please put the paper back in the bucket so the wind does not create toilet snakes across the Tankwa.",
+    "description": "Look for the chimneys and lights. If it did not come out of your body, it does not go in the potty. The throne toilets are located around the edges of the camping areas and some are in the Binnekring. Use them. No more longdrops or porta potties.\n\nThe toilets are kitted with tampon, wet wipes, or condom bins. Use those rather than putting those items in the toilets. Please put the paper back in the bucket. If you do not, the wind will create toilet snakes across the Tankwa, which is severely kak for the Leave No Trace crew.\n\nDuring Build Week and early event rollout, some toilets are kept battened shut to reduce pumping, cleaning, maintenance, and smell. Please respect closed loos and do not open them for general use. There are also toilets placed specifically for disabled participants, requested ahead of time by those who need them.",
     "additionalDetails": "Map grid: V3",
     "links": [
       {
@@ -9061,7 +9098,7 @@ const PROJECT_DETAILS = (() => {
     "tags": [
       "toilet"
     ],
-    "description": "Look for the chimneys and lights. If it did not come out of your body, it does not go in the potty. Throne toilets are located around the edges of the camping areas and some are in the Binnekring. The toilets include bins for tampons, wet wipes and condoms; use those rather than putting them in the toilets. Please put the paper back in the bucket so the wind does not create toilet snakes across the Tankwa.",
+    "description": "Look for the chimneys and lights. If it did not come out of your body, it does not go in the potty. The throne toilets are located around the edges of the camping areas and some are in the Binnekring. Use them. No more longdrops or porta potties.\n\nThe toilets are kitted with tampon, wet wipes, or condom bins. Use those rather than putting those items in the toilets. Please put the paper back in the bucket. If you do not, the wind will create toilet snakes across the Tankwa, which is severely kak for the Leave No Trace crew.\n\nDuring Build Week and early event rollout, some toilets are kept battened shut to reduce pumping, cleaning, maintenance, and smell. Please respect closed loos and do not open them for general use. There are also toilets placed specifically for disabled participants, requested ahead of time by those who need them.",
     "additionalDetails": "Map grid: X3",
     "links": [
       {
@@ -9081,7 +9118,7 @@ const PROJECT_DETAILS = (() => {
     "tags": [
       "toilet"
     ],
-    "description": "Look for the chimneys and lights. If it did not come out of your body, it does not go in the potty. Throne toilets are located around the edges of the camping areas and some are in the Binnekring. The toilets include bins for tampons, wet wipes and condoms; use those rather than putting them in the toilets. Please put the paper back in the bucket so the wind does not create toilet snakes across the Tankwa.",
+    "description": "Look for the chimneys and lights. If it did not come out of your body, it does not go in the potty. The throne toilets are located around the edges of the camping areas and some are in the Binnekring. Use them. No more longdrops or porta potties.\n\nThe toilets are kitted with tampon, wet wipes, or condom bins. Use those rather than putting those items in the toilets. Please put the paper back in the bucket. If you do not, the wind will create toilet snakes across the Tankwa, which is severely kak for the Leave No Trace crew.\n\nDuring Build Week and early event rollout, some toilets are kept battened shut to reduce pumping, cleaning, maintenance, and smell. Please respect closed loos and do not open them for general use. There are also toilets placed specifically for disabled participants, requested ahead of time by those who need them.",
     "additionalDetails": "Map grid: W3",
     "links": [
       {
@@ -9101,7 +9138,7 @@ const PROJECT_DETAILS = (() => {
     "tags": [
       "toilet"
     ],
-    "description": "Look for the chimneys and lights. If it did not come out of your body, it does not go in the potty. Throne toilets are located around the edges of the camping areas and some are in the Binnekring. The toilets include bins for tampons, wet wipes and condoms; use those rather than putting them in the toilets. Please put the paper back in the bucket so the wind does not create toilet snakes across the Tankwa.",
+    "description": "Look for the chimneys and lights. If it did not come out of your body, it does not go in the potty. The throne toilets are located around the edges of the camping areas and some are in the Binnekring. Use them. No more longdrops or porta potties.\n\nThe toilets are kitted with tampon, wet wipes, or condom bins. Use those rather than putting those items in the toilets. Please put the paper back in the bucket. If you do not, the wind will create toilet snakes across the Tankwa, which is severely kak for the Leave No Trace crew.\n\nDuring Build Week and early event rollout, some toilets are kept battened shut to reduce pumping, cleaning, maintenance, and smell. Please respect closed loos and do not open them for general use. There are also toilets placed specifically for disabled participants, requested ahead of time by those who need them.",
     "additionalDetails": "Map grid: X3",
     "links": [
       {
@@ -9121,7 +9158,7 @@ const PROJECT_DETAILS = (() => {
     "tags": [
       "toilet"
     ],
-    "description": "Look for the chimneys and lights. If it did not come out of your body, it does not go in the potty. Throne toilets are located around the edges of the camping areas and some are in the Binnekring. The toilets include bins for tampons, wet wipes and condoms; use those rather than putting them in the toilets. Please put the paper back in the bucket so the wind does not create toilet snakes across the Tankwa.",
+    "description": "Look for the chimneys and lights. If it did not come out of your body, it does not go in the potty. The throne toilets are located around the edges of the camping areas and some are in the Binnekring. Use them. No more longdrops or porta potties.\n\nThe toilets are kitted with tampon, wet wipes, or condom bins. Use those rather than putting those items in the toilets. Please put the paper back in the bucket. If you do not, the wind will create toilet snakes across the Tankwa, which is severely kak for the Leave No Trace crew.\n\nDuring Build Week and early event rollout, some toilets are kept battened shut to reduce pumping, cleaning, maintenance, and smell. Please respect closed loos and do not open them for general use. There are also toilets placed specifically for disabled participants, requested ahead of time by those who need them.",
     "additionalDetails": "Map grid: Y3",
     "links": [
       {
@@ -9141,7 +9178,7 @@ const PROJECT_DETAILS = (() => {
     "tags": [
       "toilet"
     ],
-    "description": "Look for the chimneys and lights. If it did not come out of your body, it does not go in the potty. Throne toilets are located around the edges of the camping areas and some are in the Binnekring. The toilets include bins for tampons, wet wipes and condoms; use those rather than putting them in the toilets. Please put the paper back in the bucket so the wind does not create toilet snakes across the Tankwa.",
+    "description": "Look for the chimneys and lights. If it did not come out of your body, it does not go in the potty. The throne toilets are located around the edges of the camping areas and some are in the Binnekring. Use them. No more longdrops or porta potties.\n\nThe toilets are kitted with tampon, wet wipes, or condom bins. Use those rather than putting those items in the toilets. Please put the paper back in the bucket. If you do not, the wind will create toilet snakes across the Tankwa, which is severely kak for the Leave No Trace crew.\n\nDuring Build Week and early event rollout, some toilets are kept battened shut to reduce pumping, cleaning, maintenance, and smell. Please respect closed loos and do not open them for general use. There are also toilets placed specifically for disabled participants, requested ahead of time by those who need them.",
     "additionalDetails": "Map grid: Z2",
     "links": [
       {
@@ -9161,7 +9198,7 @@ const PROJECT_DETAILS = (() => {
     "tags": [
       "toilet"
     ],
-    "description": "Look for the chimneys and lights. If it did not come out of your body, it does not go in the potty. Throne toilets are located around the edges of the camping areas and some are in the Binnekring. The toilets include bins for tampons, wet wipes and condoms; use those rather than putting them in the toilets. Please put the paper back in the bucket so the wind does not create toilet snakes across the Tankwa.",
+    "description": "Look for the chimneys and lights. If it did not come out of your body, it does not go in the potty. The throne toilets are located around the edges of the camping areas and some are in the Binnekring. Use them. No more longdrops or porta potties.\n\nThe toilets are kitted with tampon, wet wipes, or condom bins. Use those rather than putting those items in the toilets. Please put the paper back in the bucket. If you do not, the wind will create toilet snakes across the Tankwa, which is severely kak for the Leave No Trace crew.\n\nDuring Build Week and early event rollout, some toilets are kept battened shut to reduce pumping, cleaning, maintenance, and smell. Please respect closed loos and do not open them for general use. There are also toilets placed specifically for disabled participants, requested ahead of time by those who need them.",
     "additionalDetails": "Map grid: Z3",
     "links": [
       {
@@ -9181,7 +9218,7 @@ const PROJECT_DETAILS = (() => {
     "tags": [
       "toilet"
     ],
-    "description": "Look for the chimneys and lights. If it did not come out of your body, it does not go in the potty. Throne toilets are located around the edges of the camping areas and some are in the Binnekring. The toilets include bins for tampons, wet wipes and condoms; use those rather than putting them in the toilets. Please put the paper back in the bucket so the wind does not create toilet snakes across the Tankwa.",
+    "description": "Look for the chimneys and lights. If it did not come out of your body, it does not go in the potty. The throne toilets are located around the edges of the camping areas and some are in the Binnekring. Use them. No more longdrops or porta potties.\n\nThe toilets are kitted with tampon, wet wipes, or condom bins. Use those rather than putting those items in the toilets. Please put the paper back in the bucket. If you do not, the wind will create toilet snakes across the Tankwa, which is severely kak for the Leave No Trace crew.\n\nDuring Build Week and early event rollout, some toilets are kept battened shut to reduce pumping, cleaning, maintenance, and smell. Please respect closed loos and do not open them for general use. There are also toilets placed specifically for disabled participants, requested ahead of time by those who need them.",
     "additionalDetails": "Map grid: Z3",
     "links": [
       {
@@ -9201,7 +9238,7 @@ const PROJECT_DETAILS = (() => {
     "tags": [
       "toilet"
     ],
-    "description": "Look for the chimneys and lights. If it did not come out of your body, it does not go in the potty. Throne toilets are located around the edges of the camping areas and some are in the Binnekring. The toilets include bins for tampons, wet wipes and condoms; use those rather than putting them in the toilets. Please put the paper back in the bucket so the wind does not create toilet snakes across the Tankwa.",
+    "description": "Look for the chimneys and lights. If it did not come out of your body, it does not go in the potty. The throne toilets are located around the edges of the camping areas and some are in the Binnekring. Use them. No more longdrops or porta potties.\n\nThe toilets are kitted with tampon, wet wipes, or condom bins. Use those rather than putting those items in the toilets. Please put the paper back in the bucket. If you do not, the wind will create toilet snakes across the Tankwa, which is severely kak for the Leave No Trace crew.\n\nDuring Build Week and early event rollout, some toilets are kept battened shut to reduce pumping, cleaning, maintenance, and smell. Please respect closed loos and do not open them for general use. There are also toilets placed specifically for disabled participants, requested ahead of time by those who need them.",
     "additionalDetails": "Map grid: Y4",
     "links": [
       {
@@ -9221,7 +9258,7 @@ const PROJECT_DETAILS = (() => {
     "tags": [
       "toilet"
     ],
-    "description": "Look for the chimneys and lights. If it did not come out of your body, it does not go in the potty. Throne toilets are located around the edges of the camping areas and some are in the Binnekring. The toilets include bins for tampons, wet wipes and condoms; use those rather than putting them in the toilets. Please put the paper back in the bucket so the wind does not create toilet snakes across the Tankwa.",
+    "description": "Look for the chimneys and lights. If it did not come out of your body, it does not go in the potty. The throne toilets are located around the edges of the camping areas and some are in the Binnekring. Use them. No more longdrops or porta potties.\n\nThe toilets are kitted with tampon, wet wipes, or condom bins. Use those rather than putting those items in the toilets. Please put the paper back in the bucket. If you do not, the wind will create toilet snakes across the Tankwa, which is severely kak for the Leave No Trace crew.\n\nDuring Build Week and early event rollout, some toilets are kept battened shut to reduce pumping, cleaning, maintenance, and smell. Please respect closed loos and do not open them for general use. There are also toilets placed specifically for disabled participants, requested ahead of time by those who need them.",
     "additionalDetails": "Map grid: S6",
     "links": [
       {

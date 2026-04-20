@@ -158,22 +158,33 @@
   }
   .details-panel.dragging .details-card { transition:none; }
   .details-panel.dragging .details-grip { cursor:grabbing; }
-  .details-head { padding:12px 14px 8px; border-bottom:1px solid #333; }
+  .details-head { position:relative; padding:12px 72px 8px 14px; border-bottom:1px solid #333; }
   .details-kicker {
     color:#aaa; font-size:11px; letter-spacing:.04em; text-transform:uppercase;
     display:flex; gap:7px; flex-wrap:wrap; align-items:center;
   }
   .details-title { margin:5px 0 0; font-size:18px; line-height:1.2; }
   .details-actions {
+    position:absolute; top:8px; right:8px;
     display:flex; gap:6px; align-items:center; justify-content:flex-end;
-    margin-top:10px;
+    margin:0;
   }
-  .details-actions button {
+  .details-icon {
+    position:relative; width:28px; height:28px; padding:0;
     background:#222; color:#eee; border:1px solid #444; border-radius:5px;
-    padding:5px 9px; font-size:12px; cursor:pointer;
+    cursor:pointer;
   }
-  .details-actions button:hover { border-color:#777; }
-  .details-body { padding:12px 14px 16px; overflow:auto; line-height:1.42; font-size:13px; }
+  .details-icon:hover { border-color:#777; background:#2b2b2b; }
+  .details-icon::before, .details-icon::after { content:""; position:absolute; left:50%; top:50%; transform:translate(-50%, -50%); }
+  .details-close::before, .details-close::after { width:14px; height:2px; background:#eee; border-radius:2px; }
+  .details-close::before { transform:translate(-50%, -50%) rotate(45deg); }
+  .details-close::after { transform:translate(-50%, -50%) rotate(-45deg); }
+  .details-size::before { width:12px; height:12px; border:2px solid #eee; border-radius:2px; }
+  .details-panel.full .details-size::before { width:14px; height:2px; border:0; background:#eee; border-radius:2px; }
+  .details-body {
+    flex:1 1 auto; min-height:0;
+    padding:12px 14px 16px; overflow:auto; line-height:1.42; font-size:13px;
+  }
   .details-empty { color:#aaa; }
   .detail-section { margin:0 0 13px; }
   .detail-label { color:#aaa; font-size:11px; text-transform:uppercase; letter-spacing:.04em; margin-bottom:3px; }
@@ -200,12 +211,11 @@
     .details-panel.open .details-card { transform:translateY(0); }
     .details-panel.full .details-card { height:calc(100vh - 12px); }
     .details-panel.minimized .details-card { height:92px; }
-    .details-panel:not(.full) .detail-extra { display:none; }
     .details-panel.minimized .details-body { display:none; }
     .details-grip { display:block; touch-action:none; }
-    .details-head { padding-top:5px; }
+    .details-head { padding-top:5px; padding-right:72px; }
     .details-title { font-size:17px; }
-    .details-actions { justify-content:space-between; }
+    .details-actions { top:7px; right:10px; }
   }
 
   /* install / offline banner */
@@ -372,9 +382,8 @@
       <div class="details-kicker" id="details-kicker"></div>
       <h2 class="details-title" id="details-title">Project details</h2>
       <div class="details-actions">
-        <button type="button" id="details-half">Min</button>
-        <button type="button" id="details-full">Full</button>
-        <button type="button" id="details-close">Close</button>
+        <button type="button" class="details-icon details-size" id="details-size" aria-label="Maximize details" title="Maximize details"></button>
+        <button type="button" class="details-icon details-close" id="details-close" aria-label="Close details" title="Close details"></button>
       </div>
     </div>
     <div class="details-body" id="details-body"></div>
@@ -428,8 +437,7 @@
   const detailsKicker = document.getElementById("details-kicker");
   const detailsTitle = document.getElementById("details-title");
   const detailsBody = document.getElementById("details-body");
-  const detailsHalf = document.getElementById("details-half");
-  const detailsFull = document.getElementById("details-full");
+  const detailsSize = document.getElementById("details-size");
   const detailsClose = document.getElementById("details-close");
   let detailsMode = "fit";
   let detailsDrag = null;
@@ -956,13 +964,15 @@
       </section>
     `).join("");
   }
-  function relatedMutantVehicleSection(items, extraClass = "detail-extra") {
-    if (!items?.length) return "";
-    const body = items.map((item) => {
+  function descriptionWithRelatedMutants(detail) {
+    const base = detail?.description || detail?.summary || "";
+    const related = detail?.relatedMutantVehicles || [];
+    if (!related.length || base.includes("Associated Mutant Vehicle:")) return base;
+    const mutantCopy = related.map((item) => {
       const title = item.name || item.title || "Mutant Vehicle";
       return `${title}\n${item.description || ""}`.trim();
     }).join("\n\n");
-    return detailSection("Related Mutant Vehicles", body, extraClass);
+    return `${base}\n\nRelated mutant ${related.length === 1 ? "vehicle" : "vehicles"}\n${mutantCopy}`.trim();
   }
   function isMobileDetails() {
     return window.matchMedia("(max-width: 640px)").matches;
@@ -987,8 +997,9 @@
     });
   }
   function updateDetailsButtons() {
-    detailsHalf.textContent = detailsMode === "minimized" || detailsMode === "full" ? "Fit" : "Min";
-    detailsFull.textContent = detailsMode === "full" ? "Fit" : "Full";
+    const isFull = detailsMode === "full";
+    detailsSize.setAttribute("aria-label", isFull ? "Restore details" : "Maximize details");
+    detailsSize.setAttribute("title", isFull ? "Restore details" : "Maximize details");
   }
   function setDetailsMode(mode) {
     const normalized = mode === "half" ? "fit" : mode;
@@ -1033,15 +1044,14 @@
       : detail?.sourceUrl
         ? [{ label: sourceLabel, url: detail.sourceUrl }]
         : [];
+    const projectDescription = detail ? descriptionWithRelatedMutants(detail) : "";
     const hasPrimaryDetail = Boolean(
-      detail?.description ||
-      detail?.summary ||
+      projectDescription ||
       detail?.gift ||
       detail?.additionalDetails ||
       detail?.artist ||
       detail?.familyFriendly ||
-      detail?.times ||
-      detail?.relatedMutantVehicles?.length
+      detail?.times
     );
     const sourceHtml = sourceLinks.length ? `
       <section class="detail-section detail-source detail-extra">
@@ -1053,12 +1063,11 @@
     ` : "";
     detailsBody.innerHTML = detail ? `
       <div class="detail-tags">${tagHtml}</div>
-      ${detailSection("Project Description", detail.description || detail.summary)}
+      ${detailSection("Project Description", projectDescription)}
       ${detailSection("Details of Gift", detail.gift)}
       ${detailSection("Artist", detail.artist, "detail-extra")}
       ${detailSection("Family Friendly", detail.familyFriendly, "detail-extra")}
       ${detailSection("Operating Times", detail.times, "detail-extra")}
-      ${relatedMutantVehicleSection(detail.relatedMutantVehicles)}
       ${detailSection("Additional Details", detail.additionalDetails, "detail-extra")}
       ${oldWtfSection(detail.oldWtf, hasPrimaryDetail ? "detail-extra" : "")}
       ${sourceHtml}
@@ -1071,10 +1080,7 @@
     detailsPanel.setAttribute("aria-hidden", "false");
     if (mode === "half" || mode === "fit") fitMobileDetails();
   }
-  detailsHalf.addEventListener("click", () => {
-    setDetailsMode(detailsMode === "minimized" || detailsMode === "full" ? "fit" : "minimized");
-  });
-  detailsFull.addEventListener("click", () => {
+  detailsSize.addEventListener("click", () => {
     setDetailsMode(detailsMode === "full" ? "fit" : "full");
   });
   detailsClose.addEventListener("click", closeDetails);
