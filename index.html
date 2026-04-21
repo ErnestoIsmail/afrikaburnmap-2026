@@ -127,31 +127,31 @@
   }
   .user-pin {
     position:absolute; pointer-events:none; z-index:6; display:none;
-    width:24px; height:24px; transform-origin:50% 100%;
+    width:18px; height:18px; transform-origin:50% 50%;
   }
   .user-pin.visible { display:block; pointer-events:auto; cursor:pointer; }
   .user-pin.has-heading .user-pin-heading { opacity:1; }
   .user-pin::before {
     content:""; position:absolute; inset:0; border-radius:50%;
-    background:#ff7a00; border:2px solid #3b1700;
-    box-shadow:0 0 0 2px rgba(255,255,255,0.3), 0 0 14px rgba(255,122,0,0.8);
+    background:#ff7a00; border:1.5px solid #3b1700;
+    box-shadow:0 0 0 1.5px rgba(255,255,255,0.3), 0 0 12px rgba(255,122,0,0.8);
     animation:user-pin-pulse 1.6s ease-in-out infinite;
   }
   @keyframes user-pin-pulse {
-    0%, 100% { box-shadow:0 0 0 2px rgba(255,255,255,0.3), 0 0 14px rgba(255,122,0,0.8); }
-    50% { box-shadow:0 0 0 4px rgba(255,255,255,0.18), 0 0 20px rgba(255,122,0,0.98); }
+    0%, 100% { box-shadow:0 0 0 1.5px rgba(255,255,255,0.3), 0 0 12px rgba(255,122,0,0.8); }
+    50% { box-shadow:0 0 0 3px rgba(255,255,255,0.18), 0 0 18px rgba(255,122,0,0.98); }
   }
   .user-trail-layer {
     position:absolute; inset:0; pointer-events:none; z-index:5;
   }
   .user-pin-heading {
-    position:absolute; left:50%; top:-9px;
+    position:absolute; left:50%; top:-7px;
     width:0; height:0; opacity:0;
-    border-left:4px solid transparent;
-    border-right:4px solid transparent;
-    border-bottom:10px solid #ff7a00;
+    border-left:3px solid transparent;
+    border-right:3px solid transparent;
+    border-bottom:7px solid #ff7a00;
     filter:drop-shadow(0 0 2px rgba(0,0,0,0.8)) drop-shadow(0 0 8px rgba(255,122,0,0.8));
-    transform-origin:50% 20px;
+    transform-origin:50% 16px;
   }
   .zoom-ctl {
     position:absolute; top: calc(var(--header-h) + 15px); right: 12px; z-index: 20;
@@ -636,8 +636,8 @@
 <script>
 (() => {
   const data = DATA_INLINE;
-  const APP_VERSION = "2026.04.21.5";
-  const APP_CACHE_VERSION = "v32";
+  const APP_VERSION = "2026.04.21.6";
+  const APP_CACHE_VERSION = "v33";
   const projectDetails = typeof PROJECT_DETAILS !== "undefined" ? PROJECT_DETAILS : { byCode: {} };
   const oldWtfDetails = typeof OLD_WTF_DETAILS !== "undefined" ? OLD_WTF_DETAILS : { byCode: {} };
   const viewport = document.getElementById("viewport");
@@ -2050,8 +2050,8 @@
   let initialGpsFrameDone = false;
   let allowInitialGpsFrame = true;
   const USER_TRAIL_LIFETIME_MS = 45000;
-  const USER_TRAIL_MIN_DISTANCE = 18;
-  const USER_TRAIL_MIN_SPEED_MPS = 0.65;
+  const USER_TRAIL_MIN_DISTANCE = 9;
+  const USER_TRAIL_MIN_SPEED_MPS = 0.2;
   const USER_TRAIL_MAX_POINTS = 28;
   let userTrailPoints = [];
   let lastTrailFixTimestamp = null;
@@ -2237,7 +2237,7 @@
       seg.setAttribute("x2", mapX(b.x));
       seg.setAttribute("y2", mapY(b.y));
       seg.setAttribute("stroke", `rgba(120, 44, 0, ${alpha.toFixed(3)})`);
-      seg.setAttribute("stroke-width", "2");
+      seg.setAttribute("stroke-width", "3");
       seg.setAttribute("stroke-linecap", "round");
       seg.setAttribute("vector-effect", "non-scaling-stroke");
       userTrailLayer.appendChild(seg);
@@ -2308,7 +2308,7 @@
     }
     userPin.style.left = mapX(logicalPoint.x) + "px";
     userPin.style.top = mapY(logicalPoint.y) + "px";
-    userPin.style.transform = `translate(-50%, -100%) scale(${1 / scl})`;
+    userPin.style.transform = `translate(-50%, -50%) scale(${1 / scl})`;
     maybeAddUserTrailPoint(logicalPoint, latestGeoFix.timestamp || Date.now(), latestGeoFix.speed);
     updateUserTrailDisplay(latestGeoFix.timestamp || Date.now());
     if (Number.isFinite(latestHeading)) {
