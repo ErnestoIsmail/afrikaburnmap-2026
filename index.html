@@ -51,6 +51,7 @@
     font-size:11px; color:#888; white-space:nowrap;
     min-width:76px;
   }
+  header .gps-status.clickable { cursor:pointer; text-decoration:underline; text-underline-offset:2px; }
   header .gps-status.pending { color:#f0c96c; }
   header .gps-status.ready { color:#7de38f; }
   header .gps-status.warn { color:#ffb36b; }
@@ -123,8 +124,7 @@
     position:absolute; pointer-events:none; z-index:6; display:none;
     width:24px; height:24px; transform-origin:50% 100%;
   }
-  .user-pin.visible { display:block; }
-  .user-pin.has-heading::after { opacity:1; }
+  .user-pin.visible { display:block; pointer-events:auto; cursor:pointer; }
   .user-pin.has-heading .user-pin-heading { opacity:1; }
   .user-pin::before {
     content:""; position:absolute; inset:0; border-radius:50%;
@@ -132,26 +132,32 @@
     box-shadow:0 0 0 2px rgba(255,255,255,0.3), 0 0 14px rgba(255,122,0,0.8);
     animation:user-pin-pulse 1.6s ease-in-out infinite;
   }
-  .user-pin::after {
-    content:""; position:absolute; left:50%; top:100%;
-    transform:translate(-50%, -2px);
-    opacity:0;
-    border:6px solid transparent;
-    border-top-color:#ff7a00;
-    filter:drop-shadow(0 1px 0 rgba(0,0,0,0.8));
-  }
   @keyframes user-pin-pulse {
     0%, 100% { box-shadow:0 0 0 2px rgba(255,255,255,0.3), 0 0 14px rgba(255,122,0,0.8); }
     50% { box-shadow:0 0 0 4px rgba(255,255,255,0.18), 0 0 20px rgba(255,122,0,0.98); }
   }
+  .user-trail-layer {
+    position:absolute; inset:0; pointer-events:none; z-index:5;
+  }
+  .user-trail-point {
+    position:absolute; width:12px; height:12px; border-radius:50%;
+    background:rgba(255,122,0,0.85); border:1px solid rgba(59,23,0,0.85);
+    box-shadow:0 0 0 1px rgba(255,255,255,0.16), 0 0 10px rgba(255,122,0,0.45);
+    animation:user-trail-fade 15s linear forwards;
+  }
+  @keyframes user-trail-fade {
+    0% { opacity:0.65; }
+    70% { opacity:0.28; }
+    100% { opacity:0; }
+  }
   .user-pin-heading {
-    position:absolute; left:50%; top:-12px;
+    position:absolute; left:50%; top:-9px;
     width:0; height:0; opacity:0;
-    border-left:6px solid transparent;
-    border-right:6px solid transparent;
-    border-bottom:14px solid #ff7a00;
+    border-left:4px solid transparent;
+    border-right:4px solid transparent;
+    border-bottom:10px solid #ff7a00;
     filter:drop-shadow(0 0 2px rgba(0,0,0,0.8)) drop-shadow(0 0 8px rgba(255,122,0,0.8));
-    transform-origin:50% 24px;
+    transform-origin:50% 20px;
   }
   .zoom-ctl {
     position:absolute; top: calc(var(--header-h) + 15px); right: 12px; z-index: 20;
@@ -550,6 +556,9 @@
   const zlabel = document.getElementById("zlabel");
   const header = document.querySelector("header");
   const gpsStatus = document.getElementById("gps-status");
+  gpsStatus.setAttribute("role", "button");
+  gpsStatus.setAttribute("aria-disabled", "true");
+  gpsStatus.tabIndex = -1;
   const detailsPanel = document.getElementById("details-panel");
   const detailsCard = detailsPanel.querySelector(".details-card");
   const detailsGrip = document.getElementById("details-grip");
@@ -994,9 +1003,14 @@
   const entryByHotspotEl = new WeakMap();
   const indexHotspots = [];
   const indexHotspotsByEntry = new WeakMap();
+  const userTrailLayer = document.createElement("div");
+  userTrailLayer.className = "user-trail-layer";
+  mapDiv.appendChild(userTrailLayer);
   const userPin = document.createElement("div");
   userPin.className = "user-pin";
-  userPin.setAttribute("aria-hidden", "true");
+  userPin.setAttribute("aria-label", "Show your current position");
+  userPin.setAttribute("role", "button");
+  userPin.tabIndex = 0;
   const userPinHeading = document.createElement("div");
   userPinHeading.className = "user-pin-heading";
   userPin.appendChild(userPinHeading);
@@ -1421,8 +1435,12 @@
     return (Math.round(n * 10) / 10).toFixed(1);
   }
 
+  function isMapInteractiveTarget(target) {
+    return target instanceof Element && Boolean(target.closest(".hotspot, .index-hotspot, .user-pin"));
+  }
+
   async function handleMapCoordinatePick(ev) {
-    if (ev.target.classList.contains("hotspot") || ev.target.classList.contains("index-hotspot")) return;
+    if (isMapInteractiveTarget(ev.target)) return;
     const point = logicalPointFromClient(ev.clientX, ev.clientY);
     if (!point) return;
     const line = `"x": ${fmtCoord(point.x)}, "y": ${fmtCoord(point.y)}`;
@@ -1471,7 +1489,7 @@
   let dragging = false, dragStart = null;
   viewport.addEventListener("mousedown", (ev) => {
     // don't pan when clicking a hotspot (let it handle click)
-    if (ev.target.classList.contains("hotspot") || ev.target.classList.contains("index-hotspot")) return;
+    if (isMapInteractiveTarget(ev.target)) return;
     cancelInitialGpsFrame();
     dragging = true;
     dragStart = { x: ev.clientX - tx, y: ev.clientY - ty };
@@ -1493,6 +1511,7 @@
   // Touch: 1 finger pan, 2 fingers pinch
   let touchState = null;
   viewport.addEventListener("touchstart", (ev) => {
+    if (ev.targetTouches.length === 1 && isMapInteractiveTarget(ev.target)) return;
     if (ev.touches.length >= 1) cancelInitialGpsFrame();
     if (ev.touches.length === 1) {
       const t = ev.touches[0];
@@ -1532,7 +1551,7 @@
 
   // Double-click / double-tap zooms in
   viewport.addEventListener("dblclick", (ev) => {
-    if (ev.target.classList.contains("hotspot")) return;
+    if (isMapInteractiveTarget(ev.target)) return;
     cancelInitialGpsFrame();
     zoomAt(ev.clientX, ev.clientY, 2);
   });
@@ -1669,6 +1688,33 @@
     detailsMode = "fit";
     updateDetailsButtons();
   }
+  function openUserLocationDetails(mode = "half") {
+    const point = latestGeoFix ? logicalPointFromGeo(latestGeoFix.lat, latestGeoFix.lon) : null;
+    const accuracy = Number.isFinite(latestGeoFix?.accuracy) ? `${Math.round(latestGeoFix.accuracy)} m` : "";
+    const heading = Number.isFinite(latestHeading) ? `${Math.round(latestHeading)}°` : "";
+    const mapCoords = point ? `"x": ${fmtCoord(point.x)}, "y": ${fmtCoord(point.y)}` : "";
+    detailsKicker.innerHTML = `
+      <span>GPS</span>
+      <span>LIVE</span>
+      <span class="badge-occ">location</span>
+    `;
+    detailsTitle.textContent = "Your current position";
+    detailsJumps.innerHTML = "";
+    detailsBody.innerHTML = `
+      <div class="detail-tags">
+        <span class="detail-tag">gps</span>
+        <span class="detail-tag">location</span>
+      </div>
+      ${detailSection("Position", "This marker shows your current estimated GPS position on the map.")}
+      ${detailSection("Accuracy", accuracy)}
+      ${detailSection("Heading", heading)}
+      ${detailSection("Map coordinates", mapCoords, "detail-extra")}
+    `;
+    setDetailsMode(mode);
+    detailsPanel.classList.add("open");
+    detailsPanel.setAttribute("aria-hidden", "false");
+    if (mode === "half" || mode === "fit") fitMobileDetails();
+  }
   function openDetails(el, mode = "half") {
     const detail = detailFor(el);
     const mapEntry = entryByHotspotEl.get(el);
@@ -1749,6 +1795,25 @@
     detailsPanel.setAttribute("aria-hidden", "false");
     if (mode === "half" || mode === "fit") fitMobileDetails();
   }
+  userPin.addEventListener("pointerdown", (ev) => {
+    ev.stopPropagation();
+  });
+  userPin.addEventListener("mousedown", (ev) => {
+    ev.stopPropagation();
+  });
+  userPin.addEventListener("touchstart", (ev) => {
+    ev.stopPropagation();
+  }, { passive: true });
+  userPin.addEventListener("click", (ev) => {
+    ev.stopPropagation();
+    openUserLocationDetails("half");
+  });
+  userPin.addEventListener("keydown", (ev) => {
+    if (ev.key !== "Enter" && ev.key !== " ") return;
+    ev.preventDefault();
+    ev.stopPropagation();
+    openUserLocationDetails("half");
+  });
   detailsSize.addEventListener("click", () => {
     setDetailsMode(detailsMode === "full" ? "fit" : "full");
   });
@@ -1794,7 +1859,7 @@
   });
   // Hide tip on click outside / drag start
   viewport.addEventListener("pointerdown", (ev) => {
-    if (!ev.target.classList.contains("hotspot") && !ev.target.classList.contains("index-hotspot")) {
+    if (!isMapInteractiveTarget(ev.target)) {
       hideTip();
       clearIndexHighlights();
       closeDetails();
@@ -1811,6 +1876,7 @@
   const fHighRes = document.getElementById("f_highres");
   const fLocate = document.getElementById("f_locate");
   const q      = document.getElementById("q");
+  const INITIAL_GPS_FRAME_ACCURACY_M = 10;
   const GEOLOCATION_OPTIONS = {
     enableHighAccuracy: true,
     maximumAge: 5000,
@@ -1823,6 +1889,11 @@
   let orientationPermissionBlocked = false;
   let initialGpsFrameDone = false;
   let allowInitialGpsFrame = true;
+  const USER_TRAIL_LIFETIME_MS = 15000;
+  const USER_TRAIL_MIN_DISTANCE = 10;
+  const USER_TRAIL_MAX_POINTS = 18;
+  let userTrailPoints = [];
+  let lastTrailFixTimestamp = null;
 
   function cancelInitialGpsFrame() {
     allowInitialGpsFrame = false;
@@ -1858,7 +1929,8 @@
   function maybeFrameInitialGps(logicalPoint) {
     if (initialGpsFrameDone || !allowInitialGpsFrame) return;
     if (q.value.trim()) return;
-    frameLogicalPoint(logicalPoint, 1.85, 10);
+    if (!Number.isFinite(latestGeoFix?.accuracy) || latestGeoFix.accuracy > INITIAL_GPS_FRAME_ACCURACY_M) return;
+    frameLogicalPoint(logicalPoint, 1.6, 0);
     initialGpsFrameDone = true;
   }
 
@@ -1942,9 +2014,102 @@
     gpsStatus.className = "gps-status" + (tone ? ` ${tone}` : "");
   }
 
+  function currentUserLogicalPoint() {
+    if (!fLocate.checked || !latestGeoFix) return null;
+    const logicalPoint = logicalPointFromGeo(latestGeoFix.lat, latestGeoFix.lon);
+    if (!logicalPoint) return null;
+    if (
+      logicalPoint.x < 0 || logicalPoint.x > NAT_W ||
+      logicalPoint.y < 0 || logicalPoint.y > NAT_H
+    ) return null;
+    return logicalPoint;
+  }
+
+  function syncGpsStatusAction() {
+    const canJump = Boolean(currentUserLogicalPoint());
+    gpsStatus.classList.toggle("clickable", canJump);
+    gpsStatus.setAttribute("role", "button");
+    gpsStatus.tabIndex = canJump ? 0 : -1;
+    gpsStatus.setAttribute("aria-disabled", canJump ? "false" : "true");
+    gpsStatus.title = canJump ? "Jump to your current location" : "";
+  }
+
+  function frameCurrentUserLocation(scaleMultiplier = 1.75) {
+    const logicalPoint = currentUserLogicalPoint();
+    if (!logicalPoint) return false;
+    frameLogicalPoint(logicalPoint, scaleMultiplier, 0);
+    return true;
+  }
+
+  gpsStatus.addEventListener("click", () => {
+    frameCurrentUserLocation();
+  });
+  gpsStatus.addEventListener("keydown", (ev) => {
+    if (ev.key !== "Enter" && ev.key !== " ") return;
+    ev.preventDefault();
+    frameCurrentUserLocation();
+  });
+
+  function positionUserTrailPoint(point) {
+    point.el.style.left = mapX(point.x) + "px";
+    point.el.style.top = mapY(point.y) + "px";
+    point.el.style.transform = `translate(-50%, -50%) scale(${1 / scl})`;
+  }
+
+  function pruneUserTrail(now = Date.now()) {
+    userTrailPoints = userTrailPoints.filter((point) => {
+      if (now - point.timestamp < USER_TRAIL_LIFETIME_MS) return true;
+      point.el.remove();
+      return false;
+    });
+  }
+
+  function updateUserTrailDisplay() {
+    pruneUserTrail();
+    for (const point of userTrailPoints) positionUserTrailPoint(point);
+  }
+
+  function clearUserTrail() {
+    for (const point of userTrailPoints) point.el.remove();
+    userTrailPoints = [];
+    lastTrailFixTimestamp = null;
+  }
+
+  function maybeAddUserTrailPoint(logicalPoint, timestamp) {
+    if (!Number.isFinite(logicalPoint?.x) || !Number.isFinite(logicalPoint?.y)) return;
+    if (lastTrailFixTimestamp === timestamp) return;
+    lastTrailFixTimestamp = timestamp;
+    pruneUserTrail(timestamp);
+    const last = userTrailPoints[userTrailPoints.length - 1];
+    if (last) {
+      const dx = logicalPoint.x - last.x;
+      const dy = logicalPoint.y - last.y;
+      if (Math.hypot(dx, dy) < USER_TRAIL_MIN_DISTANCE) return;
+    }
+    const el = document.createElement("div");
+    el.className = "user-trail-point";
+    const point = { el, x: logicalPoint.x, y: logicalPoint.y, timestamp };
+    positionUserTrailPoint(point);
+    userTrailLayer.appendChild(el);
+    userTrailPoints.push(point);
+    while (userTrailPoints.length > USER_TRAIL_MAX_POINTS) {
+      const removed = userTrailPoints.shift();
+      removed?.el.remove();
+    }
+    window.setTimeout(() => {
+      const idx = userTrailPoints.indexOf(point);
+      if (idx >= 0) {
+        userTrailPoints.splice(idx, 1);
+        point.el.remove();
+      }
+    }, USER_TRAIL_LIFETIME_MS + 200);
+  }
+
   function hideUserLocation() {
     userPin.classList.remove("visible");
     userPin.classList.remove("has-heading");
+    clearUserTrail();
+    syncGpsStatusAction();
   }
 
   function updateUserLocationDisplay() {
@@ -1980,6 +2145,8 @@
     userPin.style.left = mapX(logicalPoint.x) + "px";
     userPin.style.top = mapY(logicalPoint.y) + "px";
     userPin.style.transform = `translate(-50%, -100%) scale(${1 / scl})`;
+    maybeAddUserTrailPoint(logicalPoint, latestGeoFix.timestamp || Date.now());
+    updateUserTrailDisplay();
     if (Number.isFinite(latestHeading)) {
       userPinHeading.style.transform = `translateX(-50%) rotate(${latestHeading}deg)`;
       userPin.classList.add("has-heading");
@@ -1990,6 +2157,7 @@
     maybeFrameInitialGps(logicalPoint);
     const accuracy = Number.isFinite(latestGeoFix.accuracy) ? ` ±${Math.round(latestGeoFix.accuracy)}m` : "";
     setGpsStatus(`GPS live${accuracy}`, "ready");
+    syncGpsStatusAction();
   }
 
   function stopGeolocationWatch() {
@@ -2019,6 +2187,7 @@
         lat: shifted.lat,
         lon: shifted.lon,
         accuracy: position.coords.accuracy,
+        timestamp: position.timestamp,
       };
       updateUserLocationDisplay();
     }, (error) => {
