@@ -8308,8 +8308,8 @@ const PROJECT_DETAILS = (() => {
   },
   {
     "code": "XRP",
-    "slug": "xrp rainbow phluph rat pie camp",
-    "title": "Rainbow Phluph / Rat Pie Camp",
+    "slug": "xrp rainbow phluph",
+    "title": "Rainbow Phluph",
     "type": "Support Camp",
     "sourceTag": "wtf-2026",
     "sourceLabel": "WTF Guide 2026 / 2026 site map",
@@ -8319,7 +8319,27 @@ const PROJECT_DETAILS = (() => {
       "support-camp"
     ],
     "description": "Associated Artwork: Rainbow PHLUPH\nArtist: Thomas Heidemann\nRed, orange, yellow, green, indigo, violet, blue, whichever way you are inclined and whatever your shade or hue, magical beings congregate where the colours meet the clouds, and you may just discover a pot of gold where the sunlight pierces through.",
-    "additionalDetails": "Map grid: S4\nShared marker code names: Rainbow Phluph, Rat Pie Camp",
+    "additionalDetails": "Map grid: R7",
+    "links": [
+      {
+        "label": "WTF Guide 2026",
+        "url": "./WTF-%202026%20-%20Through%20The%20Prism.pdf"
+      }
+    ]
+  },
+  {
+    "code": "XRP-RAT",
+    "slug": "xrp rat pie camp",
+    "title": "Rat Pie Camp",
+    "type": "Support Camp",
+    "sourceTag": "wtf-2026",
+    "sourceLabel": "WTF Guide 2026 / 2026 site map",
+    "sourceUrl": "./WTF-%202026%20-%20Through%20The%20Prism.pdf",
+    "tags": [
+      "support-camp"
+    ],
+    "description": "Support camp listed on the 2026 site map.",
+    "additionalDetails": "Map grid: S4",
     "links": [
       {
         "label": "WTF Guide 2026",

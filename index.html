@@ -5,6 +5,8 @@
 <title>AfrikaBurn 2026 — interactive map</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 <link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" sizes="32x32" href="icon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <meta name="theme-color" content="#111111">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -122,6 +124,7 @@
     width:24px; height:24px; transform-origin:50% 100%;
   }
   .user-pin.visible { display:block; }
+  .user-pin.has-heading .user-pin-heading { opacity:1; }
   .user-pin::before {
     content:""; position:absolute; inset:0; border-radius:50%;
     background:#00d6ff; border:2px solid #07232c;
@@ -138,6 +141,15 @@
   @keyframes user-pin-pulse {
     0%, 100% { box-shadow:0 0 0 2px rgba(255,255,255,0.35), 0 0 14px rgba(0,214,255,0.75); }
     50% { box-shadow:0 0 0 4px rgba(255,255,255,0.2), 0 0 20px rgba(0,214,255,0.95); }
+  }
+  .user-pin-heading {
+    position:absolute; left:50%; top:-12px;
+    width:0; height:0; opacity:0;
+    border-left:6px solid transparent;
+    border-right:6px solid transparent;
+    border-bottom:14px solid #00d6ff;
+    filter:drop-shadow(0 0 2px rgba(0,0,0,0.8)) drop-shadow(0 0 8px rgba(0,214,255,0.75));
+    transform-origin:50% 24px;
   }
   .zoom-ctl {
     position:absolute; top: calc(var(--header-h) + 15px); right: 12px; z-index: 20;
@@ -189,16 +201,27 @@
   }
   .details-panel.dragging .details-card { transition:none; }
   .details-panel.dragging .details-grip { cursor:grabbing; }
-  .details-head { position:relative; padding:12px 72px 8px 14px; border-bottom:1px solid #333; }
+  .details-head { position:relative; padding:12px 14px 8px; border-bottom:1px solid #333; }
   .details-kicker {
     color:#aaa; font-size:11px; letter-spacing:.04em; text-transform:uppercase;
     display:flex; gap:7px; flex-wrap:wrap; align-items:center;
   }
-  .details-title { margin:5px 0 0; font-size:18px; line-height:1.2; }
-  .details-jumps {
-    display:flex; flex-wrap:wrap; gap:6px;
-    margin-top:8px; padding-right:72px;
+  .details-title-row,
+  .details-meta-row {
+    display:grid; grid-template-columns:minmax(0, 1fr) auto; align-items:start;
+    gap:8px;
   }
+  .details-meta-row { margin-top:6px; }
+  .details-title {
+    margin:0; font-size:18px; line-height:1.2;
+    flex:1 1 auto; min-width:0;
+  }
+  .details-jumps {
+    display:flex; flex-wrap:nowrap; justify-content:flex-end; gap:6px;
+    flex:0 1 auto; min-width:0; max-width:min(220px, 40vw);
+    overflow-x:auto; scrollbar-width:none; -ms-overflow-style:none;
+  }
+  .details-jumps::-webkit-scrollbar { display:none; }
   .details-jump {
     background:#202020; color:#ddd; border:1px solid #444; border-radius:5px;
     padding:3px 8px; font-size:11px; font-weight:600; cursor:pointer;
@@ -212,7 +235,7 @@
   .details-jump.plaza { color:var(--plaza); border-color:rgba(120,214,75,0.45); }
   .details-jump.toilet { color:var(--toilet); border-color:rgba(201,201,201,0.45); }
   .details-actions {
-    position:absolute; top:8px; right:8px;
+    position:static;
     display:flex; gap:6px; align-items:center; justify-content:flex-end;
     margin:0;
   }
@@ -241,6 +264,11 @@
     background:#262626; color:#ddd; border:1px solid #3b3b3b; border-radius:4px;
     padding:2px 6px; font-size:11px;
   }
+  button.detail-tag {
+    appearance:none; -webkit-appearance:none;
+    cursor:pointer; font:inherit;
+  }
+  button.detail-tag:hover { border-color:#777; background:#303030; }
   .detail-links { display:flex; flex-direction:column; gap:4px; }
   .detail-source a { color:#9edcff; text-decoration:none; }
   .detail-source a:hover { text-decoration:underline; }
@@ -261,10 +289,37 @@
     .details-panel.minimized .details-card { height:92px; }
     .details-panel.minimized .details-body { display:none; }
     .details-grip { display:block; touch-action:none; }
-    .details-head { padding-top:5px; padding-right:72px; }
-    .details-title { font-size:17px; }
-    .details-jumps { padding-right:72px; }
-    .details-actions { top:7px; right:10px; }
+    .details-head { padding:5px 12px 8px 14px; }
+    .details-title-row,
+    .details-meta-row {
+      grid-template-columns:minmax(0, 1fr) auto;
+      gap:3px;
+    }
+    .details-meta-row { margin-top:4px; }
+    .details-title {
+      font-size:17px;
+      line-height:1.15;
+      padding-right:0;
+    }
+    .details-jumps {
+      justify-content:flex-end;
+      gap:2px;
+      margin:0;
+      max-width:72px;
+    }
+    .details-jump {
+      flex:0 0 auto;
+      padding:1px 4px;
+      font-size:8px;
+      border-radius:3px;
+    }
+    .details-actions { gap:3px; }
+    .details-icon {
+      width:18px; height:18px; border-radius:3px;
+    }
+    .details-close::before, .details-close::after { width:9px; height:1.25px; }
+    .details-size::before { width:7px; height:7px; border-width:1.25px; }
+    .details-panel.full .details-size::before { width:9px; height:1.25px; }
   }
 
   /* install / offline banner */
@@ -435,12 +490,16 @@
   <div class="details-card" role="dialog" aria-labelledby="details-title">
     <button type="button" class="details-grip" id="details-grip" aria-label="Drag details panel"></button>
     <div class="details-head">
-      <div class="details-kicker" id="details-kicker"></div>
-      <h2 class="details-title" id="details-title">Project details</h2>
-      <div class="details-jumps" id="details-jumps"></div>
-      <div class="details-actions">
-        <button type="button" class="details-icon details-size" id="details-size" aria-label="Maximize details" title="Maximize details"></button>
-        <button type="button" class="details-icon details-close" id="details-close" aria-label="Close details" title="Close details"></button>
+      <div class="details-title-row">
+        <h2 class="details-title" id="details-title">Project details</h2>
+        <div class="details-actions">
+          <button type="button" class="details-icon details-size" id="details-size" aria-label="Maximize details" title="Maximize details"></button>
+          <button type="button" class="details-icon details-close" id="details-close" aria-label="Close details" title="Close details"></button>
+        </div>
+      </div>
+      <div class="details-meta-row">
+        <div class="details-kicker" id="details-kicker"></div>
+        <div class="details-jumps" id="details-jumps"></div>
       </div>
     </div>
     <div class="details-body" id="details-body"></div>
@@ -574,6 +633,191 @@
   let highresRasterIndex = 0;
   let currentRaster = null;
   let cachedGeoAffine = null;
+
+  function projectDetailForMapEntry(entryLike) {
+    const nameKey = normalizeLinkName(entryLike?.name || "");
+    if (nameKey && Array.isArray(projectDetails.entries)) {
+      const exactMatch = projectDetails.entries.find((entry) => {
+        if (normalizeLinkName(entry.title) !== nameKey) return false;
+        if (!entryLike?.code || !entry.code) return true;
+        return entry.code === entryLike.code;
+      });
+      if (exactMatch) return exactMatch;
+    }
+    return projectDetails.byCode?.[entryLike?.code] || null;
+  }
+  const curatedDetailTagSets = [
+    ["ABnB", ["chill"]],
+    ["Garden of Weeden", ["chill", "music", "dance"]],
+    ["Grease Monkeys", ["workshop"]],
+    ["HeartSpace", ["chill", "workshop", "wellness"]],
+    ["Radio Free Tankwa", ["music", "radio", "info"]],
+    ["Theme Camp Saloon", ["info"]],
+    ["Artefactory & Arteria", ["history", "info"]],
+    ["Department of Mutant Vehicles", ["mutant-vehicle", "info", "volunteer"]],
+    ["Volunteers", ["volunteer", "info"]],
+    ["Medics", ["medical", "safety"]],
+    ["Sanctuary", ["chill", "wellness", "harm-reduction", "safety"]],
+    ["Rangers", ["safety", "info"]],
+    ["Lost & Found", ["lost-and-found", "info"]],
+    ["Ice", ["ice"]],
+    ["Chillaz", ["chill", "music", "performance", "dance"]],
+    ["Palm to Soul | Sanctuary for Release", ["chill", "wellness", "healing"]],
+  ];
+  const curatedDetailTagsByKey = new Map(
+    curatedDetailTagSets.map(([name, tags]) => [normalizeLinkName(name), tags])
+  );
+  const detailTagAliases = {
+    "theme-camp": ["theme camp"],
+    "support-camp": ["support camp"],
+    "associated-project": ["associated project"],
+    "ff-yes": ["family friendly", "kid friendly", "kids"],
+    "ff-maybe": ["maybe family friendly", "maybe kid friendly", "kids"],
+    "24-hours": ["24 hours", "always open"],
+    "day-time": ["day time", "daytime"],
+    "night-time": ["night time", "nighttime"],
+    "all-night": ["all night"],
+    "mutant-vehicle": ["mutant vehicle", "mutant vehicles"],
+    "harm-reduction": ["harm reduction"],
+    "lost-and-found": ["lost & found", "lost and found"],
+    "workshop": ["workshops", "repair", "repairs", "fixing", "repair help"],
+    "performance": ["performances", "show", "shows"],
+    "drink": ["drinks", "beverages", "bar"],
+    "game": ["games"],
+    "chill": ["relax", "relaxing", "lounge", "quiet space", "safe haven"],
+  };
+  const derivedDetailTagRules = [
+    { tag: "music", regex: /\b(music|tunes|dj|djs|jamming|jam\b|sound system|stage|beats?)\b/i },
+    { tag: "dance", regex: /\b(dance|dancing|dance floor|party)\b/i },
+    { tag: "performance", regex: /\b(performance|performances|storytelling|live performance|show|shows)\b/i },
+    { tag: "cinema", regex: /\b(cinema|film|movie|doccie)\b/i },
+    { tag: "workshop", regex: /\b(workshop|workshops|teaches?|teaching|repair|repairs|training|tinker|tinkering)\b/i },
+    { tag: "ceremony", regex: /\b(ceremony|ceremonies|ritual|rituals|sacred)\b/i },
+    { tag: "wellness", regex: /\b(wellness|supportive space|peer support|sanctuary|rest|restful)\b/i },
+    { tag: "yoga", regex: /\byoga\b/i },
+    { tag: "meditation", regex: /\b(meditation|meditations)\b/i },
+    { tag: "healing", regex: /\b(heal|healing)\b/i },
+    { tag: "chill", regex: /\b(chill|lounge|safe haven|quiet|cosy|cozy|relax|relaxing|break from overwhelm)\b/i },
+    { tag: "food", regex: /\b(food|fries|pancake|breakfast|boerewors|snack|snacks|cereal|munchies|hot food)\b/i },
+    { tag: "drink", regex: /\b(drink|drinks|cocktail|cocktails|beer|juice|elixir|elixirs|hydrating|beverage|beverages)\b/i },
+    { tag: "coffee", regex: /\bcoffee\b/i },
+    { tag: "tea", regex: /\b(tea|teahouse)\b/i },
+    { tag: "game", regex: /\b(game|games|playground)\b/i },
+    { tag: "interactive", regex: /\b(interactive|participatory|participants|come play|join us|gather)\b/i },
+    { tag: "climbable", regex: /\b(climb|climb aboard|ascend|crow'?s nest|mast)\b/i },
+    { tag: "viewpoint", regex: /\b(view|see the world|look out)\b/i },
+    { tag: "slide", regex: /\bslide\b/i },
+    { tag: "fire", regex: /\b(fire|flame|fire-breathing|belching)\b/i },
+    { tag: "sunrise", regex: /\bsunrise\b/i },
+    { tag: "sunset", regex: /\bsunset\b/i },
+    { tag: "radio", regex: /\b(radio|99\.9fm|broadcast|on air)\b/i },
+    { tag: "volunteer", regex: /\b(volunteer|volunteers|shift|shifts)\b/i },
+    { tag: "info", regex: /\b(map|chalkboard|schedule|register|registration|check in|information|announcements?)\b/i },
+    { tag: "history", regex: /\b(history|archive|archival|photographs?|news)\b/i },
+    { tag: "medical", regex: /\b(medic|medics|medical)\b/i },
+    { tag: "safety", regex: /\b(rangers?|safety|keep the peace|emergency)\b/i },
+    { tag: "harm-reduction", regex: /\b(harm reduction|testing|breathalysers?)\b/i },
+    { tag: "lost-and-found", regex: /\b(lost & found|lost and found)\b/i },
+    { tag: "ice", regex: /\b(ice|yskas)\b/i },
+    { tag: "mutant-vehicle", regex: /\b(mutant vehicle|mutant vehicles)\b/i },
+  ];
+
+  function detailTagInfoForMapEntry(entryLike) {
+    const current = projectDetailForMapEntry(entryLike);
+    const oldWtf = oldWtfDetails.byCode?.[entryLike?.code] || null;
+    const infos = [];
+    const seen = new Set();
+    const push = (label, aliases = []) => {
+      const cleanLabel = String(label || "").trim().toLowerCase();
+      if (!cleanLabel) return;
+      if (seen.has(cleanLabel)) return;
+      seen.add(cleanLabel);
+      infos.push({
+        label: cleanLabel,
+        searchTerms: [cleanLabel, cleanLabel.replace(/-/g, " "), ...aliases, ...(detailTagAliases[cleanLabel] || [])]
+          .map((term) => String(term || "").trim().toLowerCase())
+          .filter(Boolean),
+      });
+    };
+    const detail = current || oldWtf || {};
+    const relatedMutantText = (detail.relatedMutantVehicles || [])
+      .map((item) => `${item.name || item.title || ""}\n${item.description || ""}`.trim())
+      .join("\n");
+    const oldWtfText = (detail.oldWtf || [])
+      .map((item) => item.summary || "")
+      .join("\n");
+    const text = [
+      entryLike?.name,
+      detail.title,
+      detail.type,
+      detail.description,
+      detail.gift,
+      detail.additionalDetails,
+      detail.artist,
+      detail.familyFriendly,
+      detail.times,
+      relatedMutantText,
+      oldWtfText,
+    ].filter(Boolean).join("\n");
+
+    const sectionTagMap = {
+      theme: "theme-camp",
+      art: "artwork",
+      occ: "occ",
+      support: "support-camp",
+      toilet: "toilet",
+      plaza: "plaza",
+    };
+    push(sectionTagMap[entryLike?.section] || String(detail.type || "project").trim().toLowerCase().replace(/[^a-z0-9]+/g, "-"));
+
+    for (const tag of detail.tags || []) push(tag);
+
+    if (detail.familyFriendly === "YES") push("ff-yes");
+    if (detail.familyFriendly === "MAYBE") push("ff-maybe");
+
+    const times = String(detail.times || "").toLowerCase();
+    if (/\b24\s*hours?\b/.test(times)) push("24-hours");
+    if (/\bmorning\b/.test(times)) push("morning");
+    if (/\bday\b/.test(times)) push("day-time");
+    if (/\bnight\b/.test(times)) push("night-time");
+    if (/\ball night\b/.test(times)) push("all-night");
+
+    const detailKeys = [
+      normalizeLinkName(detail.slug),
+      normalizeLinkName(detail.title),
+      normalizeLinkName(entryLike?.name),
+    ].filter(Boolean);
+    for (const key of detailKeys) {
+      const curatedTags = curatedDetailTagsByKey.get(key);
+      if (!curatedTags) continue;
+      for (const tag of curatedTags) push(tag);
+    }
+
+    for (const item of derivedDetailTagRules) {
+      if (item.regex.test(text)) push(item.tag);
+    }
+
+    if (detail.relatedMutantVehicles?.length) push("mutant-vehicle");
+
+    return infos;
+  }
+  function detailTagsForMapEntry(entryLike) {
+    return detailTagInfoForMapEntry(entryLike).map((item) => item.label);
+  }
+  function detailSearchTermsForMapEntry(entryLike) {
+    const terms = [];
+    const seen = new Set();
+    const push = (value) => {
+      const term = String(value || "").trim().toLowerCase();
+      if (!term || seen.has(term)) return;
+      seen.add(term);
+      terms.push(term);
+    };
+    for (const info of detailTagInfoForMapEntry(entryLike)) {
+      for (const term of info.searchTerms) push(term);
+    }
+    return terms;
+  }
 
   function rasterForMap(source) {
     if (!source.rasters || !mobileRasterQuery.matches) return null;
@@ -751,6 +995,9 @@
   const userPin = document.createElement("div");
   userPin.className = "user-pin";
   userPin.setAttribute("aria-hidden", "true");
+  const userPinHeading = document.createElement("div");
+  userPinHeading.className = "user-pin-heading";
+  userPin.appendChild(userPinHeading);
   mapDiv.appendChild(userPin);
   for (const e of data.entries) {
     const el = document.createElement("div");
@@ -761,6 +1008,7 @@
     el.dataset.grid = e.grid;
     el.dataset.section = e.section;
     el.dataset.src = e.src || "ocr";
+    el.dataset.tags = detailSearchTermsForMapEntry(e).join(" ");
     positionHotspot(el, e);
     mapDiv.appendChild(el);
     hotspots.push({ el, entry: e });
@@ -841,7 +1089,7 @@
     }
     codeList.push(entry);
     for (const variant of nameVariants(entry.name)) rememberMapEntryAlias(variant, entry);
-    const detail = projectDetails.byCode?.[entry.code];
+    const detail = projectDetailForMapEntry(entry);
     if (detail?.title) {
       for (const variant of nameVariants(detail.title)) rememberMapEntryAlias(variant, entry);
     }
@@ -891,7 +1139,7 @@
   }
 
   for (const sourceEntry of data.entries) {
-    const detail = projectDetails.byCode?.[sourceEntry.code];
+    const detail = projectDetailForMapEntry(sourceEntry);
     if (!detail) continue;
     for (const ref of collectExplicitLinkRefs(detail)) {
       for (const targetEntry of resolveMapEntries(ref)) {
@@ -1195,6 +1443,7 @@
   // Wheel zoom
   viewport.addEventListener("wheel", (ev) => {
     ev.preventDefault();
+    cancelInitialGpsFrame();
     // trackpad pinch (ctrlKey) gives larger deltaY — normalize a bit
     const factor = Math.exp(-ev.deltaY * (ev.ctrlKey ? 0.01 : 0.0015));
     zoomAt(ev.clientX, ev.clientY, factor);
@@ -1202,20 +1451,26 @@
 
   // Buttons
   document.getElementById("zin").addEventListener("click", () => {
+    cancelInitialGpsFrame();
     const r = viewport.getBoundingClientRect();
     zoomAt(r.left + r.width/2, r.top + r.height/2, 1.4);
   });
   document.getElementById("zout").addEventListener("click", () => {
+    cancelInitialGpsFrame();
     const r = viewport.getBoundingClientRect();
     zoomAt(r.left + r.width/2, r.top + r.height/2, 1/1.4);
   });
-  document.getElementById("zreset").addEventListener("click", resetView);
+  document.getElementById("zreset").addEventListener("click", () => {
+    cancelInitialGpsFrame();
+    resetView();
+  });
 
   // Drag-to-pan (mouse)
   let dragging = false, dragStart = null;
   viewport.addEventListener("mousedown", (ev) => {
     // don't pan when clicking a hotspot (let it handle click)
     if (ev.target.classList.contains("hotspot") || ev.target.classList.contains("index-hotspot")) return;
+    cancelInitialGpsFrame();
     dragging = true;
     dragStart = { x: ev.clientX - tx, y: ev.clientY - ty };
     viewport.classList.add("dragging");
@@ -1236,6 +1491,7 @@
   // Touch: 1 finger pan, 2 fingers pinch
   let touchState = null;
   viewport.addEventListener("touchstart", (ev) => {
+    if (ev.touches.length >= 1) cancelInitialGpsFrame();
     if (ev.touches.length === 1) {
       const t = ev.touches[0];
       touchState = { mode: "pan", x: t.clientX - tx, y: t.clientY - ty };
@@ -1275,6 +1531,7 @@
   // Double-click / double-tap zooms in
   viewport.addEventListener("dblclick", (ev) => {
     if (ev.target.classList.contains("hotspot")) return;
+    cancelInitialGpsFrame();
     zoomAt(ev.clientX, ev.clientY, 2);
   });
   viewport.addEventListener("click", (ev) => {
@@ -1321,7 +1578,11 @@
     `;
   }
   function detailFor(el) {
-    const current = projectDetails.byCode?.[el.dataset.code] || null;
+    const current = projectDetailForMapEntry({
+      code: el.dataset.code,
+      name: el.dataset.name,
+      section: el.dataset.section,
+    });
     const oldWtf = oldWtfDetails.byCode?.[el.dataset.code] || null;
     if (!current && !oldWtf) return null;
     if (!current) {
@@ -1431,8 +1692,12 @@
     }
     const sourceTag = detail?.sourceTag || projectDetails.sourceTag || "community-project-directory";
     const sourceLabel = detail?.sourceLabel || projectDetails.sourceLabel || sourceTag;
-    const tags = detail ? [sourceTag, ...(detail.tags || [])] : [sourceTag];
-    const tagHtml = tags.map((tag) => `<span class="detail-tag">${escapeHtml(tag)}</span>`).join("");
+    const tags = detailTagsForMapEntry(mapEntry || {
+      code,
+      name: el.dataset.name,
+      section,
+    });
+    const tagHtml = tags.map((tag) => `<button type="button" class="detail-tag" data-search-tag="${escapeHtml(tag)}">${escapeHtml(tag)}</button>`).join("");
     const sourceLinks = detail?.links?.length
       ? detail.links
       : detail?.sourceUrl
@@ -1469,6 +1734,14 @@
       <div class="detail-tags">${tagHtml}</div>
       <p class="details-empty">No ${escapeHtml(sourceTag)} details have been linked for this item yet.</p>
     `;
+    for (const button of detailsBody.querySelectorAll(".detail-tag[data-search-tag]")) {
+      button.addEventListener("click", () => {
+        q.value = button.dataset.searchTag || "";
+        applyFilter();
+        const v = q.value.trim();
+        history.replaceState(null, "", v ? "#q=" + encodeURIComponent(v) : "#");
+      });
+    }
     setDetailsMode(mode);
     detailsPanel.classList.add("open");
     detailsPanel.setAttribute("aria-hidden", "false");
@@ -1543,6 +1816,101 @@
   };
   let geoWatchId = null;
   let latestGeoFix = null;
+  let latestHeading = null;
+  let orientationListening = false;
+  let orientationPermissionBlocked = false;
+  let initialGpsFrameDone = false;
+  let allowInitialGpsFrame = true;
+
+  function cancelInitialGpsFrame() {
+    allowInitialGpsFrame = false;
+  }
+
+  function frameLogicalPoint(point, scaleMultiplier = 2.2) {
+    if (!point) return;
+    const vw = viewport.clientWidth, vh = viewport.clientHeight;
+    let visibleW = vw;
+    let visibleH = vh;
+    let visibleCx = vw / 2;
+    let visibleCy = vh / 2;
+    if (detailsPanel.classList.contains("open")) {
+      const detailsRect = detailsCard.getBoundingClientRect();
+      if (isMobileDetails()) {
+        const bottomInset = Math.min(vh, Math.max(0, detailsRect.height));
+        visibleH = Math.max(120, vh - bottomInset);
+        visibleCy = visibleH / 2;
+      } else {
+        const rightInset = Math.min(vw, Math.max(0, detailsRect.width + 24));
+        visibleW = Math.max(120, vw - rightInset);
+        visibleCx = visibleW / 2;
+      }
+    }
+    scl = Math.max(fitScale(), Math.min(MAX_SCALE, fitScale() * scaleMultiplier));
+    tx = visibleCx - point.x * scl;
+    ty = visibleCy - point.y * scl;
+    clampPan();
+    apply();
+  }
+
+  function maybeFrameInitialGps(logicalPoint) {
+    if (initialGpsFrameDone || !allowInitialGpsFrame) return;
+    if (q.value.trim()) return;
+    frameLogicalPoint(logicalPoint, 2.4);
+    initialGpsFrameDone = true;
+  }
+
+  function normalizeHeadingDegrees(value) {
+    const num = Number(value);
+    if (!Number.isFinite(num)) return null;
+    return ((num % 360) + 360) % 360;
+  }
+
+  function headingFromOrientationEvent(ev) {
+    if (Number.isFinite(ev.webkitCompassHeading)) {
+      return normalizeHeadingDegrees(ev.webkitCompassHeading);
+    }
+    if (ev.absolute === true && Number.isFinite(ev.alpha)) {
+      return normalizeHeadingDegrees(360 - ev.alpha);
+    }
+    return null;
+  }
+
+  function handleDeviceOrientation(ev) {
+    latestHeading = headingFromOrientationEvent(ev);
+    updateUserLocationDisplay();
+  }
+
+  async function ensureOrientationTracking(interactive = false) {
+    if (orientationListening || orientationPermissionBlocked) return;
+    if (typeof window === "undefined" || typeof window.DeviceOrientationEvent === "undefined") return;
+    if (typeof DeviceOrientationEvent.requestPermission === "function") {
+      if (!interactive) return;
+      try {
+        const result = await DeviceOrientationEvent.requestPermission();
+        if (result !== "granted") {
+          orientationPermissionBlocked = true;
+          latestHeading = null;
+          updateUserLocationDisplay();
+          return;
+        }
+      } catch (err) {
+        orientationPermissionBlocked = true;
+        latestHeading = null;
+        updateUserLocationDisplay();
+        return;
+      }
+    }
+    window.addEventListener("deviceorientation", handleDeviceOrientation, true);
+    orientationListening = true;
+  }
+
+  function stopOrientationTracking() {
+    if (orientationListening) {
+      window.removeEventListener("deviceorientation", handleDeviceOrientation, true);
+      orientationListening = false;
+    }
+    latestHeading = null;
+  }
 
   function setGpsStatus(text, tone = "") {
     gpsStatus.textContent = text;
@@ -1551,6 +1919,7 @@
 
   function hideUserLocation() {
     userPin.classList.remove("visible");
+    userPin.classList.remove("has-heading");
   }
 
   function updateUserLocationDisplay() {
@@ -1586,7 +1955,14 @@
     userPin.style.left = mapX(logicalPoint.x) + "px";
     userPin.style.top = mapY(logicalPoint.y) + "px";
     userPin.style.transform = `translate(-50%, -100%) scale(${1 / scl})`;
+    if (Number.isFinite(latestHeading)) {
+      userPinHeading.style.transform = `translateX(-50%) rotate(${latestHeading}deg)`;
+      userPin.classList.add("has-heading");
+    } else {
+      userPin.classList.remove("has-heading");
+    }
     userPin.classList.add("visible");
+    maybeFrameInitialGps(logicalPoint);
     const accuracy = Number.isFinite(latestGeoFix.accuracy) ? ` ±${Math.round(latestGeoFix.accuracy)}m` : "";
     setGpsStatus(`GPS live${accuracy}`, "ready");
   }
@@ -1596,14 +1972,16 @@
       navigator.geolocation.clearWatch(geoWatchId);
       geoWatchId = null;
     }
+    stopOrientationTracking();
   }
 
-  function startGeolocationWatch() {
+  async function startGeolocationWatch(interactive = false) {
     if (!navigator.geolocation) {
       fLocate.checked = false;
       updateUserLocationDisplay();
       return;
     }
+    ensureOrientationTracking(interactive);
     if (geoWatchId !== null) return;
     setGpsStatus("Waiting for GPS", "pending");
     geoWatchId = navigator.geolocation.watchPosition((position) => {
@@ -1694,7 +2072,8 @@
                      || (sec === "support" && showSupport)
                      || (sec === "toilet" && showToilet);
       const searchOk = !qs || el.dataset.code.toLowerCase().includes(qs)
-                           || el.dataset.name.toLowerCase().includes(qs);
+                           || el.dataset.name.toLowerCase().includes(qs)
+                           || el.dataset.tags.includes(qs);
       const visible = sectionOk && searchOk;
       el.classList.toggle("filtered-out", !visible);
       if (qs && visible) hits.push(el);
@@ -1756,6 +2135,7 @@
   fSupport.addEventListener("change", applyFilter);
   fToilet.addEventListener("change", applyFilter);
   fHighRes.addEventListener("change", () => {
+    cancelInitialGpsFrame();
     currentMap = fHighRes.checked ? MAP_SOURCES.highres : MAP_SOURCES.standard;
     highresRasterIndex = 0;
     applyMapSourceLayout();
@@ -1766,7 +2146,7 @@
     applyFilter();
   });
   fLocate.addEventListener("change", () => {
-    if (fLocate.checked) startGeolocationWatch();
+    if (fLocate.checked) startGeolocationWatch(true);
     else {
       stopGeolocationWatch();
       hideUserLocation();
@@ -1774,6 +2154,7 @@
     }
   });
   q.addEventListener("input", () => {
+    cancelInitialGpsFrame();
     applyFilter();
     // reflect query in URL hash so it's shareable
     const v = q.value.trim();
@@ -1794,7 +2175,7 @@
       setGpsStatus("GPS unavailable", "error");
     }
     if (navigator.geolocation && fLocate.checked) {
-      startGeolocationWatch();
+      startGeolocationWatch(false);
     }
     resetView();
     readHash();
