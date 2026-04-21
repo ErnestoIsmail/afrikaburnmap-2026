@@ -191,8 +191,11 @@
     padding:2px 6px; border-radius:4px;
   }
   .app-version {
-    font-size:9px; color:rgba(238,238,238,0.33); white-space:nowrap;
+    font-size:10px; color:rgba(238,238,238,0.72); white-space:nowrap;
     letter-spacing:0.02em;
+    background:rgba(0,0,0,0.42);
+    padding:2px 6px;
+    border-radius:4px;
   }
 
   .details-panel {
@@ -509,8 +512,8 @@
       gap:6px;
     }
     .app-version {
-      font-size:8px;
-      color:rgba(238,238,238,0.28);
+      font-size:9px;
+      color:rgba(238,238,238,0.68);
     }
     .about-backdrop { align-items:flex-end; padding:0; }
     .about-panel {
@@ -636,8 +639,8 @@
 <script>
 (() => {
   const data = DATA_INLINE;
-  const APP_VERSION = "2026.04.21.6";
-  const APP_CACHE_VERSION = "v33";
+  const APP_VERSION = "2026.04.21.7";
+  const APP_CACHE_VERSION = "v34";
   const projectDetails = typeof PROJECT_DETAILS !== "undefined" ? PROJECT_DETAILS : { byCode: {} };
   const oldWtfDetails = typeof OLD_WTF_DETAILS !== "undefined" ? OLD_WTF_DETAILS : { byCode: {} };
   const viewport = document.getElementById("viewport");
