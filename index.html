@@ -31,7 +31,7 @@
     border-bottom: 1px solid #333; background:var(--bg); z-index:10; position:relative; }
   header h1 { font-size:16px; margin:0; font-weight:600; letter-spacing:0.02em; }
   header .header-title,
-  header .header-search { display:flex; gap:12px; align-items:center; }
+  header .header-search { display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
   header .header-title { order:1; }
   header .filters { order:2; margin-left:auto; }
   header .header-search { order:3; }
@@ -43,7 +43,16 @@
   header label { font-size:12px; color:#bbb; display:flex; gap:4px; align-items:center; cursor:pointer; }
   header input[type=search] { background:#222; color:#eee; border:1px solid #444;
     border-radius:4px; padding:4px 8px; font-size:12px; width:180px; }
-  header .highres-toggle { white-space:nowrap; }
+  header .highres-toggle,
+  header .gps-toggle { white-space:nowrap; }
+  header .gps-status {
+    font-size:11px; color:#888; white-space:nowrap;
+    min-width:76px;
+  }
+  header .gps-status.pending { color:#f0c96c; }
+  header .gps-status.ready { color:#7de38f; }
+  header .gps-status.warn { color:#ffb36b; }
+  header .gps-status.error { color:#ff8f8f; }
   .viewport {
     position:absolute; inset: var(--header-h) 0 0 0;   /* below header */
     overflow: hidden; background:#0a0a0a;
@@ -107,6 +116,28 @@
     border-radius: 6px;
     background: rgba(255,242,0,0.18);
     box-shadow: 0 0 0 2px rgba(0,0,0,0.6) inset, 0 0 12px rgba(255,242,0,0.7);
+  }
+  .user-pin {
+    position:absolute; pointer-events:none; z-index:6; display:none;
+    width:24px; height:24px; transform-origin:50% 100%;
+  }
+  .user-pin.visible { display:block; }
+  .user-pin::before {
+    content:""; position:absolute; inset:0; border-radius:50%;
+    background:#00d6ff; border:2px solid #07232c;
+    box-shadow:0 0 0 2px rgba(255,255,255,0.35), 0 0 14px rgba(0,214,255,0.75);
+    animation:user-pin-pulse 1.6s ease-in-out infinite;
+  }
+  .user-pin::after {
+    content:""; position:absolute; left:50%; top:100%;
+    transform:translate(-50%, -2px);
+    border:6px solid transparent;
+    border-top-color:#00d6ff;
+    filter:drop-shadow(0 1px 0 rgba(0,0,0,0.8));
+  }
+  @keyframes user-pin-pulse {
+    0%, 100% { box-shadow:0 0 0 2px rgba(255,255,255,0.35), 0 0 14px rgba(0,214,255,0.75); }
+    50% { box-shadow:0 0 0 4px rgba(255,255,255,0.2), 0 0 20px rgba(0,214,255,0.95); }
   }
   .zoom-ctl {
     position:absolute; top: calc(var(--header-h) + 15px); right: 12px; z-index: 20;
@@ -294,6 +325,11 @@
     header .hint {
       font-size:11px;
     }
+    header .gps-status {
+      min-width:0;
+      margin-left:auto;
+      text-align:right;
+    }
     header .hint-full,
     header .hint-title,
     header .label-full {
@@ -347,6 +383,8 @@
     <h1>AfrikaBurn 2026</h1>
     <span class="hint hint-title">hover to identify · scroll to zoom · drag to pan</span>
     <label class="highres-toggle"><input type="checkbox" id="f_highres" checked> high-res map</label>
+    <label class="gps-toggle"><input type="checkbox" id="f_locate"> GPS</label>
+    <span class="gps-status" id="gps-status">GPS off</span>
   </div>
   <div class="header-search">
     <span class="hint hint-search"><span class="hint-short">zoom · drag</span></span>
@@ -431,6 +469,7 @@
   const tip = document.getElementById("tip");
   const zlabel = document.getElementById("zlabel");
   const header = document.querySelector("header");
+  const gpsStatus = document.getElementById("gps-status");
   const detailsPanel = document.getElementById("details-panel");
   const detailsCard = detailsPanel.querySelector(".details-card");
   const detailsGrip = document.getElementById("details-grip");
@@ -452,6 +491,25 @@
 
   const NAT_W = data.map_w || 2560;
   const NAT_H = data.map_h || 1424;
+  const MAP_GEOREFERENCE = {
+    controlPoints: [
+      { x: 1524.1, y: 1233.9, lat: -32.5191272, lon: 19.9616586 },
+      { x: 1653.9, y: 440.2, lat: -32.5110126, lon: 19.9618014 },
+      { x: 1525.0, y: 321.9, lat: -32.5100366, lon: 19.9602820 },
+      { x: 960.9, y: 307.5, lat: -32.5107389, lon: 19.9547795 },
+      { x: 351.5, y: 480.8, lat: -32.5132993, lon: 19.9490168 },
+      { x: 195.5, y: 1122.7, lat: -32.5197840, lon: 19.9484140 },
+      { x: 656.2, y: 991.1, lat: -32.5179048, lon: 19.9527811 },
+      { x: 876.2, y: 816.3, lat: -32.5158630, lon: 19.9546365 },
+    ],
+  };
+  const TEMP_GPS_TEST_SHIFT = {
+    enabled: true,
+    actualLat: -34.100465,
+    actualLon: 18.473639,
+    targetX: 988.7,
+    targetY: 882.9,
+  };
 
   const MAP_SOURCES = {
     standard: {
@@ -495,6 +553,7 @@
   let currentRelativeZoom = 1;
   let highresRasterIndex = 0;
   let currentRaster = null;
+  let cachedGeoAffine = null;
 
   function rasterForMap(source) {
     if (!source.rasters || !mobileRasterQuery.matches) return null;
@@ -539,6 +598,112 @@
   function mapY(y) { return y * currentMap.coordScaleY + currentMap.coordShiftY; }
   function mapW(w) { return w * currentMap.coordScaleX; }
   function mapH(h) { return h * currentMap.coordScaleY; }
+  function logicalXFromMap(x) { return (x - currentMap.coordShiftX) / currentMap.coordScaleX; }
+  function logicalYFromMap(y) { return (y - currentMap.coordShiftY) / currentMap.coordScaleY; }
+
+  function solveLinear3x3(matrix, vector) {
+    const a = matrix.map((row, i) => [...row, vector[i]]);
+    for (let col = 0; col < 3; col++) {
+      let pivot = col;
+      for (let row = col + 1; row < 3; row++) {
+        if (Math.abs(a[row][col]) > Math.abs(a[pivot][col])) pivot = row;
+      }
+      if (Math.abs(a[pivot][col]) < 1e-12) return null;
+      if (pivot !== col) [a[col], a[pivot]] = [a[pivot], a[col]];
+      const divisor = a[col][col];
+      for (let j = col; j < 4; j++) a[col][j] /= divisor;
+      for (let row = 0; row < 3; row++) {
+        if (row === col) continue;
+        const factor = a[row][col];
+        for (let j = col; j < 4; j++) a[row][j] -= factor * a[col][j];
+      }
+    }
+    return [a[0][3], a[1][3], a[2][3]];
+  }
+
+  function solveAffineFromControlPoints(points) {
+    if (!points || points.length < 3) return null;
+    let sLonLon = 0, sLonLat = 0, sLon = 0;
+    let sLatLat = 0, sLat = 0;
+    let sLonX = 0, sLatX = 0, sX = 0;
+    let sLonY = 0, sLatY = 0, sY = 0;
+    let validCount = 0;
+    for (const point of points) {
+      const lon = Number(point.lon);
+      const lat = Number(point.lat);
+      const x = Number(point.x);
+      const y = Number(point.y);
+      if (![lon, lat, x, y].every(Number.isFinite)) continue;
+      validCount++;
+      sLonLon += lon * lon;
+      sLonLat += lon * lat;
+      sLon += lon;
+      sLatLat += lat * lat;
+      sLat += lat;
+      sLonX += lon * x;
+      sLatX += lat * x;
+      sX += x;
+      sLonY += lon * y;
+      sLatY += lat * y;
+      sY += y;
+    }
+    if (validCount < 3) return null;
+    const n = validCount;
+    const normal = [
+      [sLonLon, sLonLat, sLon],
+      [sLonLat, sLatLat, sLat],
+      [sLon, sLat, n],
+    ];
+    const xCoeffs = solveLinear3x3(normal, [sLonX, sLatX, sX]);
+    const yCoeffs = solveLinear3x3(normal, [sLonY, sLatY, sY]);
+    if (!xCoeffs || !yCoeffs) return null;
+    return {
+      xFromLon: xCoeffs[0],
+      xFromLat: xCoeffs[1],
+      xOffset: xCoeffs[2],
+      yFromLon: yCoeffs[0],
+      yFromLat: yCoeffs[1],
+      yOffset: yCoeffs[2],
+    };
+  }
+
+  function getGeoAffine() {
+    if (cachedGeoAffine !== null) return cachedGeoAffine;
+    cachedGeoAffine = solveAffineFromControlPoints(MAP_GEOREFERENCE.controlPoints);
+    return cachedGeoAffine;
+  }
+
+  function logicalPointFromGeo(lat, lon) {
+    const affine = getGeoAffine();
+    if (!affine) return null;
+    return {
+      x: affine.xFromLon * lon + affine.xFromLat * lat + affine.xOffset,
+      y: affine.yFromLon * lon + affine.yFromLat * lat + affine.yOffset,
+    };
+  }
+
+  function geoFromLogicalPoint(x, y) {
+    const affine = getGeoAffine();
+    if (!affine) return null;
+    const det = affine.xFromLon * affine.yFromLat - affine.xFromLat * affine.yFromLon;
+    if (Math.abs(det) < 1e-12) return null;
+    const rx = x - affine.xOffset;
+    const ry = y - affine.yOffset;
+    return {
+      lon: (rx * affine.yFromLat - affine.xFromLat * ry) / det,
+      lat: (affine.xFromLon * ry - rx * affine.yFromLon) / det,
+    };
+  }
+
+  function applyTemporaryGpsShift(lat, lon) {
+    if (!TEMP_GPS_TEST_SHIFT?.enabled) return { lat, lon };
+    const targetGeo = geoFromLogicalPoint(TEMP_GPS_TEST_SHIFT.targetX, TEMP_GPS_TEST_SHIFT.targetY);
+    if (!targetGeo) return { lat, lon };
+    return {
+      lat: lat + (targetGeo.lat - TEMP_GPS_TEST_SHIFT.actualLat),
+      lon: lon + (targetGeo.lon - TEMP_GPS_TEST_SHIFT.actualLon),
+    };
+  }
 
   function applyMapSourceLayout() {
     updateMapRaster();
@@ -562,6 +727,10 @@
   const hotspotByEntry = new WeakMap();
   const indexHotspots = [];
   const indexHotspotsByEntry = new WeakMap();
+  const userPin = document.createElement("div");
+  userPin.className = "user-pin";
+  userPin.setAttribute("aria-hidden", "true");
+  mapDiv.appendChild(userPin);
   for (const e of data.entries) {
     const el = document.createElement("div");
     el.className = "hotspot " + e.section;
@@ -780,6 +949,7 @@
     zlabel.textContent = Math.round(currentRelativeZoom * 100) + "%";
     // keep search pins same pixel size as map scales
     if (typeof updateHitScale === "function") updateHitScale();
+    if (typeof updateUserLocationDisplay === "function") updateUserLocationDisplay();
   }
 
   function clampPan() {
@@ -811,6 +981,65 @@
     ty = vy - my * scl;
     clampPan();
     apply();
+  }
+
+  function logicalPointFromClient(clientX, clientY) {
+    const rect = viewport.getBoundingClientRect();
+    const vx = clientX - rect.left;
+    const vy = clientY - rect.top;
+    const mapPx = (vx - tx) / scl;
+    const mapPy = (vy - ty) / scl;
+    const logicalX = logicalXFromMap(mapPx);
+    const logicalY = logicalYFromMap(mapPy);
+    if (!Number.isFinite(logicalX) || !Number.isFinite(logicalY)) return null;
+    if (logicalX < 0 || logicalX > NAT_W || logicalY < 0 || logicalY > NAT_H) return null;
+    return {
+      x: logicalX,
+      y: logicalY,
+      mapX: mapPx,
+      mapY: mapPy,
+    };
+  }
+
+  async function copyTextToClipboard(text) {
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(text);
+      return;
+    }
+    const input = document.createElement("textarea");
+    input.value = text;
+    input.setAttribute("readonly", "");
+    input.style.position = "fixed";
+    input.style.opacity = "0";
+    document.body.appendChild(input);
+    input.select();
+    document.execCommand("copy");
+    input.remove();
+  }
+
+  function fmtCoord(n) {
+    return (Math.round(n * 10) / 10).toFixed(1);
+  }
+
+  async function handleMapCoordinatePick(ev) {
+    if (ev.target.classList.contains("hotspot") || ev.target.classList.contains("index-hotspot")) return;
+    const point = logicalPointFromClient(ev.clientX, ev.clientY);
+    if (!point) return;
+    const line = `"x": ${fmtCoord(point.x)}, "y": ${fmtCoord(point.y)}`;
+    try {
+      await copyTextToClipboard(line);
+      console.log("[map-pick]", line, { mapSource: currentMap.id, mapX: point.mapX, mapY: point.mapY });
+      zlabel.textContent = `copied ${fmtCoord(point.x)}, ${fmtCoord(point.y)}`;
+      window.setTimeout(() => {
+        zlabel.textContent = Math.round(currentRelativeZoom * 100) + "%";
+      }, 1800);
+    } catch (err) {
+      console.log("[map-pick]", line, { mapSource: currentMap.id, mapX: point.mapX, mapY: point.mapY, clipboardError: String(err) });
+      zlabel.textContent = `pick ${fmtCoord(point.x)}, ${fmtCoord(point.y)}`;
+      window.setTimeout(() => {
+        zlabel.textContent = Math.round(currentRelativeZoom * 100) + "%";
+      }, 1800);
+    }
   }
 
   // Wheel zoom
@@ -897,6 +1126,9 @@
   viewport.addEventListener("dblclick", (ev) => {
     if (ev.target.classList.contains("hotspot")) return;
     zoomAt(ev.clientX, ev.clientY, 2);
+  });
+  viewport.addEventListener("click", (ev) => {
+    handleMapCoordinatePick(ev);
   });
 
   // Tooltip
@@ -1141,7 +1373,101 @@
   const fSupport = document.getElementById("f_support");
   const fToilet = document.getElementById("f_toilet");
   const fHighRes = document.getElementById("f_highres");
+  const fLocate = document.getElementById("f_locate");
   const q      = document.getElementById("q");
+  const GEOLOCATION_OPTIONS = {
+    enableHighAccuracy: true,
+    maximumAge: 5000,
+    timeout: 15000,
+  };
+  let geoWatchId = null;
+  let latestGeoFix = null;
+
+  function setGpsStatus(text, tone = "") {
+    gpsStatus.textContent = text;
+    gpsStatus.className = "gps-status" + (tone ? ` ${tone}` : "");
+  }
+
+  function hideUserLocation() {
+    userPin.classList.remove("visible");
+  }
+
+  function updateUserLocationDisplay() {
+    if (!fLocate.checked) {
+      hideUserLocation();
+      setGpsStatus("GPS off");
+      return;
+    }
+    if (!navigator.geolocation) {
+      hideUserLocation();
+      setGpsStatus("GPS unavailable", "error");
+      return;
+    }
+    if (!latestGeoFix) {
+      hideUserLocation();
+      setGpsStatus("Waiting for GPS", "pending");
+      return;
+    }
+    const logicalPoint = logicalPointFromGeo(latestGeoFix.lat, latestGeoFix.lon);
+    if (!logicalPoint) {
+      hideUserLocation();
+      setGpsStatus("Map not calibrated", "warn");
+      return;
+    }
+    if (
+      logicalPoint.x < 0 || logicalPoint.x > NAT_W ||
+      logicalPoint.y < 0 || logicalPoint.y > NAT_H
+    ) {
+      hideUserLocation();
+      setGpsStatus("Outside map", "warn");
+      return;
+    }
+    userPin.style.left = mapX(logicalPoint.x) + "px";
+    userPin.style.top = mapY(logicalPoint.y) + "px";
+    userPin.style.transform = `translate(-50%, -100%) scale(${1 / scl})`;
+    userPin.classList.add("visible");
+    const accuracy = Number.isFinite(latestGeoFix.accuracy) ? ` ±${Math.round(latestGeoFix.accuracy)}m` : "";
+    setGpsStatus(`GPS live${accuracy}`, "ready");
+  }
+
+  function stopGeolocationWatch() {
+    if (geoWatchId !== null) {
+      navigator.geolocation.clearWatch(geoWatchId);
+      geoWatchId = null;
+    }
+  }
+
+  function startGeolocationWatch() {
+    if (!navigator.geolocation) {
+      fLocate.checked = false;
+      updateUserLocationDisplay();
+      return;
+    }
+    if (geoWatchId !== null) return;
+    setGpsStatus("Waiting for GPS", "pending");
+    geoWatchId = navigator.geolocation.watchPosition((position) => {
+      const shifted = applyTemporaryGpsShift(position.coords.latitude, position.coords.longitude);
+      latestGeoFix = {
+        lat: shifted.lat,
+        lon: shifted.lon,
+        accuracy: position.coords.accuracy,
+      };
+      updateUserLocationDisplay();
+    }, (error) => {
+      latestGeoFix = null;
+      hideUserLocation();
+      if (!fLocate.checked) return;
+      if (error.code === error.PERMISSION_DENIED) {
+        setGpsStatus("GPS denied", "error");
+      } else if (error.code === error.POSITION_UNAVAILABLE) {
+        setGpsStatus("GPS unavailable", "error");
+      } else if (error.code === error.TIMEOUT) {
+        setGpsStatus("GPS timeout", "warn");
+      } else {
+        setGpsStatus("GPS error", "error");
+      }
+    }, GEOLOCATION_OPTIONS);
+  }
 
   // Pin/overlay nodes are re-used across searches
   const hitOverlays = [];   // yellow rectangle overlays (one per hit)
@@ -1260,6 +1586,14 @@
     resetView();
     applyFilter();
   });
+  fLocate.addEventListener("change", () => {
+    if (fLocate.checked) startGeolocationWatch();
+    else {
+      stopGeolocationWatch();
+      hideUserLocation();
+      updateUserLocationDisplay();
+    }
+  });
   q.addEventListener("input", () => {
     applyFilter();
     // reflect query in URL hash so it's shareable
@@ -1275,7 +1609,14 @@
   }
 
   // Init once image loads (for accurate clamping — actually we use NAT_W/H so can init now)
-  function init() { resetView(); readHash(); }
+  function init() {
+    if (!navigator.geolocation) {
+      fLocate.disabled = true;
+      setGpsStatus("GPS unavailable", "error");
+    }
+    resetView();
+    readHash();
+  }
   if (img.complete) init(); else img.addEventListener("load", init, { once: true });
   window.addEventListener("resize", () => {
     // keep same logical zoom (relative to fit), then clamp
