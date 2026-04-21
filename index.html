@@ -211,6 +211,12 @@
   .user-trail-layer {
     position:absolute; inset:0; pointer-events:none; z-index:5;
   }
+  .user-toilet-route-layer {
+    position:absolute; inset:0; pointer-events:none; z-index:4;
+  }
+  .user-event-route-layer {
+    position:absolute; inset:0; pointer-events:none; z-index:4;
+  }
   .user-pin-heading {
     position:absolute; left:50%; top:-7px;
     width:0; height:0; opacity:0;
@@ -249,6 +255,26 @@
   .badge-plaza { color: var(--plaza); }
   .badge-support { color: var(--support); }
   .badge-toilet { color: var(--toilet); }
+  .detail-control {
+    display:grid;
+    gap:8px;
+  }
+  .detail-control-row {
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .detail-control-row input[type="range"] {
+    flex:1 1 auto;
+    min-width:0;
+  }
+  .detail-control-value {
+    flex:0 0 auto;
+    min-width:58px;
+    text-align:right;
+    color:#bbb;
+    font-size:12px;
+  }
   .bottom-status {
     position:absolute; bottom:8px; right:12px; z-index:20;
     display:flex; align-items:center; gap:8px;
@@ -610,9 +636,6 @@
     font-size:11px; color:#bbb;
     cursor:pointer;
   }
-  .schedule-kind-filter.burn-filter span {
-    color:#ffc15a;
-  }
   .schedule-kind-filter input {
     margin:0; width:13px; height:13px;
   }
@@ -673,9 +696,20 @@
     border-color:rgba(255,189,88,0.38);
     box-shadow:0 0 0 1px rgba(255,173,51,0.08);
   }
+  .schedule-item.starred {
+    border-color:rgba(255,214,92,0.52);
+    box-shadow:0 0 0 1px rgba(255,214,92,0.16);
+  }
+  .schedule-item.started-now {
+    border-color:rgba(124,255,170,0.44);
+    box-shadow:0 0 0 1px rgba(124,255,170,0.16), 0 0 18px rgba(124,255,170,0.08);
+  }
   .schedule-item.selected {
     border-color:rgba(255,242,0,0.6);
     box-shadow:0 0 0 1px rgba(255,242,0,0.22), 0 0 18px rgba(255,242,0,0.12);
+  }
+  .schedule-item-row {
+    display:grid; grid-template-columns:minmax(0, 1fr) auto; align-items:stretch;
   }
   .schedule-item-summary {
     width:100%; appearance:none; background:none; border:0; color:inherit;
@@ -699,6 +733,29 @@
   .schedule-item-meta {
     display:flex; align-items:center; gap:6px; flex-wrap:wrap;
     font-size:10px; color:#aaa;
+  }
+  .schedule-live-chip {
+    display:inline-flex; align-items:center;
+    padding:2px 6px; border-radius:999px;
+    border:1px solid rgba(124,255,170,0.36);
+    background:rgba(124,255,170,0.12);
+    color:#9df2ba;
+    font-size:10px;
+    line-height:1.1;
+    white-space:nowrap;
+  }
+  .schedule-star-btn {
+    appearance:none; background:none; border:0; color:#7f7f7f;
+    min-width:34px; padding:0 10px; cursor:pointer; font-size:17px; line-height:1;
+  }
+  .schedule-star-btn:hover,
+  .schedule-star-btn:focus-visible {
+    color:#ffd65b; outline:none;
+    background:rgba(255,255,255,0.03);
+  }
+  .schedule-star-btn.active {
+    color:#ffd65b;
+    text-shadow:0 0 10px rgba(255,214,91,0.36);
   }
   .schedule-kind {
     display:inline-flex; align-items:center;
@@ -735,6 +792,9 @@
   .schedule-detail-title {
     margin:0; font-size:16px; line-height:1.2;
   }
+  .schedule-detail-actions {
+    display:flex; gap:6px; align-items:center; flex-wrap:wrap;
+  }
   .schedule-detail-meta {
     display:flex; gap:6px; flex-wrap:wrap; align-items:center;
     margin-top:6px; font-size:11px; color:#aaa;
@@ -751,6 +811,79 @@
     appearance:none; background:#222; color:#ddd; border:1px solid #444;
     border-radius:5px; padding:4px 8px; font-size:11px; line-height:1.25;
     cursor:pointer;
+  }
+  .schedule-detail-btn {
+    appearance:none; background:#222; color:#ddd; border:1px solid #444;
+    border-radius:5px; padding:5px 8px; font-size:11px; line-height:1.15;
+    cursor:pointer;
+  }
+  .schedule-detail-btn.star.active {
+    color:#ffd65b;
+    border-color:rgba(255,214,91,0.42);
+  }
+  .schedule-detail-btn.danger {
+    color:#ffb4b4;
+    border-color:rgba(255,95,95,0.34);
+  }
+  .schedule-editor {
+    display:grid; gap:10px;
+  }
+  .schedule-editor-grid {
+    display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:10px;
+  }
+  .schedule-editor-field {
+    display:grid; gap:4px;
+  }
+  .schedule-editor-field.full {
+    grid-column:1 / -1;
+  }
+  .schedule-editor-categories {
+    display:flex; flex-wrap:wrap; gap:8px 10px;
+  }
+  .schedule-editor-category {
+    display:inline-flex; align-items:center; gap:4px;
+    font-size:11px; color:#ccc;
+    cursor:pointer;
+  }
+  .schedule-editor-category input {
+    margin:0; width:13px; height:13px;
+  }
+  .schedule-editor-field label {
+    font-size:11px; color:#aaa;
+  }
+  .schedule-editor-field input,
+  .schedule-editor-field select,
+  .schedule-editor-field textarea {
+    width:100%;
+    background:#1d1d1d; color:#eee; border:1px solid #444;
+    border-radius:6px; padding:7px 8px; font-size:12px;
+  }
+  .schedule-editor-field textarea {
+    min-height:74px; resize:vertical;
+  }
+  .schedule-editor-picker {
+    display:grid; gap:6px;
+  }
+  .schedule-editor-picker-list {
+    display:flex; flex-wrap:wrap; gap:6px; max-height:120px; overflow:auto;
+    padding:2px 0;
+  }
+  .schedule-editor-picker-empty {
+    font-size:11px; color:#777;
+  }
+  .schedule-editor-pick {
+    appearance:none; background:#202020; color:#ddd; border:1px solid #444;
+    border-radius:999px; padding:4px 8px; font-size:11px; line-height:1.15;
+    cursor:pointer;
+  }
+  .schedule-editor-pick code {
+    color:#fff200;
+    font-family:inherit;
+    font-weight:700;
+    margin-right:4px;
+  }
+  .schedule-editor-actions {
+    display:flex; gap:8px; justify-content:flex-end; flex-wrap:wrap;
   }
   .schedule-map-link:hover,
   .schedule-map-link:focus-visible {
@@ -847,6 +980,27 @@
     background:rgba(255,173,51,0.16);
     border-color:rgba(255,189,88,0.52);
   }
+  .schedule-timeline-card.starred {
+    border-color:rgba(255,214,92,0.72);
+    background:rgba(255,214,92,0.12);
+    box-shadow:0 0 0 1px rgba(255,214,92,0.22), 0 0 10px rgba(255,214,92,0.08);
+  }
+  .schedule-timeline-card.personal {
+    border-color:rgba(145,193,255,0.72);
+    background:rgba(72,118,255,0.14);
+    box-shadow:0 0 0 1px rgba(145,193,255,0.18), inset 0 0 0 1px rgba(145,193,255,0.08);
+  }
+  .schedule-timeline-card.started-now {
+    border-color:rgba(124,255,170,0.68);
+    box-shadow:0 0 0 1px rgba(124,255,170,0.22), 0 0 14px rgba(124,255,170,0.12);
+  }
+  .schedule-timeline-card.personal.starred {
+    background:
+      linear-gradient(0deg, rgba(255,214,92,0.08), rgba(255,214,92,0.08)),
+      rgba(72,118,255,0.14);
+    border-color:rgba(255,214,92,0.8);
+    box-shadow:0 0 0 1px rgba(255,214,92,0.24), 0 0 12px rgba(255,214,92,0.1);
+  }
   .schedule-timeline-card.open-ended::after {
     content:"";
     position:absolute;
@@ -864,6 +1018,23 @@
     opacity:0.7;
     pointer-events:none;
   }
+  .schedule-timeline-card.uncertain-start::before {
+    content:"";
+    position:absolute;
+    top:-1px;
+    left:-1px;
+    bottom:-1px;
+    width:8px;
+    background:
+      linear-gradient(45deg,
+        transparent 0 2px,
+        rgba(255,255,255,0.75) 2px 3px,
+        transparent 3px 5px);
+    background-size:8px 5px;
+    background-repeat:repeat-y;
+    opacity:0.7;
+    pointer-events:none;
+  }
   .schedule-timeline-card.event-kind {
     background:rgba(255,61,138,0.14);
     border-color:rgba(255,61,138,0.38);
@@ -871,6 +1042,42 @@
   .schedule-timeline-card.open-kind {
     background:rgba(0,160,215,0.14);
     border-color:rgba(0,160,215,0.38);
+  }
+  .schedule-timeline-card.event-kind.starred {
+    background:
+      linear-gradient(180deg, rgba(255,214,92,0.34) 0 3px, transparent 3px),
+      rgba(255,61,138,0.14);
+    border-color:rgba(255,214,92,0.82);
+    box-shadow:0 0 0 1px rgba(255,214,92,0.24), 0 0 10px rgba(255,214,92,0.08);
+  }
+  .schedule-timeline-card.open-kind.starred {
+    background:
+      linear-gradient(180deg, rgba(255,214,92,0.34) 0 3px, transparent 3px),
+      rgba(0,160,215,0.14);
+    border-color:rgba(255,214,92,0.82);
+    box-shadow:0 0 0 1px rgba(255,214,92,0.24), 0 0 10px rgba(255,214,92,0.08);
+  }
+  .schedule-timeline-card.event-kind.personal {
+    background:
+      linear-gradient(180deg, rgba(145,193,255,0.32) 0 3px, transparent 3px),
+      rgba(255,61,138,0.14);
+    border-color:rgba(145,193,255,0.82);
+    box-shadow:0 0 0 1px rgba(145,193,255,0.2), inset 0 0 0 1px rgba(145,193,255,0.08);
+  }
+  .schedule-timeline-card.open-kind.personal {
+    background:
+      linear-gradient(180deg, rgba(145,193,255,0.32) 0 3px, transparent 3px),
+      rgba(0,160,215,0.14);
+    border-color:rgba(145,193,255,0.82);
+    box-shadow:0 0 0 1px rgba(145,193,255,0.2), inset 0 0 0 1px rgba(145,193,255,0.08);
+  }
+  .schedule-timeline-card.event-kind.personal.starred,
+  .schedule-timeline-card.open-kind.personal.starred {
+    background:
+      linear-gradient(180deg, rgba(255,214,92,0.34) 0 3px, rgba(145,193,255,0.24) 3px 6px, transparent 6px),
+      rgba(255,255,255,0.06);
+    border-color:rgba(255,214,92,0.84);
+    box-shadow:0 0 0 1px rgba(255,214,92,0.24), 0 0 12px rgba(255,214,92,0.1);
   }
   .schedule-timeline-card.selected {
     border-color:rgba(255,242,0,0.75);
@@ -1020,6 +1227,7 @@
     .schedule-view-hint { display:none; }
     .schedule-item-summary { gap:8px; padding:9px 10px; }
     .schedule-item-title { font-size:12px; }
+    .schedule-editor-grid { grid-template-columns:1fr; }
     .schedule-timeline-axis-track { height:28px; }
     .schedule-timeline-hour { font-size:9px; top:6px; }
   }
@@ -1102,6 +1310,7 @@
       <div class="schedule-title-row">
         <h2 id="schedule-title">Burn schedule</h2>
         <div class="schedule-actions">
+          <button type="button" class="schedule-nav" id="schedule-add">Add</button>
           <button type="button" class="schedule-nav" id="schedule-prev" aria-label="Previous burn day">‹</button>
           <button type="button" class="schedule-nav" id="schedule-today">Today</button>
           <button type="button" class="schedule-nav" id="schedule-next" aria-label="Next burn day">›</button>
@@ -1112,8 +1321,8 @@
       <div class="schedule-view-row">
         <div class="schedule-filter-row">
           <div class="schedule-view-toggle" id="schedule-view-toggle" role="tablist" aria-label="Schedule view">
-            <button type="button" class="schedule-view-btn active" id="schedule-view-agenda" data-schedule-view="agenda" role="tab" aria-selected="true">Agenda</button>
-            <button type="button" class="schedule-view-btn" id="schedule-view-timeline" data-schedule-view="timeline" role="tab" aria-selected="false">Timeline</button>
+            <button type="button" class="schedule-view-btn" id="schedule-view-agenda" data-schedule-view="agenda" role="tab" aria-selected="false">Agenda</button>
+            <button type="button" class="schedule-view-btn active" id="schedule-view-timeline" data-schedule-view="timeline" role="tab" aria-selected="true">Timeline</button>
           </div>
           <div class="schedule-kind-filters" id="schedule-kind-filters" aria-label="Schedule filters">
             <label class="schedule-kind-filter">
@@ -1123,10 +1332,6 @@
             <label class="schedule-kind-filter">
               <input type="checkbox" id="schedule-filter-open" checked>
               <span>Open times</span>
-            </label>
-            <label class="schedule-kind-filter burn-filter">
-              <input type="checkbox" id="schedule-filter-burn" checked>
-              <span>Burn</span>
             </label>
           </div>
         </div>
@@ -1196,9 +1401,25 @@
 (() => {
   const data = DATA_INLINE;
   const APP_VERSION = "2026.04.21.12";
-  const APP_CACHE_VERSION = "v39";
+  const APP_CACHE_VERSION = "v40";
   const projectDetails = typeof PROJECT_DETAILS !== "undefined" ? PROJECT_DETAILS : { byCode: {} };
-  const scheduleData = typeof SCHEDULE_DATA !== "undefined" ? SCHEDULE_DATA : { days: [], entries: [], byDate: {}, byLinkedCode: {}, series: [], seriesById: {}, seriesByLinkedCode: {} };
+  const EMPTY_SCHEDULE_DATA = { days: [], entries: [], byDate: {}, byLinkedCode: {}, series: [], seriesById: {}, seriesByLinkedCode: {} };
+  const baseScheduleData = typeof SCHEDULE_DATA !== "undefined" ? SCHEDULE_DATA : EMPTY_SCHEDULE_DATA;
+  const SCHEDULE_STAR_STORAGE_KEY = "ab-schedule-stars";
+  const SCHEDULE_CUSTOM_STORAGE_KEY = "ab-schedule-custom-events";
+  const USER_TRAIL_SETTING_STORAGE_KEY = "ab-user-trail-setting";
+  const SCHEDULE_CATEGORY_OPTIONS = [
+    { key: "Burn", label: "Burn", shortLabel: "Burn" },
+    { key: "Music", label: "Music", shortLabel: "Music" },
+    { key: "Performance", label: "Performance", shortLabel: "Perf" },
+    { key: "Workshop", label: "Workshop", shortLabel: "Work" },
+    { key: "Wellness", label: "Wellness", shortLabel: "Well" },
+    { key: "Food & Drink", label: "Food & Drink", shortLabel: "Food" },
+    { key: "Service", label: "Service", shortLabel: "Serv" },
+    { key: "Movement", label: "Movement", shortLabel: "Move" },
+    { key: "Community", label: "Community", shortLabel: "Comm" },
+  ];
+  let scheduleData = baseScheduleData;
   const oldWtfDetails = typeof OLD_WTF_DETAILS !== "undefined" ? OLD_WTF_DETAILS : { byCode: {} };
   const viewport = document.getElementById("viewport");
   const mapDiv = document.getElementById("map");
@@ -1221,6 +1442,7 @@
   const aboutCacheVersion = document.getElementById("about-cache-version");
   const scheduleBackdrop = document.getElementById("schedule-backdrop");
   const scheduleClose = document.getElementById("schedule-close");
+  const scheduleAdd = document.getElementById("schedule-add");
   const schedulePrev = document.getElementById("schedule-prev");
   const scheduleNext = document.getElementById("schedule-next");
   const scheduleToday = document.getElementById("schedule-today");
@@ -1231,7 +1453,6 @@
   const scheduleCategoryFilters = document.getElementById("schedule-category-filters");
   const scheduleFilterEvents = document.getElementById("schedule-filter-events");
   const scheduleFilterOpen = document.getElementById("schedule-filter-open");
-  const scheduleFilterBurn = document.getElementById("schedule-filter-burn");
   const detailsPanel = document.getElementById("details-panel");
   const detailsCard = detailsPanel.querySelector(".details-card");
   const detailsGrip = document.getElementById("details-grip");
@@ -1244,6 +1465,206 @@
   let detailsMode = "fit";
   let detailsDrag = null;
   let detailsUserHeight = null;
+  let scheduleEditorState = null;
+
+  function safeReadStorageJson(key, fallback) {
+    try {
+      const raw = localStorage.getItem(key);
+      return raw ? JSON.parse(raw) : fallback;
+    } catch {
+      return fallback;
+    }
+  }
+
+  function safeWriteStorageJson(key, value) {
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+    } catch {
+      // ignore storage failures
+    }
+  }
+
+  function pad2(value) {
+    return String(value).padStart(2, "0");
+  }
+
+  function friendlyTimeLabel(start, end = "") {
+    const render = (value) => {
+      if (!/^\d{2}:\d{2}$/.test(value || "")) return "";
+      const [hStr, mStr] = value.split(":");
+      const hour = Number(hStr);
+      const minute = Number(mStr);
+      const suffix = hour >= 12 ? "pm" : "am";
+      const displayHour = hour % 12 || 12;
+      if (minute === 0) return `${displayHour} ${suffix}`;
+      return `${displayHour}:${pad2(minute)} ${suffix}`;
+    };
+    const startLabel = render(start);
+    const endLabel = render(end);
+    if (!startLabel) return "";
+    return endLabel ? `${startLabel} to ${endLabel}` : startLabel;
+  }
+
+  function sanitizeLinkedCodes(value) {
+    return [...new Set(String(value || "")
+      .split(/[,\s]+/)
+      .map((code) => code.trim().toUpperCase())
+      .filter(Boolean))];
+  }
+
+  function sanitizeScheduleCategories(values) {
+    const allowed = new Set(SCHEDULE_CATEGORY_OPTIONS.map((option) => option.key));
+    return [...new Set((Array.isArray(values) ? values : [values])
+      .flatMap((value) => Array.isArray(value) ? value : [value])
+      .map((value) => String(value || "").trim())
+      .filter((value) => allowed.has(value)))];
+  }
+
+  function normalizeCustomScheduleItems(items) {
+    const dayMap = Object.fromEntries(baseScheduleData.days.map((day) => [day.date, day]));
+    return (items || []).map((item) => {
+      const day = dayMap[item.date];
+      if (!day) return null;
+      const id = item.id || `custom-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+      const start = /^\d{2}:\d{2}$/.test(item.start || "") ? item.start : "";
+      const end = /^\d{2}:\d{2}$/.test(item.end || "") ? item.end : "";
+      const linkedCodes = sanitizeLinkedCodes(item.linkedCodes);
+      const categories = sanitizeScheduleCategories(item.categories);
+      return {
+        id,
+        seriesId: id,
+        date: day.date,
+        dayKey: day.key,
+        dayLabel: day.label,
+        title: String(item.title || "").trim(),
+        kind: "event",
+        kindLabel: "Event",
+        linkedCodes,
+        timeLabel: friendlyTimeLabel(start, end) || "Custom time",
+        description: String(item.description || "").trim(),
+        sourceLabel: "Personal",
+        sortStart: start ? Number(start.slice(0, 2)) * 60 + Number(start.slice(3, 5)) : null,
+        sortEnd: end ? Number(end.slice(0, 2)) * 60 + Number(end.slice(3, 5)) : null,
+        categories,
+        isCustom: true,
+      };
+    }).filter((item) => item && item.title);
+  }
+
+  function buildRuntimeScheduleData(staticData, customRaw) {
+    const entries = [
+      ...(staticData.entries || []).map((item) => ({
+        ...item,
+        linkedCodes: [...(item.linkedCodes || [])],
+        categories: [...(item.categories || [])],
+      })),
+      ...normalizeCustomScheduleItems(customRaw),
+    ];
+
+    entries.sort((a, b) =>
+      a.date.localeCompare(b.date)
+      || ((a.sortStart ?? 0) - (b.sortStart ?? 0))
+      || a.kind.localeCompare(b.kind)
+      || a.title.localeCompare(b.title)
+    );
+
+    const byDate = Object.fromEntries((staticData.days || []).map((day) => [day.date, []]));
+    const byLinkedCode = {};
+    const series = [
+      ...(staticData.series || []).map((item) => ({
+        ...item,
+        linkedCodes: [...(item.linkedCodes || [])],
+        categories: [...(item.categories || [])],
+      })),
+      ...entries.filter((item) => item.isCustom).map((item) => ({
+        id: item.seriesId,
+        title: item.title,
+        kind: item.kind,
+        kindLabel: item.kindLabel,
+        linkedCodes: [...item.linkedCodes],
+        timeLabel: item.timeLabel,
+        summaryLabel: `${item.dayLabel} · ${item.timeLabel} · ${item.title}`,
+        description: item.description,
+        sourceLabel: item.sourceLabel,
+        sortStart: item.sortStart,
+        sortEnd: item.sortEnd,
+        categories: [...item.categories],
+        isCustom: true,
+      })),
+    ];
+    const seriesById = Object.fromEntries(series.map((item) => [item.id, item]));
+    const seriesByLinkedCode = {};
+
+    for (const item of entries) {
+      (byDate[item.date] ||= []).push(item);
+      for (const code of item.linkedCodes || []) {
+        (byLinkedCode[code] ||= []).push(item);
+      }
+    }
+    for (const item of series) {
+      for (const code of item.linkedCodes || []) {
+        (seriesByLinkedCode[code] ||= []).push(item);
+      }
+    }
+
+    for (const code of Object.keys(byLinkedCode)) {
+      byLinkedCode[code].sort((a, b) =>
+        a.date.localeCompare(b.date)
+        || ((a.sortStart ?? 0) - (b.sortStart ?? 0))
+        || a.title.localeCompare(b.title)
+      );
+    }
+    for (const code of Object.keys(seriesByLinkedCode)) {
+      seriesByLinkedCode[code].sort((a, b) =>
+        (a.sortStart ?? 0) - (b.sortStart ?? 0)
+        || a.title.localeCompare(b.title)
+      );
+    }
+
+    return {
+      days: staticData.days || [],
+      entries,
+      byDate,
+      byLinkedCode,
+      series,
+      seriesById,
+      seriesByLinkedCode,
+    };
+  }
+
+  let starredScheduleIds = new Set(safeReadStorageJson(SCHEDULE_STAR_STORAGE_KEY, []));
+  let customScheduleItems = safeReadStorageJson(SCHEDULE_CUSTOM_STORAGE_KEY, []);
+  scheduleData = buildRuntimeScheduleData(baseScheduleData, customScheduleItems);
+
+  function persistStarredScheduleIds() {
+    safeWriteStorageJson(SCHEDULE_STAR_STORAGE_KEY, [...starredScheduleIds]);
+  }
+
+  function persistCustomScheduleItems() {
+    safeWriteStorageJson(SCHEDULE_CUSTOM_STORAGE_KEY, customScheduleItems);
+  }
+
+  function isScheduleItemStarred(itemId) {
+    return starredScheduleIds.has(itemId);
+  }
+
+  function toggleScheduleStar(itemId) {
+    if (starredScheduleIds.has(itemId)) starredScheduleIds.delete(itemId);
+    else starredScheduleIds.add(itemId);
+    persistStarredScheduleIds();
+    renderSchedule();
+    syncUiHistory();
+  }
+
+  function refreshScheduleData() {
+    scheduleData = buildRuntimeScheduleData(baseScheduleData, customScheduleItems);
+    if (!scheduleData.byDate?.[activeScheduleDate]) {
+      activeScheduleDate = scheduleData.days[0]?.date || null;
+    }
+    if (activeScheduleEventId && !scheduleOccurrenceById(activeScheduleEventId)) {
+      activeScheduleEventId = null;
+    }
+  }
 
   appVersion.textContent = `app ${APP_VERSION} · cache ${APP_CACHE_VERSION}`;
   aboutVersion.textContent = `App version: ${APP_VERSION}`;
@@ -1257,6 +1678,114 @@
   function closeAbout() {
     aboutBackdrop.classList.remove("open");
     aboutBackdrop.setAttribute("aria-hidden", "true");
+  }
+
+  let suppressUiHistory = false;
+
+  function currentQueryHash() {
+    const v = q.value.trim();
+    return v ? "#q=" + encodeURIComponent(v) : "#";
+  }
+
+  function detailStateForHistory() {
+    if (showingUserLocationDetails) {
+      return { type: "user", mode: detailsMode };
+    }
+    if (!activeDetailHighlight) return null;
+    return {
+      type: "entry",
+      code: activeDetailHighlight.dataset.code,
+      name: activeDetailHighlight.dataset.name,
+      section: activeDetailHighlight.dataset.section,
+      mode: detailsMode,
+    };
+  }
+
+  function snapshotUiHistoryState() {
+    return {
+      abMapUi: true,
+      map: {
+        source: currentMap.id,
+        scl,
+        tx,
+        ty,
+      },
+      detail: detailStateForHistory(),
+      schedule: scheduleBackdrop.classList.contains("open") ? {
+        date: activeScheduleDate,
+        eventId: activeScheduleEventId,
+        view: activeScheduleView,
+      } : null,
+    };
+  }
+
+  function syncUiHistory(replace = false) {
+    if (suppressUiHistory) return;
+    const method = replace ? "replaceState" : "pushState";
+    history[method](snapshotUiHistoryState(), "", currentQueryHash());
+  }
+
+  function findHotspotForHistoryDetail(detail) {
+    if (!detail || detail.type !== "entry") return null;
+    return hotspots.find((el) =>
+      el.dataset.code === detail.code &&
+      el.dataset.name === detail.name &&
+      el.dataset.section === detail.section
+    ) || null;
+  }
+
+  function applyHistoryState(state) {
+    suppressUiHistory = true;
+    try {
+      const requestedMap = state?.map?.source === "standard" ? MAP_SOURCES.standard : MAP_SOURCES.highres;
+      if (requestedMap !== currentMap) {
+        currentMap = requestedMap;
+        fHighRes.checked = currentMap.id === "highres";
+        highresRasterIndex = 0;
+        applyMapSourceLayout();
+        positionAllHotspots();
+        updateIndexHotspotsVisibility();
+        clearIndexHighlights();
+      }
+
+      q.value = "";
+      readHash();
+
+      if (
+        Number.isFinite(state?.map?.scl) &&
+        Number.isFinite(state?.map?.tx) &&
+        Number.isFinite(state?.map?.ty)
+      ) {
+        scl = state.map.scl;
+        tx = state.map.tx;
+        ty = state.map.ty;
+        clampPan();
+        apply();
+      } else {
+        resetView();
+      }
+
+      closeSchedule();
+      closeDetails();
+
+      if (state?.schedule) {
+        activeScheduleView = state.schedule.view || "timeline";
+        setScheduleDate(state.schedule.date || defaultScheduleDate());
+        activeScheduleEventId = state.schedule.eventId || null;
+        openSchedule({ date: activeScheduleDate, eventId: activeScheduleEventId });
+      }
+
+      if (state?.detail?.type === "user") {
+        openUserLocationDetails(state.detail.mode || "half");
+      } else if (state?.detail?.type === "entry") {
+        const target = findHotspotForHistoryDetail(state.detail);
+        if (target) {
+          openDetails(target, state.detail.mode || "fit");
+        }
+      }
+    } finally {
+      suppressUiHistory = false;
+    }
   }
 
   function jumpToAboutSearch(query) {
@@ -1664,10 +2193,18 @@
   }
 
   let userTrailLayer = null;
+  let userToiletRouteLayer = null;
+  let userEventRouteLayer = null;
   function applyMapSourceLayout() {
     updateMapRaster();
     mapDiv.style.width = currentMap.viewW + "px";
     mapDiv.style.height = currentMap.viewH + "px";
+    userEventRouteLayer?.setAttribute("viewBox", `0 0 ${currentMap.viewW} ${currentMap.viewH}`);
+    userEventRouteLayer?.setAttribute("width", currentMap.viewW);
+    userEventRouteLayer?.setAttribute("height", currentMap.viewH);
+    userToiletRouteLayer?.setAttribute("viewBox", `0 0 ${currentMap.viewW} ${currentMap.viewH}`);
+    userToiletRouteLayer?.setAttribute("width", currentMap.viewW);
+    userToiletRouteLayer?.setAttribute("height", currentMap.viewH);
     userTrailLayer?.setAttribute("viewBox", `0 0 ${currentMap.viewW} ${currentMap.viewH}`);
     userTrailLayer?.setAttribute("width", currentMap.viewW);
     userTrailLayer?.setAttribute("height", currentMap.viewH);
@@ -1691,6 +2228,16 @@
   const indexHotspots = [];
   const indexHotspotsByEntry = new WeakMap();
   const SVG_NS = "http://www.w3.org/2000/svg";
+  userEventRouteLayer = document.createElementNS(SVG_NS, "svg");
+  userEventRouteLayer.classList.add("user-event-route-layer");
+  userEventRouteLayer.setAttribute("aria-hidden", "true");
+  userEventRouteLayer.setAttribute("overflow", "visible");
+  mapDiv.appendChild(userEventRouteLayer);
+  userToiletRouteLayer = document.createElementNS(SVG_NS, "svg");
+  userToiletRouteLayer.classList.add("user-toilet-route-layer");
+  userToiletRouteLayer.setAttribute("aria-hidden", "true");
+  userToiletRouteLayer.setAttribute("overflow", "visible");
+  mapDiv.appendChild(userToiletRouteLayer);
   userTrailLayer = document.createElementNS(SVG_NS, "svg");
   userTrailLayer.classList.add("user-trail-layer");
   userTrailLayer.setAttribute("aria-hidden", "true");
@@ -1734,9 +2281,15 @@
     });
     // tap to show on touch
     el.addEventListener("click", (ev) => {
+      if (shouldSuppressInteractiveActivation()) {
+        ev.stopPropagation();
+        ev.preventDefault();
+        return;
+      }
       highlightIndexForEntry(e);
       showTip(ev);
       openDetails(el, "half");
+      syncUiHistory();
       ev.stopPropagation();
     });
   }
@@ -1871,14 +2424,14 @@
     highlightIndexForEntry(entry);
     openDetails(targetEl, detailsMode === "full" ? "full" : "fit");
     frameHits([targetEl]);
+    syncUiHistory();
   }
 
   let activeScheduleDate = null;
   let activeScheduleEventId = null;
-  let activeScheduleView = "agenda";
+  let activeScheduleView = "timeline";
   let scheduleShowEvents = true;
   let scheduleShowOpen = true;
-  let scheduleShowBurn = true;
   let scheduleTimelineNeedsMorningAnchor = true;
   let scheduleNowTimer = null;
   let scheduleTimelineZoom = 1;
@@ -1886,17 +2439,7 @@
   const TIMELINE_END_MIN = 24 * 60;
   const SCHEDULE_TIMELINE_ZOOM_MIN = 0.6;
   const SCHEDULE_TIMELINE_ZOOM_MAX = 3.4;
-  const SCHEDULE_CATEGORY_FILTERS = [
-    { key: "Burn", label: "Burn", shortLabel: "Burn" },
-    { key: "Music", label: "Music", shortLabel: "Music" },
-    { key: "Performance", label: "Performance", shortLabel: "Perf" },
-    { key: "Workshop", label: "Workshop", shortLabel: "Work" },
-    { key: "Wellness", label: "Wellness", shortLabel: "Well" },
-    { key: "Food & Drink", label: "Food & Drink", shortLabel: "Food" },
-    { key: "Service", label: "Service", shortLabel: "Serv" },
-    { key: "Movement", label: "Movement", shortLabel: "Move" },
-    { key: "Community", label: "Community", shortLabel: "Comm" },
-  ];
+  const SCHEDULE_CATEGORY_FILTERS = SCHEDULE_CATEGORY_OPTIONS;
   const scheduleCategoryState = Object.fromEntries(SCHEDULE_CATEGORY_FILTERS.map((filter) => [filter.key, true]));
   const BURN_SITE_SUN = {
     lat: -32.518,
@@ -1909,6 +2452,7 @@
   const SOLAR_J1970 = 2440588;
   const SOLAR_J2000 = 2451545;
   const SOLAR_E = SOLAR_RAD * 23.4397;
+  const DEBUG_TIME_SHIFT_MS = 7 * 24 * 60 * 60 * 1000 * 0;
 
   function currentBurnLocalParts() {
     const parts = new Intl.DateTimeFormat("en-CA", {
@@ -1919,7 +2463,7 @@
       hour: "2-digit",
       minute: "2-digit",
       hourCycle: "h23",
-    }).formatToParts(new Date());
+    }).formatToParts(new Date(Date.now() + DEBUG_TIME_SHIFT_MS));
     return Object.fromEntries(parts.filter((part) => part.type !== "literal").map((part) => [part.type, part.value]));
   }
 
@@ -1928,20 +2472,29 @@
     return `${parts.year}-${parts.month}-${parts.day}`;
   }
 
+  function currentBurnNowInfo() {
+    const parts = currentBurnLocalParts();
+    const dateIso = `${parts.year}-${parts.month}-${parts.day}`;
+    const minutes = Number(parts.hour || 0) * 60 + Number(parts.minute || 0);
+    if (!scheduleData.byDate?.[dateIso] || !Number.isFinite(minutes)) return null;
+    return {
+      dateIso,
+      minutes,
+      label: `${parts.hour}:${parts.minute}`,
+    };
+  }
+
   function defaultScheduleDate() {
     const todayIso = currentBurnLocalDateIso();
     return scheduleData.byDate?.[todayIso] ? todayIso : scheduleData.days[0]?.date || null;
   }
 
   function currentScheduleNowInfo() {
-    const parts = currentBurnLocalParts();
-    const todayIso = `${parts.year}-${parts.month}-${parts.day}`;
-    if (activeScheduleDate !== todayIso || !scheduleData.byDate?.[todayIso]) return null;
-    const minutes = Number(parts.hour || 0) * 60 + Number(parts.minute || 0);
-    if (!Number.isFinite(minutes)) return null;
+    const info = currentBurnNowInfo();
+    if (!info || activeScheduleDate !== info.dateIso) return null;
     return {
-      minutes,
-      label: `${parts.hour}:${parts.minute}`,
+      minutes: info.minutes,
+      label: info.label,
     };
   }
 
@@ -2106,13 +2659,33 @@
     return window.matchMedia("(max-width: 700px)").matches ? 2 : 1;
   }
 
+  function estimateScheduleStartMeta(item) {
+    const explicitStart = Number.isFinite(item.sortStart) ? item.sortStart : null;
+    const start = explicitStart ?? 12 * 60;
+    const label = String(item.timeLabel || "").toLowerCase();
+    const description = String(item.description || "").toLowerCase();
+    const combined = `${label} ${description}`;
+    const uncertainStart = (
+      explicitStart == null ||
+      /\bish\b/.test(combined) ||
+      /\bafter dark\b|\bafter sunset\b|\bsunset\b|\bsunrise\b|\bevening\b|\bafternoon\b|\bmorning\b/.test(combined)
+    );
+    return { start, uncertainStart };
+  }
+
   function displayRangeForItem(item) {
-    const start = Number.isFinite(item.sortStart) ? item.sortStart : 12 * 60;
+    const startMeta = estimateScheduleStartMeta(item);
+    const start = startMeta.start;
     const estimated = estimateScheduleEnd(item, start);
     let end = estimated.end;
     const clampedStart = Math.max(TIMELINE_START_MIN, Math.min(TIMELINE_END_MIN - 30, start));
     const clampedEnd = Math.max(clampedStart + 30, Math.min(TIMELINE_END_MIN, end));
-    return { start: clampedStart, end: clampedEnd, openEnded: estimated.openEnded };
+    return {
+      start: clampedStart,
+      end: clampedEnd,
+      openEnded: estimated.openEnded,
+      uncertainStart: startMeta.uncertainStart,
+    };
   }
 
   function estimateScheduleEnd(item, start) {
@@ -2185,6 +2758,7 @@
     activeScheduleEventId = eventId;
     renderSchedule();
     scrollScheduleSelectionIntoView();
+    syncUiHistory();
   }
 
   function anchorScheduleTimelineMorning() {
@@ -2296,6 +2870,7 @@
         setScheduleDate(button.dataset.scheduleDate);
         scheduleTimelineNeedsMorningAnchor = true;
         renderSchedule();
+        syncUiHistory();
       });
     }
   }
@@ -2314,6 +2889,14 @@
 
   function scheduleItemHasBurnCategory(item) {
     return (item.categories || []).includes("Burn");
+  }
+
+  function scheduleItemStartedNow(item) {
+    if (item.kind !== "event") return false;
+    const now = currentBurnNowInfo();
+    if (!now || item.date !== now.dateIso) return false;
+    const range = displayRangeForItem(item);
+    return now.minutes >= range.start && now.minutes <= range.end;
   }
 
   function scheduleItemMatchesCategoryFilters(item) {
@@ -2356,7 +2939,6 @@
     }
     scheduleFilterEvents.checked = scheduleShowEvents;
     scheduleFilterOpen.checked = scheduleShowOpen;
-    scheduleFilterBurn.checked = scheduleShowBurn;
     renderScheduleCategoryFilters();
   }
 
@@ -2367,7 +2949,6 @@
         (item.kind === "open" && scheduleShowOpen)
       );
       if (!kindVisible) return false;
-      if (!scheduleShowBurn && scheduleItemHasBurnCategory(item)) return false;
       if (!scheduleItemMatchesCategoryFilters(item)) return false;
       return true;
     });
@@ -2378,20 +2959,14 @@
     if (noCategories) {
       return "Enable one or more category filters to see schedule entries for this burn day.";
     }
-    if (!scheduleShowEvents && !scheduleShowOpen && !scheduleShowBurn) {
-      return "Enable Events, Open times, or Burn to see schedule entries for this burn day.";
-    }
     if (!scheduleShowEvents && !scheduleShowOpen) {
-      return "Enable Events or Open times to see non-burn schedule entries for this burn day.";
+      return "Enable Events or Open times to see schedule entries for this burn day.";
     }
     if (!scheduleShowEvents) {
       return "No open times have been linked for this burn day yet.";
     }
     if (!scheduleShowOpen) {
       return "No events have been linked for this burn day yet.";
-    }
-    if (!scheduleShowBurn) {
-      return "No non-burn timed events or openings have been linked for this burn day yet.";
     }
     return "No timed events or openings have been linked for this burn day yet.";
   }
@@ -2402,19 +2977,24 @@
       return;
     }
     scheduleContent.innerHTML = items.map((item) => `
-      <article class="schedule-item ${escapeHtml(item.kind)}-kind${scheduleItemHasBurnCategory(item) ? " burn-category" : ""}${item.id === activeScheduleEventId ? " selected" : ""}" data-schedule-id="${escapeHtml(item.id)}">
-        <button type="button" class="schedule-item-summary" data-schedule-toggle="${escapeHtml(item.id)}">
-          <span class="schedule-item-time">${escapeHtml(item.timeLabel)}</span>
-          <span class="schedule-item-main">
-            <span class="schedule-item-title">${escapeHtml(item.title)}</span>
-            <span class="schedule-item-meta">
-              <span class="schedule-kind ${escapeHtml(item.kind)}">${escapeHtml(item.kindLabel)}</span>
-              <span>${escapeHtml(item.dayLabel)}</span>
-              ${item.linkedCodes.map((code) => `<span>${escapeHtml(code)}</span>`).join("")}
-              ${scheduleCategoryHtml(item)}
+      <article class="schedule-item ${escapeHtml(item.kind)}-kind${scheduleItemHasBurnCategory(item) ? " burn-category" : ""}${item.id === activeScheduleEventId ? " selected" : ""}${isScheduleItemStarred(item.id) ? " starred" : ""}${scheduleItemStartedNow(item) ? " started-now" : ""}" data-schedule-id="${escapeHtml(item.id)}">
+        <div class="schedule-item-row">
+          <button type="button" class="schedule-item-summary" data-schedule-toggle="${escapeHtml(item.id)}">
+            <span class="schedule-item-time">${escapeHtml(item.timeLabel)}</span>
+            <span class="schedule-item-main">
+              <span class="schedule-item-title">${escapeHtml(item.title)}</span>
+              <span class="schedule-item-meta">
+                <span class="schedule-kind ${escapeHtml(item.kind)}">${escapeHtml(item.kindLabel)}</span>
+                <span>${escapeHtml(item.dayLabel)}</span>
+                ${scheduleItemStartedNow(item) ? '<span class="schedule-live-chip">Started</span>' : ""}
+                ${item.isCustom ? '<span>Personal</span>' : ""}
+                ${item.linkedCodes.map((code) => `<span>${escapeHtml(code)}</span>`).join("")}
+                ${scheduleCategoryHtml(item)}
+              </span>
             </span>
-          </span>
-        </button>
+          </button>
+          <button type="button" class="schedule-star-btn${isScheduleItemStarred(item.id) ? " active" : ""}" data-schedule-star="${escapeHtml(item.id)}" aria-label="${isScheduleItemStarred(item.id) ? "Unstar event" : "Star event"}" title="${isScheduleItemStarred(item.id) ? "Unstar event" : "Star event"}">★</button>
+        </div>
       </article>
     `).join("");
   }
@@ -2496,9 +3076,13 @@
               const width = Math.max(16, Math.round((record.end - record.start) * pxPerMinute - 2));
               const selected = record.item.id === activeScheduleEventId ? " selected" : "";
               const openEnded = record.openEnded ? " open-ended" : "";
+              const uncertainStart = record.uncertainStart ? " uncertain-start" : "";
               const burnCategory = scheduleItemHasBurnCategory(record.item) ? " burn-category" : "";
+              const starred = isScheduleItemStarred(record.item.id) ? " starred" : "";
+              const startedNow = scheduleItemStartedNow(record.item) ? " started-now" : "";
+              const personal = record.item.isCustom ? " personal" : "";
               return `
-                <button type="button" class="schedule-timeline-card ${escapeHtml(record.item.kind)}-kind${burnCategory}${selected}${openEnded}" data-schedule-toggle="${escapeHtml(record.item.id)}" data-schedule-id="${escapeHtml(record.item.id)}" style="top:${top}px; left:${left}px; width:${width}px; height:${height}px;">
+                <button type="button" class="schedule-timeline-card ${escapeHtml(record.item.kind)}-kind${burnCategory}${selected}${openEnded}${uncertainStart}${starred}${startedNow}${personal}" data-schedule-toggle="${escapeHtml(record.item.id)}" data-schedule-id="${escapeHtml(record.item.id)}" style="top:${top}px; left:${left}px; width:${width}px; height:${height}px;">
                   <div class="schedule-timeline-title">${escapeHtml(record.item.title)}</div>
                 </button>
               `;
@@ -2509,9 +3093,203 @@
     `;
   }
 
+  function customScheduleFormValues(item = null) {
+    return {
+      title: item?.title || "",
+      date: item?.date || activeScheduleDate || defaultScheduleDate() || baseScheduleData.days[0]?.date || "",
+      start: Number.isFinite(item?.sortStart) ? `${pad2(Math.floor(item.sortStart / 60))}:${pad2(item.sortStart % 60)}` : "",
+      end: Number.isFinite(item?.sortEnd) ? `${pad2(Math.floor(item.sortEnd / 60))}:${pad2(item.sortEnd % 60)}` : "",
+      linkedCodes: (item?.linkedCodes || []).join(", "),
+      categories: sanitizeScheduleCategories(item?.categories || []),
+      description: item?.description || "",
+    };
+  }
+
+  function scoreLinkableEntryOption(entry, query) {
+    const qs = String(query || "").trim().toLowerCase();
+    if (!qs) return 0;
+    const code = String(entry.code || "").toLowerCase();
+    const name = String(entry.name || "").toLowerCase();
+    const grid = String(entry.grid || "").toLowerCase();
+    const tags = (detailTagsForMapEntry(entry) || []).map((tag) => String(tag || "").toLowerCase());
+    let score = 0;
+    if (code === qs) score += 500;
+    else if (name === qs) score += 450;
+    else if (grid === qs) score += 420;
+    if (code.startsWith(qs)) score += 260;
+    if (name.startsWith(qs)) score += 220;
+    if (grid.startsWith(qs)) score += 180;
+    if (code.includes(qs)) score += 120;
+    if (name.includes(qs)) score += 100;
+    if (grid.includes(qs)) score += 80;
+    for (const tag of tags) {
+      if (tag === qs) score += 120;
+      else if (tag.startsWith(qs)) score += 70;
+      else if (tag.includes(qs)) score += 35;
+    }
+    return score;
+  }
+
+  function scheduleLinkableEntryOptions(query = "") {
+    const qs = String(query || "").split(",").pop().trim().toLowerCase();
+    const options = data.entries
+      .filter((entry) => entry.code && entry.name)
+      .map((entry) => ({
+        code: entry.code,
+        name: entry.name,
+        grid: entry.grid,
+        section: entry.section,
+      }))
+      .filter((entry, index, arr) =>
+        arr.findIndex((other) => other.code === entry.code && other.name === entry.name) === index
+      );
+    if (!qs) {
+      return options
+        .sort((a, b) => a.code.localeCompare(b.code) || a.name.localeCompare(b.name))
+        .slice(0, 24);
+    }
+    return options
+      .map((entry) => ({ entry, score: scoreLinkableEntryOption(entry, qs) }))
+      .filter((entry) => entry.score > 0)
+      .sort((a, b) => b.score - a.score || a.entry.code.localeCompare(b.entry.code) || a.entry.name.localeCompare(b.entry.name))
+      .slice(0, 24)
+      .map((item) => item.entry);
+  }
+
+  function renderScheduleEditor() {
+    const values = customScheduleFormValues(scheduleEditorState?.item || null);
+    const linkedOptions = scheduleLinkableEntryOptions(values.linkedCodes);
+    const isEditing = Boolean(scheduleEditorState?.item);
+    scheduleDetail.innerHTML = `
+      <div class="schedule-detail-head">
+        <div>
+          <h3 class="schedule-detail-title">${isEditing ? "Edit custom event" : "Add custom event"}</h3>
+          <div class="schedule-detail-meta">
+            <span class="schedule-live-chip">Personal</span>
+          </div>
+        </div>
+      </div>
+      <form class="schedule-editor" id="schedule-editor-form">
+        <div class="schedule-editor-grid">
+          <div class="schedule-editor-field full">
+            <label for="schedule-editor-title">Title</label>
+            <input id="schedule-editor-title" name="title" type="text" value="${escapeHtml(values.title)}" required>
+          </div>
+          <div class="schedule-editor-field">
+            <label for="schedule-editor-date">Day</label>
+            <select id="schedule-editor-date" name="date">
+              ${scheduleData.days.map((day) => `<option value="${escapeHtml(day.date)}"${day.date === values.date ? " selected" : ""}>${escapeHtml(day.longLabel)}</option>`).join("")}
+            </select>
+          </div>
+          <div class="schedule-editor-field">
+            <label for="schedule-editor-linked">Linked code</label>
+            <input id="schedule-editor-linked" name="linkedCodes" type="text" value="${escapeHtml(values.linkedCodes)}" placeholder="e.g. BAD or BAD, XRK">
+            <div class="schedule-editor-picker">
+              <div class="schedule-editor-picker-list" id="schedule-editor-picker-list">
+                ${linkedOptions.length
+                  ? linkedOptions.map((entry) => `
+                    <button type="button" class="schedule-editor-pick" data-schedule-pick-code="${escapeHtml(entry.code)}" title="${escapeHtml(entry.name)}">
+                      <code>${escapeHtml(entry.code)}</code>${escapeHtml(entry.name)}
+                    </button>
+                  `).join("")
+                  : '<div class="schedule-editor-picker-empty">No matches</div>'}
+              </div>
+            </div>
+          </div>
+          <div class="schedule-editor-field">
+            <label for="schedule-editor-start">Start</label>
+            <input id="schedule-editor-start" name="start" type="time" value="${escapeHtml(values.start)}" required>
+          </div>
+          <div class="schedule-editor-field">
+            <label for="schedule-editor-end">End</label>
+            <input id="schedule-editor-end" name="end" type="time" value="${escapeHtml(values.end)}">
+          </div>
+          <div class="schedule-editor-field full">
+            <label>Categories</label>
+            <div class="schedule-editor-categories">
+              ${SCHEDULE_CATEGORY_OPTIONS.map((option) => `
+                <label class="schedule-editor-category">
+                  <input type="checkbox" name="categories" value="${escapeHtml(option.key)}"${values.categories.includes(option.key) ? " checked" : ""}>
+                  <span>${escapeHtml(option.label)}</span>
+                </label>
+              `).join("")}
+            </div>
+          </div>
+          <div class="schedule-editor-field full">
+            <label for="schedule-editor-description">Notes</label>
+            <textarea id="schedule-editor-description" name="description" placeholder="Optional notes or event details">${escapeHtml(values.description)}</textarea>
+          </div>
+        </div>
+        <div class="schedule-editor-actions">
+          <button type="button" class="schedule-detail-btn" data-schedule-editor-cancel>Cancel</button>
+          <button type="submit" class="schedule-detail-btn">${isEditing ? "Save changes" : "Save custom event"}</button>
+        </div>
+      </form>
+    `;
+    const form = document.getElementById("schedule-editor-form");
+    const linkedInput = document.getElementById("schedule-editor-linked");
+    const pickerList = document.getElementById("schedule-editor-picker-list");
+
+    function renderLinkedCodePicker() {
+      if (!linkedInput || !pickerList) return;
+      const options = scheduleLinkableEntryOptions(linkedInput.value);
+      pickerList.innerHTML = options.length
+        ? options.map((entry) => `
+          <button type="button" class="schedule-editor-pick" data-schedule-pick-code="${escapeHtml(entry.code)}" title="${escapeHtml(entry.name)}">
+            <code>${escapeHtml(entry.code)}</code>${escapeHtml(entry.name)}
+          </button>
+        `).join("")
+        : '<div class="schedule-editor-picker-empty">No matches</div>';
+      for (const button of pickerList.querySelectorAll("[data-schedule-pick-code]")) {
+        button.addEventListener("click", () => {
+          const pickedCode = button.dataset.schedulePickCode || "";
+          const codes = sanitizeLinkedCodes(linkedInput.value);
+          if (!codes.includes(pickedCode)) codes.push(pickedCode);
+          linkedInput.value = codes.join(", ");
+          renderLinkedCodePicker();
+          linkedInput.focus();
+        });
+      }
+    }
+
+      linkedInput?.addEventListener("input", renderLinkedCodePicker);
+    renderLinkedCodePicker();
+
+    form?.addEventListener("submit", (ev) => {
+      ev.preventDefault();
+      const fd = new FormData(form);
+      const title = String(fd.get("title") || "").trim();
+      const date = String(fd.get("date") || "");
+      const start = String(fd.get("start") || "");
+      const end = String(fd.get("end") || "");
+      const description = String(fd.get("description") || "").trim();
+      const linkedCodes = sanitizeLinkedCodes(fd.get("linkedCodes") || "");
+      const categories = sanitizeScheduleCategories(fd.getAll("categories"));
+      if (!title || !date || !start) return;
+      const id = scheduleEditorState?.item?.id || `custom-${Date.now()}`;
+      customScheduleItems = customScheduleItems.filter((item) => item.id !== id);
+      customScheduleItems.push({ id, title, date, start, end, description, linkedCodes, categories });
+      persistCustomScheduleItems();
+      refreshScheduleData();
+      scheduleEditorState = null;
+      activeScheduleEventId = id;
+      setScheduleDate(date);
+      renderSchedule();
+      syncUiHistory();
+    });
+    scheduleDetail.querySelector("[data-schedule-editor-cancel]")?.addEventListener("click", () => {
+      scheduleEditorState = null;
+      renderScheduleDetail(activeScheduleItem());
+    });
+  }
+
   function renderScheduleDetail(item) {
+    if (scheduleEditorState) {
+      renderScheduleEditor();
+      return;
+    }
     if (!item) {
-      scheduleDetail.innerHTML = '<div class="schedule-detail-empty">Select an event or opening to see the full description and jump back to the map.</div>';
+      scheduleDetail.innerHTML = '<div class="schedule-detail-empty">Select an event or opening to see the full description and jump back to the map, or add your own custom event.</div>';
       return;
     }
     scheduleDetail.innerHTML = `
@@ -2522,9 +3300,15 @@
             <span class="schedule-kind ${escapeHtml(item.kind)}">${escapeHtml(item.kindLabel)}</span>
             <span>${escapeHtml(item.dayLabel)}</span>
             <span>${escapeHtml(item.timeLabel)}</span>
+            ${scheduleItemStartedNow(item) ? '<span class="schedule-live-chip">Started</span>' : ""}
+            ${item.isCustom ? '<span>Personal</span>' : ""}
             ${item.linkedCodes.map((code) => `<span>${escapeHtml(code)}</span>`).join("")}
             ${scheduleCategoryHtml(item)}
           </div>
+        </div>
+        <div class="schedule-detail-actions">
+          <button type="button" class="schedule-detail-btn star${isScheduleItemStarred(item.id) ? " active" : ""}" data-schedule-star="${escapeHtml(item.id)}">${isScheduleItemStarred(item.id) ? "★ Starred" : "☆ Star"}</button>
+          ${item.isCustom ? '<button type="button" class="schedule-detail-btn" data-schedule-edit>Edit</button><button type="button" class="schedule-detail-btn danger" data-schedule-delete>Delete</button>' : ""}
         </div>
       </div>
       <p class="schedule-detail-description">${escapeHtml(item.description)}</p>
@@ -2538,12 +3322,35 @@
         jumpToScheduleEntry(button.dataset.scheduleCode);
       });
     }
+    scheduleDetail.querySelector("[data-schedule-star]")?.addEventListener("click", () => {
+      toggleScheduleStar(item.id);
+    });
+    scheduleDetail.querySelector("[data-schedule-edit]")?.addEventListener("click", () => {
+      scheduleEditorState = { item };
+      renderScheduleDetail(item);
+    });
+    scheduleDetail.querySelector("[data-schedule-delete]")?.addEventListener("click", () => {
+      customScheduleItems = customScheduleItems.filter((entry) => entry.id !== item.id);
+      persistCustomScheduleItems();
+      starredScheduleIds.delete(item.id);
+      persistStarredScheduleIds();
+      refreshScheduleData();
+      activeScheduleEventId = null;
+      renderSchedule();
+      syncUiHistory();
+    });
   }
 
   function attachScheduleSelectionHandlers() {
     for (const button of scheduleContent.querySelectorAll("[data-schedule-toggle]")) {
       button.addEventListener("click", () => {
         selectScheduleEvent(button.dataset.scheduleToggle);
+      });
+    }
+    for (const button of scheduleContent.querySelectorAll("[data-schedule-star]")) {
+      button.addEventListener("click", (ev) => {
+        ev.stopPropagation();
+        toggleScheduleStar(button.dataset.scheduleStar);
       });
     }
   }
@@ -2571,11 +3378,28 @@
   }
 
   scheduleBtn.addEventListener("click", () => {
+    scheduleEditorState = null;
     openSchedule({ date: activeScheduleDate || defaultScheduleDate() });
+    syncUiHistory();
   });
-  scheduleClose.addEventListener("click", closeSchedule);
+  scheduleAdd?.addEventListener("click", () => {
+    scheduleEditorState = { item: null };
+    if (!scheduleBackdrop.classList.contains("open")) {
+      openSchedule({ date: activeScheduleDate || defaultScheduleDate() });
+    } else {
+      renderScheduleDetail(null);
+    }
+    syncUiHistory();
+  });
+  scheduleClose.addEventListener("click", () => {
+    closeSchedule();
+    syncUiHistory();
+  });
   scheduleBackdrop.addEventListener("click", (ev) => {
-    if (ev.target === scheduleBackdrop) closeSchedule();
+    if (ev.target === scheduleBackdrop) {
+      closeSchedule();
+      syncUiHistory();
+    }
   });
   schedulePrev.addEventListener("click", () => {
     const currentIndex = scheduleData.days.findIndex((day) => day.date === (activeScheduleDate || defaultScheduleDate()));
@@ -2584,6 +3408,7 @@
     setScheduleDate(scheduleData.days[nextIndex]?.date);
     scheduleTimelineNeedsMorningAnchor = true;
     renderSchedule();
+    syncUiHistory();
   });
   scheduleNext.addEventListener("click", () => {
     const currentIndex = scheduleData.days.findIndex((day) => day.date === (activeScheduleDate || defaultScheduleDate()));
@@ -2592,12 +3417,14 @@
     setScheduleDate(scheduleData.days[nextIndex]?.date);
     scheduleTimelineNeedsMorningAnchor = true;
     renderSchedule();
+    syncUiHistory();
   });
   scheduleToday.addEventListener("click", () => {
     activeScheduleEventId = null;
     setScheduleDate(defaultScheduleDate());
     scheduleTimelineNeedsMorningAnchor = true;
     renderSchedule();
+    syncUiHistory();
   });
   for (const button of scheduleViewToggle.querySelectorAll("[data-schedule-view]")) {
     button.addEventListener("click", () => {
@@ -2605,6 +3432,7 @@
       if (activeScheduleView === "timeline") scheduleTimelineNeedsMorningAnchor = true;
       renderSchedule();
       scrollScheduleSelectionIntoView();
+      syncUiHistory();
     });
   }
   scheduleFilterEvents.addEventListener("change", () => {
@@ -2614,11 +3442,6 @@
   });
   scheduleFilterOpen.addEventListener("change", () => {
     scheduleShowOpen = scheduleFilterOpen.checked;
-    renderSchedule();
-    scrollScheduleSelectionIntoView();
-  });
-  scheduleFilterBurn.addEventListener("change", () => {
-    scheduleShowBurn = scheduleFilterBurn.checked;
     renderSchedule();
     scrollScheduleSelectionIntoView();
   });
@@ -2735,9 +3558,15 @@
           });
           el.addEventListener("click", (ev) => {
             if (el.dataset.mapSource !== currentMap.id) return;
+            if (shouldSuppressInteractiveActivation()) {
+              ev.stopPropagation();
+              ev.preventDefault();
+              return;
+            }
             refreshHighlights([target]);
             showTip(ev);
             openDetails(target, "half");
+            syncUiHistory();
             ev.stopPropagation();
           });
           mapDiv.appendChild(el);
@@ -2852,6 +3681,17 @@
     return target instanceof Element && Boolean(target.closest(".hotspot, .index-hotspot, .user-pin"));
   }
 
+  const INTERACTION_DRAG_THRESHOLD_PX = 8;
+  let suppressInteractiveActivationUntil = 0;
+
+  function suppressInteractiveActivation(ms = 400) {
+    suppressInteractiveActivationUntil = Date.now() + ms;
+  }
+
+  function shouldSuppressInteractiveActivation() {
+    return Date.now() < suppressInteractiveActivationUntil;
+  }
+
   // Wheel zoom
   viewport.addEventListener("wheel", (ev) => {
     ev.preventDefault();
@@ -2878,36 +3718,53 @@
   });
 
   // Drag-to-pan (mouse)
-  let dragging = false, dragStart = null;
+  let dragging = false, dragStart = null, dragMoved = false, dragStartedOnInteractive = false;
   viewport.addEventListener("mousedown", (ev) => {
-    // don't pan when clicking a hotspot (let it handle click)
-    if (isMapInteractiveTarget(ev.target)) return;
     cancelInitialGpsFrame();
     dragging = true;
+    dragMoved = false;
+    dragStartedOnInteractive = isMapInteractiveTarget(ev.target);
     dragStart = { x: ev.clientX - tx, y: ev.clientY - ty };
     viewport.classList.add("dragging");
     ev.preventDefault();
   });
   window.addEventListener("mousemove", (ev) => {
     if (!dragging) return;
+    const movedPx = Math.hypot(ev.clientX - (dragStart.x + tx), ev.clientY - (dragStart.y + ty));
+    if (!dragMoved && movedPx >= INTERACTION_DRAG_THRESHOLD_PX) {
+      dragMoved = true;
+    }
+    if (!dragMoved) return;
     tx = ev.clientX - dragStart.x;
     ty = ev.clientY - dragStart.y;
     clampPan();
     apply();
   });
   window.addEventListener("mouseup", () => {
+    if (dragging && dragMoved && dragStartedOnInteractive) {
+      suppressInteractiveActivation();
+    }
     dragging = false;
+    dragMoved = false;
+    dragStartedOnInteractive = false;
     viewport.classList.remove("dragging");
   });
 
   // Touch: 1 finger pan, 2 fingers pinch
   let touchState = null;
   viewport.addEventListener("touchstart", (ev) => {
-    if (ev.targetTouches.length === 1 && isMapInteractiveTarget(ev.target)) return;
     if (ev.touches.length >= 1) cancelInitialGpsFrame();
     if (ev.touches.length === 1) {
       const t = ev.touches[0];
-      touchState = { mode: "pan", x: t.clientX - tx, y: t.clientY - ty };
+      touchState = {
+        mode: "pan",
+        x: t.clientX - tx,
+        y: t.clientY - ty,
+        startX: t.clientX,
+        startY: t.clientY,
+        moved: false,
+        startedOnInteractive: isMapInteractiveTarget(ev.target),
+      };
     } else if (ev.touches.length === 2) {
       const [a, b] = ev.touches;
       const mx = (a.clientX + b.clientX) / 2, my = (a.clientY + b.clientY) / 2;
@@ -2919,6 +3776,11 @@
     if (!touchState) return;
     if (touchState.mode === "pan" && ev.touches.length === 1) {
       const t = ev.touches[0];
+      const movedPx = Math.hypot(t.clientX - touchState.startX, t.clientY - touchState.startY);
+      if (!touchState.moved && movedPx >= INTERACTION_DRAG_THRESHOLD_PX) {
+        touchState.moved = true;
+      }
+      if (!touchState.moved) return;
       tx = t.clientX - touchState.x;
       ty = t.clientY - touchState.y;
       clampPan(); apply();
@@ -2939,7 +3801,12 @@
       ev.preventDefault();
     }
   }, { passive: false });
-  viewport.addEventListener("touchend", () => { touchState = null; });
+  viewport.addEventListener("touchend", () => {
+    if (touchState?.mode === "pan" && touchState.moved && touchState.startedOnInteractive) {
+      suppressInteractiveActivation();
+    }
+    touchState = null;
+  });
 
   // Double-click / double-tap zooms in
   viewport.addEventListener("dblclick", (ev) => {
@@ -3010,6 +3877,46 @@
       <section class="detail-section">
         <div class="detail-label">Schedule</div>
         <div class="detail-schedule-links">${buttons}</div>
+      </section>
+    `;
+  }
+  function detailToiletRouteSection(point) {
+    const routes = showToiletRoutes && point ? nearbyToiletRoutesForPoint(point) : [];
+    const buttonLabel = showToiletRoutes ? "Hide toilet routes" : "Find a toilet";
+    const summary = routes.length
+      ? routes.map((route) => `${route.entry.grid} ${route.entry.name}`).join(" · ")
+      : "Draw thin guide lines to a few nearby toilets in different directions.";
+    return `
+      <section class="detail-section">
+        <div class="detail-label">Nearby toilets</div>
+        <div class="detail-schedule-links">
+          <button type="button" class="detail-schedule-link" data-find-toilet-toggle="1">${escapeHtml(buttonLabel)}</button>
+        </div>
+        <p class="detail-text">${escapeHtml(summary)}</p>
+      </section>
+    `;
+  }
+  function detailEventRouteSection(point) {
+    const routes = showEventRoutes && point ? nearbyCurrentEventRoutesForPoint(point) : [];
+    const buttonLabel = showEventRoutes ? "Hide event routes" : "Close event";
+    const links = routes.length
+      ? `
+        <div class="detail-schedule-links">
+          ${routes.map((route) => `
+            <button type="button" class="detail-schedule-link" data-event-route-code="${escapeHtml(route.entry.code)}">
+              ${escapeHtml(`${route.entry.code} ${route.item?.title || route.entry.name}`)}
+            </button>
+          `).join("")}
+        </div>
+      `
+      : `<p class="detail-text">Draw thin green guide lines to a few nearby events happening now.</p>`;
+    return `
+      <section class="detail-section">
+        <div class="detail-label">Nearby current events</div>
+        <div class="detail-schedule-links">
+          <button type="button" class="detail-schedule-link" data-find-event-toggle="1">${escapeHtml(buttonLabel)}</button>
+        </div>
+        ${links}
       </section>
     `;
   }
@@ -3099,6 +4006,7 @@
   }
   function closeDetails() {
     activeDetailHighlight = null;
+    showingUserLocationDetails = false;
     detailsPanel.classList.remove("open", "full", "minimized", "dragging");
     detailsPanel.setAttribute("aria-hidden", "true");
     detailsMode = "fit";
@@ -3107,8 +4015,12 @@
   }
   function openUserLocationDetails(mode = "half") {
     activeDetailHighlight = null;
-    const point = latestGeoFix ? logicalPointFromGeo(latestGeoFix.lat, latestGeoFix.lon) : null;
-    const accuracy = Number.isFinite(latestGeoFix?.accuracy) ? `${Math.round(latestGeoFix.accuracy)} m` : "";
+    showingUserLocationDetails = true;
+    const point = currentUserLogicalPoint();
+    const debugActive = Boolean(debugUserLogicalPoint);
+    const accuracy = debugActive
+      ? "debug map click"
+      : Number.isFinite(latestGeoFix?.accuracy) ? `${Math.round(latestGeoFix.accuracy)} m` : "";
     const heading = Number.isFinite(latestHeading) ? `${Math.round(latestHeading)}°` : "";
     const mapCoords = point ? `"x": ${fmtCoord(point.x)}, "y": ${fmtCoord(point.y)}` : "";
     detailsKicker.innerHTML = `
@@ -3121,14 +4033,49 @@
     const tagHtml = `
       <span class="detail-tag">gps</span>
       <span class="detail-tag">location</span>
+      ${debugActive ? '<span class="detail-tag">debug</span>' : ""}
     `;
     detailsBody.innerHTML = `
-      ${detailSection("Position", "This marker shows your current estimated GPS position on the map. The fading trail shows your recent movement. Orientation / heading is only as accurate as the phone, and may be off if the compass is not well calibrated.")}
+      ${detailSection("Position", debugActive
+        ? "This marker is currently using the local debug map-click override instead of real GPS. Click somewhere else on the map to move it again. The fading trail shows your recent debug movement. Orientation / heading is only as accurate as the phone, and may be off if the compass is not well calibrated."
+        : "This marker shows your current estimated GPS position on the map. The fading trail shows your recent movement. Orientation / heading is only as accurate as the phone, and may be off if the compass is not well calibrated.")}
       ${detailSection("Accuracy", accuracy)}
       ${detailSection("Heading", heading)}
       ${detailSection("Map coordinates", mapCoords, "detail-extra")}
+      ${detailTrailControlSection()}
+      ${detailToiletRouteSection(point)}
+      ${detailEventRouteSection(point)}
       ${detailTagsSection(tagHtml)}
     `;
+    const trailDurationInput = detailsBody.querySelector("#trail-duration");
+    const trailDurationValue = detailsBody.querySelector("#trail-duration-value");
+    trailDurationInput?.addEventListener("input", () => {
+      setUserTrailSliderValue(trailDurationInput.value);
+      if (trailDurationValue) trailDurationValue.textContent = formatTrailLifetime(currentTrailLifetimeMs());
+    });
+    for (const button of detailsBody.querySelectorAll("[data-find-toilet-toggle]")) {
+      button.addEventListener("click", () => {
+        showToiletRoutes = !showToiletRoutes;
+        updateToiletRouteDisplay(currentUserLogicalPoint());
+        openUserLocationDetails(detailsMode === "full" ? "full" : "half");
+        syncUiHistory();
+      });
+    }
+    for (const button of detailsBody.querySelectorAll("[data-find-event-toggle]")) {
+      button.addEventListener("click", () => {
+        showEventRoutes = !showEventRoutes;
+        updateEventRouteDisplay(currentUserLogicalPoint());
+        openUserLocationDetails(detailsMode === "full" ? "full" : "half");
+        syncUiHistory();
+      });
+    }
+    for (const button of detailsBody.querySelectorAll("[data-event-route-code]")) {
+      button.addEventListener("click", () => {
+        const entry = mapEntryForCode(button.dataset.eventRouteCode);
+        if (!entry) return;
+        jumpToLinkedEntry(entry);
+      });
+    }
     setDetailsMode(mode);
     detailsPanel.classList.add("open");
     detailsPanel.setAttribute("aria-hidden", "false");
@@ -3137,6 +4084,7 @@
   }
   function openDetails(el, mode = "half") {
     activeDetailHighlight = el;
+    showingUserLocationDetails = false;
     const detail = detailFor(el);
     const mapEntry = entryByHotspotEl.get(el);
     const code = el.dataset.code;
@@ -3215,8 +4163,7 @@
       button.addEventListener("click", () => {
         q.value = button.dataset.searchTag || "";
         applyFilter();
-        const v = q.value.trim();
-        history.replaceState(null, "", v ? "#q=" + encodeURIComponent(v) : "#");
+        syncUiHistory(true);
       });
     }
     for (const button of detailsBody.querySelectorAll(".detail-schedule-link[data-schedule-series]")) {
@@ -3226,6 +4173,7 @@
         const date = chooseScheduleDateForSeries(seriesItem);
         const firstOccurrence = (scheduleData.byDate?.[date] || []).find((item) => item.seriesId === seriesItem.id);
         openSchedule({ date, eventId: firstOccurrence?.id || null });
+        syncUiHistory();
       });
     }
     setDetailsMode(mode);
@@ -3244,19 +4192,30 @@
     ev.stopPropagation();
   }, { passive: true });
   userPin.addEventListener("click", (ev) => {
+    if (shouldSuppressInteractiveActivation()) {
+      ev.stopPropagation();
+      ev.preventDefault();
+      return;
+    }
     ev.stopPropagation();
     openUserLocationDetails("half");
+    syncUiHistory();
   });
   userPin.addEventListener("keydown", (ev) => {
     if (ev.key !== "Enter" && ev.key !== " ") return;
     ev.preventDefault();
     ev.stopPropagation();
     openUserLocationDetails("half");
+    syncUiHistory();
   });
   detailsSize.addEventListener("click", () => {
     setDetailsMode(detailsMode === "full" ? "fit" : "full");
+    syncUiHistory();
   });
-  detailsClose.addEventListener("click", closeDetails);
+  detailsClose.addEventListener("click", () => {
+    closeDetails();
+    syncUiHistory();
+  });
   detailsGrip.addEventListener("pointerdown", (ev) => {
     if (!isMobileDetails() || !detailsPanel.classList.contains("open")) return;
     detailsDrag = {
@@ -3302,6 +4261,7 @@
       hideTip();
       clearIndexHighlights();
       closeDetails();
+      syncUiHistory();
     }
   });
 
@@ -3315,6 +4275,7 @@
   const fHighRes = document.getElementById("f_highres");
   const fLocate = document.getElementById("f_locate");
   const q      = document.getElementById("q");
+  const DEBUG_MAP_CLICK_SETS_LOCATION = false;
   const INITIAL_GPS_FRAME_ACCURACY_M = 10;
   const GEOLOCATION_OPTIONS = {
     enableHighAccuracy: true,
@@ -3328,11 +4289,87 @@
   let orientationPermissionBlocked = false;
   let initialGpsFrameDone = false;
   let allowInitialGpsFrame = true;
-  const USER_TRAIL_LIFETIME_MS = 45000;
+  let debugUserLogicalPoint = null;
+  let showingUserLocationDetails = false;
+  let showToiletRoutes = false;
+  let showEventRoutes = false;
+  const USER_TRAIL_SLIDER_MIN = 0;
+  const USER_TRAIL_SLIDER_MAX = 100;
+  const USER_TRAIL_MIN_SECONDS = 3;
+  const USER_TRAIL_MAX_SECONDS = 5 * 60 * 60;
   const USER_TRAIL_MIN_DISTANCE = 6;
   const USER_TRAIL_MAX_POINTS = 72;
   let userTrailPoints = [];
   let lastTrailFixTimestamp = null;
+  let userTrailSliderValue = (() => {
+    const raw = Number(localStorage.getItem(USER_TRAIL_SETTING_STORAGE_KEY));
+    if (!Number.isFinite(raw)) return 58;
+    return Math.max(USER_TRAIL_SLIDER_MIN, Math.min(USER_TRAIL_SLIDER_MAX, Math.round(raw)));
+  })();
+
+  function trailLifetimeMsFromSlider(value) {
+    const slider = Math.max(USER_TRAIL_SLIDER_MIN, Math.min(USER_TRAIL_SLIDER_MAX, Number(value) || 0));
+    if (slider <= 0) return 0;
+    const t = (slider - 1) / (USER_TRAIL_SLIDER_MAX - 1);
+    const seconds = USER_TRAIL_MIN_SECONDS * Math.pow(USER_TRAIL_MAX_SECONDS / USER_TRAIL_MIN_SECONDS, t);
+    return Math.round(seconds * 1000);
+  }
+
+  function trailSliderFromLifetimeMs(ms) {
+    const lifetime = Math.max(0, Number(ms) || 0);
+    if (lifetime <= 0) return 0;
+    const seconds = lifetime / 1000;
+    const t = Math.log(seconds / USER_TRAIL_MIN_SECONDS) / Math.log(USER_TRAIL_MAX_SECONDS / USER_TRAIL_MIN_SECONDS);
+    return Math.max(1, Math.min(USER_TRAIL_SLIDER_MAX, Math.round(1 + t * (USER_TRAIL_SLIDER_MAX - 1))));
+  }
+
+  function currentTrailLifetimeMs() {
+    return trailLifetimeMsFromSlider(userTrailSliderValue);
+  }
+
+  function formatTrailLifetime(ms) {
+    const totalMs = Math.max(0, Number(ms) || 0);
+    if (!totalMs) return "Off";
+    const totalSeconds = Math.round(totalMs / 1000);
+    if (totalSeconds < 60) return `${totalSeconds}s`;
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    if (minutes < 60) return seconds ? `${minutes}m ${seconds}s` : `${minutes}m`;
+    const hours = Math.floor(minutes / 60);
+    const remMinutes = minutes % 60;
+    return remMinutes ? `${hours}h ${remMinutes}m` : `${hours}h`;
+  }
+
+  function persistUserTrailSetting() {
+    localStorage.setItem(USER_TRAIL_SETTING_STORAGE_KEY, String(userTrailSliderValue));
+  }
+
+  function setUserTrailSliderValue(value) {
+    userTrailSliderValue = Math.max(USER_TRAIL_SLIDER_MIN, Math.min(USER_TRAIL_SLIDER_MAX, Math.round(Number(value) || 0)));
+    persistUserTrailSetting();
+    if (!currentTrailLifetimeMs()) {
+      clearUserTrail();
+    } else {
+      pruneUserTrail(Date.now());
+      updateUserTrailDisplay(currentUserLogicalPoint(), Date.now());
+    }
+  }
+
+  function detailTrailControlSection() {
+    const lifetimeMs = currentTrailLifetimeMs();
+    return `
+      <section class="detail-section detail-extra">
+        <div class="detail-label">Trail duration</div>
+        <div class="detail-control">
+          <div class="detail-text">Controls how much recent movement is shown behind your location marker.</div>
+          <label class="detail-control-row" for="trail-duration">
+            <input id="trail-duration" type="range" min="${USER_TRAIL_SLIDER_MIN}" max="${USER_TRAIL_SLIDER_MAX}" step="1" value="${userTrailSliderValue}">
+            <span class="detail-control-value" id="trail-duration-value">${formatTrailLifetime(lifetimeMs)}</span>
+          </label>
+        </div>
+      </section>
+    `;
+  }
 
   function cancelInitialGpsFrame() {
     allowInitialGpsFrame = false;
@@ -3480,14 +4517,190 @@
   }
 
   function currentUserLogicalPoint() {
-    if (!fLocate.checked || !latestGeoFix) return null;
-    const logicalPoint = logicalPointFromGeo(latestGeoFix.lat, latestGeoFix.lon);
+    if (!fLocate.checked) return null;
+    const logicalPoint = debugUserLogicalPoint || (latestGeoFix ? logicalPointFromGeo(latestGeoFix.lat, latestGeoFix.lon) : null);
     if (!logicalPoint) return null;
     if (
       logicalPoint.x < 0 || logicalPoint.x > NAT_W ||
       logicalPoint.y < 0 || logicalPoint.y > NAT_H
     ) return null;
     return logicalPoint;
+  }
+
+  function angleSeparationDegrees(a, b) {
+    const delta = Math.abs(a - b) % (Math.PI * 2);
+    const wrapped = delta > Math.PI ? (Math.PI * 2) - delta : delta;
+    return wrapped * 180 / Math.PI;
+  }
+
+  function nearbyToiletRoutesForPoint(point) {
+    if (!point) return [];
+    const toilets = entriesBySection.toilet || [];
+    const candidates = toilets.map((entry) => {
+      const cx = Number(entry.x) + Number(entry.w || 0) / 2;
+      const cy = Number(entry.y) + Number(entry.h || 0) / 2;
+      const dx = cx - point.x;
+      const dy = cy - point.y;
+      return {
+        entry,
+        x: cx,
+        y: cy,
+        dx,
+        dy,
+        distance: Math.hypot(dx, dy),
+        angle: Math.atan2(dy, dx),
+      };
+    }).filter((candidate) => Number.isFinite(candidate.distance))
+      .sort((a, b) => a.distance - b.distance);
+    if (!candidates.length) return [];
+    const desiredCount = Math.min(4, candidates.length);
+    const pool = candidates.slice(0, 18);
+    const selected = [];
+    for (const candidate of pool) {
+      if (!selected.length) {
+        selected.push(candidate);
+        continue;
+      }
+      if (selected.length >= desiredCount) break;
+      const sufficientlyDifferent = selected.every((existing) => angleSeparationDegrees(existing.angle, candidate.angle) >= 26);
+      if (sufficientlyDifferent) selected.push(candidate);
+    }
+    for (const candidate of pool) {
+      if (selected.length >= desiredCount) break;
+      if (!selected.includes(candidate)) selected.push(candidate);
+    }
+    return selected.sort((a, b) => a.distance - b.distance);
+  }
+
+  function activeScheduleItemsNow() {
+    const info = currentBurnNowInfo();
+    if (!info) return [];
+    return (scheduleData.byDate?.[info.dateIso] || []).filter((item) => {
+      if (item.kind !== "event") return false;
+      const range = displayRangeForItem(item);
+      return (
+        (info.minutes >= range.start && info.minutes <= range.end) ||
+        (range.start > info.minutes && range.start <= info.minutes + 15)
+      );
+    });
+  }
+
+  function nearbyCurrentEventRoutesForPoint(point) {
+    if (!point) return [];
+    const seenCodes = new Set();
+    const candidates = [];
+    for (const item of activeScheduleItemsNow()) {
+      for (const code of item.linkedCodes || []) {
+        if (!code || seenCodes.has(code)) continue;
+        const entry = mapEntryForCode(code);
+        if (!entry) continue;
+        seenCodes.add(code);
+        const cx = Number(entry.x) + Number(entry.w || 0) / 2;
+        const cy = Number(entry.y) + Number(entry.h || 0) / 2;
+        const dx = cx - point.x;
+        const dy = cy - point.y;
+        candidates.push({
+          item,
+          entry,
+          x: cx,
+          y: cy,
+          dx,
+          dy,
+          distance: Math.hypot(dx, dy),
+          angle: Math.atan2(dy, dx),
+        });
+      }
+    }
+    candidates.sort((a, b) => a.distance - b.distance);
+    if (!candidates.length) return [];
+    const desiredCount = Math.min(6, candidates.length);
+    const nearestDistance = candidates[0].distance;
+    const maxDistance = Math.max(260, Math.min(760, nearestDistance * 5.2));
+    const pool = candidates.filter((candidate) => candidate.distance <= maxDistance).slice(0, 18);
+    const selected = [];
+    for (const candidate of pool) {
+      if (!selected.length) {
+        selected.push(candidate);
+        continue;
+      }
+      if (selected.length >= desiredCount) break;
+      const sufficientlyDifferent = selected.every((existing) => angleSeparationDegrees(existing.angle, candidate.angle) >= 18);
+      if (sufficientlyDifferent) selected.push(candidate);
+    }
+    for (const candidate of pool) {
+      if (selected.length >= desiredCount) break;
+      if (!selected.includes(candidate)) selected.push(candidate);
+    }
+    return selected.sort((a, b) => a.distance - b.distance);
+  }
+
+  function updateToiletRouteDisplay(currentPoint = null) {
+    userToiletRouteLayer.replaceChildren();
+    if (!showToiletRoutes || !currentPoint) return [];
+    const routes = nearbyToiletRoutesForPoint(currentPoint);
+    const nearestDistance = routes[0]?.distance ?? 0;
+    const furthestDistance = routes[routes.length - 1]?.distance ?? nearestDistance;
+    const distanceSpan = Math.max(1, furthestDistance - nearestDistance);
+    routes.forEach((route, index) => {
+      const t = Math.max(0, Math.min(1, (route.distance - nearestDistance) / distanceSpan));
+      const alpha = 0.88 - t * 0.46;
+      const line = document.createElementNS(SVG_NS, "line");
+      line.setAttribute("x1", mapX(currentPoint.x));
+      line.setAttribute("y1", mapY(currentPoint.y));
+      line.setAttribute("x2", mapX(route.x));
+      line.setAttribute("y2", mapY(route.y));
+      line.setAttribute("stroke", `rgba(46, 96, 196, ${alpha.toFixed(3)})`);
+      line.setAttribute("stroke-width", "3");
+      line.setAttribute("stroke-linecap", "round");
+      line.setAttribute("vector-effect", "non-scaling-stroke");
+      userToiletRouteLayer.appendChild(line);
+    });
+    return routes;
+  }
+
+  function updateEventRouteDisplay(currentPoint = null) {
+    userEventRouteLayer.replaceChildren();
+    if (!showEventRoutes || !currentPoint) return [];
+    const routes = nearbyCurrentEventRoutesForPoint(currentPoint);
+    const nearestDistance = routes[0]?.distance ?? 0;
+    const furthestDistance = routes[routes.length - 1]?.distance ?? nearestDistance;
+    const distanceSpan = Math.max(1, furthestDistance - nearestDistance);
+    routes.forEach((route) => {
+      const t = Math.max(0, Math.min(1, (route.distance - nearestDistance) / distanceSpan));
+      const alpha = 0.88 - t * 0.46;
+      const line = document.createElementNS(SVG_NS, "line");
+      line.setAttribute("x1", mapX(currentPoint.x));
+      line.setAttribute("y1", mapY(currentPoint.y));
+      line.setAttribute("x2", mapX(route.x));
+      line.setAttribute("y2", mapY(route.y));
+      line.setAttribute("stroke", `rgba(44, 168, 96, ${alpha.toFixed(3)})`);
+      line.setAttribute("stroke-width", "3");
+      line.setAttribute("stroke-linecap", "round");
+      line.setAttribute("vector-effect", "non-scaling-stroke");
+      userEventRouteLayer.appendChild(line);
+    });
+    return routes;
+  }
+
+  function clearToiletRoutes() {
+    showToiletRoutes = false;
+    userToiletRouteLayer.replaceChildren();
+  }
+
+  function clearEventRoutes() {
+    showEventRoutes = false;
+    userEventRouteLayer.replaceChildren();
+  }
+
+  function setDebugUserLocation(logicalPoint) {
+    if (!logicalPoint) return;
+    debugUserLogicalPoint = {
+      x: Math.max(0, Math.min(NAT_W, logicalPoint.x)),
+      y: Math.max(0, Math.min(NAT_H, logicalPoint.y)),
+    };
+    latestGeoFix = latestGeoFix ? { ...latestGeoFix, timestamp: Date.now() } : null;
+    updateUserLocationDisplay();
+    if (showingUserLocationDetails) openUserLocationDetails(detailsMode === "full" ? "full" : "half");
   }
 
   function syncGpsStatusAction() {
@@ -3516,7 +4729,12 @@
   });
 
   function pruneUserTrail(now = Date.now()) {
-    userTrailPoints = userTrailPoints.filter((point) => now - point.timestamp < USER_TRAIL_LIFETIME_MS);
+    const lifetimeMs = currentTrailLifetimeMs();
+    if (!lifetimeMs) {
+      userTrailPoints = [];
+      return;
+    }
+    userTrailPoints = userTrailPoints.filter((point) => now - point.timestamp < lifetimeMs);
   }
 
   function catmullRomPoint(p0, p1, p2, p3, t) {
@@ -3549,6 +4767,30 @@
     return renderPoints;
   }
 
+  function thinTrailRenderPoints(points, now) {
+    if (points.length < 3) return points;
+    const lifetimeMs = currentTrailLifetimeMs();
+    if (!lifetimeMs) return [];
+    const thinned = [points[0]];
+    let lastKept = points[0];
+    for (let i = 1; i < points.length - 1; i++) {
+      const point = points[i];
+      const ageRatio = Math.max(0, Math.min(1, (now - point.timestamp) / lifetimeMs));
+      const minDistance = 1.8 + ageRatio * 14;
+      const minTimeGap = 250 + ageRatio * 7000;
+      if (
+        Math.hypot(point.x - lastKept.x, point.y - lastKept.y) >= minDistance ||
+        (point.timestamp - lastKept.timestamp) >= minTimeGap
+      ) {
+        thinned.push(point);
+        lastKept = point;
+      }
+    }
+    const tail = points[points.length - 1];
+    if (thinned[thinned.length - 1] !== tail) thinned.push(tail);
+    return thinned;
+  }
+
   function smoothTrailPoints(points) {
     if (points.length < 3) return points;
     const smoothed = [points[0]];
@@ -3572,13 +4814,15 @@
   function updateUserTrailDisplay(currentPoint = null, now = Date.now()) {
     pruneUserTrail(now);
     userTrailLayer.replaceChildren();
-    const renderPoints = smoothTrailPoints(buildTrailRenderPoints(currentPoint, now));
+    const lifetimeMs = currentTrailLifetimeMs();
+    if (!lifetimeMs) return;
+    const renderPoints = smoothTrailPoints(thinTrailRenderPoints(buildTrailRenderPoints(currentPoint, now), now));
     if (renderPoints.length < 2) return;
     const segmentCount = renderPoints.length - 1;
     for (let i = 1; i < renderPoints.length; i++) {
       const a = renderPoints[i - 1];
       const b = renderPoints[i];
-      const ageRatio = Math.max(0, 1 - ((now - b.timestamp) / USER_TRAIL_LIFETIME_MS));
+      const ageRatio = Math.max(0, 1 - ((now - b.timestamp) / lifetimeMs));
       const proximityRatio = i / segmentCount;
       const alpha = 0.92 * ageRatio * (0.18 + 0.82 * proximityRatio);
       if (alpha <= 0.02) continue;
@@ -3602,6 +4846,7 @@
   }
 
   function maybeAddUserTrailPoint(logicalPoint, timestamp, speed = null, accuracy = null) {
+    if (!currentTrailLifetimeMs()) return;
     if (!Number.isFinite(logicalPoint?.x) || !Number.isFinite(logicalPoint?.y)) return;
     if (lastTrailFixTimestamp === timestamp) return;
     lastTrailFixTimestamp = timestamp;
@@ -3627,6 +4872,8 @@
     userPin.classList.remove("visible");
     userPin.classList.remove("has-heading");
     clearUserTrail();
+    userEventRouteLayer.replaceChildren();
+    userToiletRouteLayer.replaceChildren();
     syncGpsStatusAction();
   }
 
@@ -3636,20 +4883,23 @@
       setGpsStatus("GPS off");
       return;
     }
-    if (!navigator.geolocation) {
+    const debugActive = Boolean(debugUserLogicalPoint);
+    if (!debugActive && !navigator.geolocation) {
       hideUserLocation();
       setGpsStatus("GPS unavailable", "error");
       return;
     }
-    if (!latestGeoFix) {
+    if (!debugActive && !latestGeoFix) {
       hideUserLocation();
       setGpsStatus("Waiting for GPS", "pending");
       return;
     }
-    const logicalPoint = logicalPointFromGeo(latestGeoFix.lat, latestGeoFix.lon);
+    const logicalPoint = debugActive
+      ? debugUserLogicalPoint
+      : latestGeoFix ? logicalPointFromGeo(latestGeoFix.lat, latestGeoFix.lon) : null;
     if (!logicalPoint) {
       hideUserLocation();
-      setGpsStatus("Map not calibrated", "warn");
+      setGpsStatus(debugActive ? "Debug offsite" : "Map not calibrated", "warn");
       return;
     }
     if (
@@ -3657,14 +4907,19 @@
       logicalPoint.y < 0 || logicalPoint.y > NAT_H
     ) {
       hideUserLocation();
-      setGpsStatus("Offsite", "warn");
+      setGpsStatus(debugActive ? "Debug offsite" : "Offsite", "warn");
       return;
     }
     userPin.style.left = mapX(logicalPoint.x) + "px";
     userPin.style.top = mapY(logicalPoint.y) + "px";
     userPin.style.transform = `translate(-50%, -50%) scale(${1 / scl})`;
-    maybeAddUserTrailPoint(logicalPoint, latestGeoFix.timestamp || Date.now(), latestGeoFix.speed, latestGeoFix.accuracy);
-    updateUserTrailDisplay(logicalPoint, latestGeoFix.timestamp || Date.now());
+    const trailTimestamp = debugActive ? Date.now() : (latestGeoFix.timestamp || Date.now());
+    const trailSpeed = debugActive ? null : latestGeoFix.speed;
+    const trailAccuracy = debugActive ? 0 : latestGeoFix.accuracy;
+    maybeAddUserTrailPoint(logicalPoint, trailTimestamp, trailSpeed, trailAccuracy);
+    updateUserTrailDisplay(logicalPoint, trailTimestamp);
+    updateEventRouteDisplay(logicalPoint);
+    updateToiletRouteDisplay(logicalPoint);
     if (Number.isFinite(latestHeading)) {
       userPinHeading.style.transform = `translateX(-50%) rotate(${latestHeading}deg)`;
       userPin.classList.add("has-heading");
@@ -3672,9 +4927,9 @@
       userPin.classList.remove("has-heading");
     }
     userPin.classList.add("visible");
-    maybeFrameInitialGps(logicalPoint);
-    const accuracy = Number.isFinite(latestGeoFix.accuracy) ? ` ±${Math.round(latestGeoFix.accuracy)}m` : "";
-    setGpsStatus(`GPS live${accuracy}`, "ready");
+    if (!debugActive) maybeFrameInitialGps(logicalPoint);
+    const accuracy = (!debugActive && Number.isFinite(latestGeoFix?.accuracy)) ? ` ±${Math.round(latestGeoFix.accuracy)}m` : "";
+    setGpsStatus(debugActive ? "GPS debug" : `GPS live${accuracy}`, "ready");
     syncGpsStatusAction();
   }
 
@@ -3853,6 +5108,7 @@
         if (!target) return;
         openDetails(target, isMobileDetails() ? "half" : "fit");
         frameHits([target]);
+        syncUiHistory();
       });
     }
     const expandButton = searchResults.querySelector("[data-expand-search-results]");
@@ -3947,26 +5203,41 @@
     clearIndexHighlights();
     resetView();
     applyFilter();
+    syncUiHistory();
   });
   fLocate.addEventListener("change", () => {
     if (fLocate.checked) startGeolocationWatch(true);
     else {
+      debugUserLogicalPoint = null;
+      clearEventRoutes();
+      clearToiletRoutes();
       stopGeolocationWatch();
       hideUserLocation();
       updateUserLocationDisplay();
     }
   });
+  viewport.addEventListener("click", (ev) => {
+    if (!DEBUG_MAP_CLICK_SETS_LOCATION || !fLocate.checked) return;
+    if (isMapInteractiveTarget(ev.target)) return;
+    const rect = viewport.getBoundingClientRect();
+    const vx = ev.clientX - rect.left;
+    const vy = ev.clientY - rect.top;
+    const mapPxX = (vx - tx) / scl;
+    const mapPxY = (vy - ty) / scl;
+    setDebugUserLocation({
+      x: logicalXFromMap(mapPxX),
+      y: logicalYFromMap(mapPxY),
+    });
+  });
   q.addEventListener("input", () => {
     cancelInitialGpsFrame();
     applyFilter();
-    // reflect query in URL hash so it's shareable
-    const v = q.value.trim();
-    history.replaceState(null, "", v ? "#q=" + encodeURIComponent(v) : "#");
+    syncUiHistory(true);
   });
   searchClear.addEventListener("click", () => {
     q.value = "";
     applyFilter();
-    history.replaceState(null, "", "#");
+    syncUiHistory(true);
     q.focus();
   });
 
@@ -3988,8 +5259,12 @@
     if (navigator.geolocation && fLocate.checked) {
       startGeolocationWatch(false);
     }
+    syncUiHistory(true);
   }
   if (img.complete) init(); else img.addEventListener("load", init, { once: true });
+  window.addEventListener("popstate", (ev) => {
+    applyHistoryState(ev.state || null);
+  });
   window.addEventListener("resize", () => {
     // keep same logical zoom (relative to fit), then clamp
     const old_rel = scl / fitScale();
