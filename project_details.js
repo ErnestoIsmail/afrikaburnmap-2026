@@ -905,8 +905,8 @@ const PROJECT_DETAILS = (() => {
   },
   {
     "code": "TGM",
-    "slug": "grease monkeys",
-    "title": "Grease Monkeys",
+    "slug": "greasemonkeys",
+    "title": "Greasemonkeys",
     "type": "Theme Camp",
     "sourceTag": "wtf-2026",
     "sourceLabel": "WTF Guide 2026",

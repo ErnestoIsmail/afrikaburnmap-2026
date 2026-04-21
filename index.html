@@ -32,6 +32,11 @@
   header { padding: 10px 16px; display:flex; gap:12px 16px; align-items:center; flex-wrap:wrap;
     border-bottom: 1px solid #333; background:var(--bg); z-index:10; position:relative; }
   header h1 { font-size:16px; margin:0; font-weight:600; letter-spacing:0.02em; }
+  header .title-about-btn {
+    appearance:none; background:transparent; color:inherit; border:0; padding:0;
+    margin:0; font:inherit; letter-spacing:inherit; cursor:pointer;
+  }
+  header .title-about-btn:hover { color:#fff; text-decoration:underline; text-underline-offset:2px; }
   header .header-title,
   header .header-search { display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
   header .header-title { order:1; }
@@ -56,14 +61,6 @@
   header .gps-status.ready { color:#7de38f; }
   header .gps-status.warn { color:#ffb36b; }
   header .gps-status.error { color:#ff8f8f; }
-  header .about-btn {
-    background:#222; color:#ddd; border:1px solid #444; border-radius:4px;
-    padding:3px 8px; font-size:12px; cursor:pointer;
-  }
-  header .about-btn:hover { background:#2b2b2b; border-color:#666; }
-  header .app-version {
-    font-size:10px; color:#888; white-space:nowrap; letter-spacing:0.02em;
-  }
   .viewport {
     position:absolute; inset: var(--header-h) 0 0 0;   /* below header */
     overflow: hidden; background:#0a0a0a;
@@ -185,8 +182,18 @@
   .badge-plaza { color: var(--plaza); }
   .badge-support { color: var(--support); }
   .badge-toilet { color: var(--toilet); }
-  .zoom-label { position:absolute; bottom:8px; right:12px; z-index:20;
-    font-size:11px; color:#888; background:rgba(0,0,0,0.5); padding:2px 6px; border-radius:4px; }
+  .bottom-status {
+    position:absolute; bottom:8px; right:12px; z-index:20;
+    display:flex; align-items:center; gap:8px;
+  }
+  .zoom-label {
+    font-size:11px; color:#888; background:rgba(0,0,0,0.5);
+    padding:2px 6px; border-radius:4px;
+  }
+  .app-version {
+    font-size:9px; color:rgba(238,238,238,0.33); white-space:nowrap;
+    letter-spacing:0.02em;
+  }
 
   .details-panel {
     position:fixed; z-index:90; pointer-events:none;
@@ -264,7 +271,7 @@
   .detail-section { margin:0 0 13px; }
   .detail-label { color:#aaa; font-size:11px; text-transform:uppercase; letter-spacing:.04em; margin-bottom:3px; }
   .detail-text { margin:0; white-space:pre-line; }
-  .detail-tags { display:flex; flex-wrap:wrap; gap:5px; margin:10px 0 0; }
+  .detail-tags { display:flex; flex-wrap:wrap; gap:5px; margin:6px 0 0; }
   .detail-tag {
     background:#262626; color:#ddd; border:1px solid #3b3b3b; border-radius:4px;
     padding:2px 6px; font-size:11px;
@@ -398,6 +405,12 @@
     padding:14px; overflow:auto; line-height:1.45; font-size:13px;
   }
   .about-body p { margin:0 0 12px; }
+  .about-inline-link {
+    appearance:none; background:none; border:0; padding:0;
+    color:#9ed2ff; cursor:pointer; font:inherit;
+    text-decoration:underline; text-underline-offset:2px;
+  }
+  .about-inline-link:hover { color:#c3e3ff; }
   .about-links, .about-meta {
     display:grid; gap:8px;
   }
@@ -447,8 +460,6 @@
       margin-left:auto;
       text-align:right;
     }
-    header .about-btn { padding:2px 7px; font-size:11px; }
-    header .app-version { font-size:9px; }
     header .hint-full,
     header .hint-title,
     header .label-full {
@@ -493,6 +504,14 @@
       top: calc(var(--header-h) + 10px);
       right:8px;
     }
+    .bottom-status {
+      right:8px;
+      gap:6px;
+    }
+    .app-version {
+      font-size:8px;
+      color:rgba(238,238,238,0.28);
+    }
     .about-backdrop { align-items:flex-end; padding:0; }
     .about-panel {
       width:100vw; max-height:78vh; border-radius:8px 8px 0 0;
@@ -504,13 +523,11 @@
 <body>
 <header>
   <div class="header-title">
-    <h1>AfrikaBurn 2026</h1>
+    <h1><button type="button" class="title-about-btn" id="about-btn">AfrikaBurn 2026</button></h1>
     <span class="hint hint-title">hover to identify · scroll to zoom · drag to pan</span>
     <label class="highres-toggle"><input type="checkbox" id="f_highres" checked> high-res map</label>
     <label class="gps-toggle"><input type="checkbox" id="f_locate" checked> GPS</label>
     <span class="gps-status" id="gps-status">GPS off</span>
-    <button type="button" class="about-btn" id="about-btn">About</button>
-    <span class="app-version" id="app-version">app — · cache —</span>
   </div>
   <div class="header-search">
     <span class="hint hint-search"><span class="hint-short">zoom · drag</span></span>
@@ -535,21 +552,24 @@
   <button id="zout" title="Zoom out">−</button>
   <button id="zreset" title="Reset">⌂</button>
 </div>
-<div class="zoom-label" id="zlabel">100%</div>
+<div class="bottom-status">
+  <div class="zoom-label" id="zlabel">100%</div>
+  <span class="app-version" id="app-version">app — · cache —</span>
+</div>
 <div class="offline-badge" id="offline-badge">✓ saved for offline</div>
 <div id="tip" role="tooltip"></div>
 
 <div class="about-backdrop" id="about-backdrop" aria-hidden="true">
   <section class="about-panel" role="dialog" aria-modal="true" aria-labelledby="about-title">
     <div class="about-head">
-      <h2 id="about-title">About this map</h2>
+      <h2 id="about-title">About this interactive map</h2>
       <button type="button" class="about-close" id="about-close" aria-label="Close about">×</button>
     </div>
     <div class="about-body">
       <p>This interactive map is built from the official AfrikaBurn 2026 site map and the 2026 WTF Guide, with additional linking and offline-friendly navigation layered on top.</p>
-      <p>Developed by Chris Laidler from the Grease Monkeys.</p>
-      <p>The original interactive map project was created by Bernard Bravenboer from camp 404.</p>
-      <p>This is an independent helper tool. There are no guarantees, and some information may still be incomplete or incorrect, but care has been taken to make it as accurate and useful as possible.</p>
+      <p>Developed by Chris Laidler from the <button type="button" class="about-inline-link" data-about-search="Greasemonkeys">Greasemonkeys</button>.</p>
+      <p>The original interactive map project was created by Bernard Bravenboer from <button type="button" class="about-inline-link" data-about-search="Camp 404">camp 404</button>.</p>
+      <p>This is an independent helper tool. There are no guarantees, and some information may still be incomplete or incorrect, but care has been taken to make it as accurate and useful as possible. Heading information is only as accurate as the phone; a mis-calibrated compass can lead to inaccurate heading display.</p>
       <div class="about-links">
         <a href="https://www.afrikaburn.org/wp-content/uploads/2026/04/2026_Site_map.pdf" target="_blank" rel="noopener noreferrer">Official AfrikaBurn 2026 site map</a>
         <a href="https://www.afrikaburn.org/binnekringblog/afrikaburn-2026-wtf/" target="_blank" rel="noopener noreferrer">Official AfrikaBurn 2026 WTF Guide</a>
@@ -616,8 +636,8 @@
 <script>
 (() => {
   const data = DATA_INLINE;
-  const APP_VERSION = "2026.04.21.3";
-  const APP_CACHE_VERSION = "v30";
+  const APP_VERSION = "2026.04.21.5";
+  const APP_CACHE_VERSION = "v32";
   const projectDetails = typeof PROJECT_DETAILS !== "undefined" ? PROJECT_DETAILS : { byCode: {} };
   const oldWtfDetails = typeof OLD_WTF_DETAILS !== "undefined" ? OLD_WTF_DETAILS : { byCode: {} };
   const viewport = document.getElementById("viewport");
@@ -663,11 +683,27 @@
     aboutBackdrop.setAttribute("aria-hidden", "true");
   }
 
+  function jumpToAboutSearch(query) {
+    closeAbout();
+    q.value = query;
+    applyFilter();
+    const v = q.value.trim();
+    history.replaceState(null, "", v ? "#q=" + encodeURIComponent(v) : "#");
+    if (activeSearchHits.length === 1) {
+      openDetails(activeSearchHits[0], isMobileDetails() ? "half" : "fit");
+    }
+  }
+
   aboutBtn.addEventListener("click", openAbout);
   aboutClose.addEventListener("click", closeAbout);
   aboutBackdrop.addEventListener("click", (ev) => {
     if (ev.target === aboutBackdrop) closeAbout();
   });
+  for (const button of aboutBackdrop.querySelectorAll("[data-about-search]")) {
+    button.addEventListener("click", () => {
+      jumpToAboutSearch(button.dataset.aboutSearch || "");
+    });
+  }
   window.addEventListener("keydown", (ev) => {
     if (ev.key === "Escape") closeAbout();
   });
@@ -760,7 +796,7 @@
   const curatedDetailTagSets = [
     ["ABnB", ["chill"]],
     ["Garden of Weeden", ["chill", "music", "dance"]],
-    ["Grease Monkeys", ["workshop"]],
+    ["Greasemonkeys", ["workshop"]],
     ["HeartSpace", ["chill", "workshop", "wellness"]],
     ["Radio Free Tankwa", ["music", "radio", "info"]],
     ["Theme Camp Saloon", ["info"]],
@@ -1286,7 +1322,6 @@
     const targetEl = hotspotByEntry.get(entry);
     if (!targetEl) return;
     highlightIndexForEntry(entry);
-    markHits([targetEl]);
     openDetails(targetEl, detailsMode === "full" ? "full" : "fit");
     frameHits([targetEl]);
   }
@@ -1386,17 +1421,17 @@
           el.dataset.mapSource = col.mapSource;
           el.addEventListener("mouseenter", (ev) => {
             if (el.dataset.mapSource !== currentMap.id) return;
-            markHits([target]);
+            refreshHighlights([target]);
             showTip(ev);
           });
           el.addEventListener("mousemove", moveTip);
           el.addEventListener("mouseleave", () => {
             hideTip();
-            markHits(activeSearchHits);
+            refreshHighlights();
           });
           el.addEventListener("click", (ev) => {
             if (el.dataset.mapSource !== currentMap.id) return;
-            markHits([target]);
+            refreshHighlights([target]);
             showTip(ev);
             openDetails(target, "half");
             ev.stopPropagation();
@@ -1706,6 +1741,15 @@
       </section>
     `;
   }
+  function detailTagsSection(tagHtml) {
+    if (!tagHtml) return "";
+    return `
+      <section class="detail-section">
+        <div class="detail-label">Tags</div>
+        <div class="detail-tags">${tagHtml}</div>
+      </section>
+    `;
+  }
   function detailFor(el) {
     const current = projectDetailForMapEntry({
       code: el.dataset.code,
@@ -1791,12 +1835,15 @@
     updateDetailsButtons();
   }
   function closeDetails() {
+    activeDetailHighlight = null;
     detailsPanel.classList.remove("open", "full", "minimized", "dragging");
     detailsPanel.setAttribute("aria-hidden", "true");
     detailsMode = "fit";
     updateDetailsButtons();
+    refreshHighlights();
   }
   function openUserLocationDetails(mode = "half") {
+    activeDetailHighlight = null;
     const point = latestGeoFix ? logicalPointFromGeo(latestGeoFix.lat, latestGeoFix.lon) : null;
     const accuracy = Number.isFinite(latestGeoFix?.accuracy) ? `${Math.round(latestGeoFix.accuracy)} m` : "";
     const heading = Number.isFinite(latestHeading) ? `${Math.round(latestHeading)}°` : "";
@@ -1808,22 +1855,25 @@
     `;
     detailsTitle.textContent = "Your current position";
     detailsJumps.innerHTML = "";
+    const tagHtml = `
+      <span class="detail-tag">gps</span>
+      <span class="detail-tag">location</span>
+    `;
     detailsBody.innerHTML = `
-      <div class="detail-tags">
-        <span class="detail-tag">gps</span>
-        <span class="detail-tag">location</span>
-      </div>
       ${detailSection("Position", "This marker shows your current estimated GPS position on the map.")}
       ${detailSection("Accuracy", accuracy)}
       ${detailSection("Heading", heading)}
       ${detailSection("Map coordinates", mapCoords, "detail-extra")}
+      ${detailTagsSection(tagHtml)}
     `;
     setDetailsMode(mode);
     detailsPanel.classList.add("open");
     detailsPanel.setAttribute("aria-hidden", "false");
     if (mode === "half" || mode === "fit") fitMobileDetails();
+    refreshHighlights();
   }
   function openDetails(el, mode = "half") {
+    activeDetailHighlight = el;
     const detail = detailFor(el);
     const mapEntry = entryByHotspotEl.get(el);
     const code = el.dataset.code;
@@ -1854,6 +1904,7 @@
       section,
     });
     const tagHtml = tags.map((tag) => `<button type="button" class="detail-tag" data-search-tag="${escapeHtml(tag)}">${escapeHtml(tag)}</button>`).join("");
+    const tagsSectionHtml = detailTagsSection(tagHtml);
     const sourceLinks = detail?.links?.length
       ? detail.links
       : detail?.sourceUrl
@@ -1877,7 +1928,6 @@
       </section>
     ` : "";
     detailsBody.innerHTML = detail ? `
-      <div class="detail-tags">${tagHtml}</div>
       ${detailSection("Project Description", projectDescription)}
       ${detailSection("Details of Gift", detail.gift)}
       ${detailSection("Artist", detail.artist, "detail-extra")}
@@ -1886,9 +1936,10 @@
       ${detailSection("Additional Details", detail.additionalDetails, "detail-extra")}
       ${oldWtfSection(detail.oldWtf, hasPrimaryDetail ? "detail-extra" : "")}
       ${sourceHtml}
+      ${tagsSectionHtml}
     ` : `
-      <div class="detail-tags">${tagHtml}</div>
       <p class="details-empty">No ${escapeHtml(sourceTag)} details have been linked for this item yet.</p>
+      ${tagsSectionHtml}
     `;
     for (const button of detailsBody.querySelectorAll(".detail-tag[data-search-tag]")) {
       button.addEventListener("click", () => {
@@ -1902,6 +1953,7 @@
     detailsPanel.classList.add("open");
     detailsPanel.setAttribute("aria-hidden", "false");
     if (mode === "half" || mode === "fit") fitMobileDetails();
+    refreshHighlights();
   }
   userPin.addEventListener("pointerdown", (ev) => {
     ev.stopPropagation();
@@ -2037,11 +2089,13 @@
     apply();
   }
 
+  const USER_LOCATION_FRAME_SCALE = 2.4;
+
   function maybeFrameInitialGps(logicalPoint) {
     if (initialGpsFrameDone || !allowInitialGpsFrame) return;
     if (q.value.trim()) return;
     if (!Number.isFinite(latestGeoFix?.accuracy) || latestGeoFix.accuracy > INITIAL_GPS_FRAME_ACCURACY_M) return;
-    frameLogicalPoint(logicalPoint, 1.6, 0);
+    frameLogicalPoint(logicalPoint, USER_LOCATION_FRAME_SCALE, 0);
     initialGpsFrameDone = true;
   }
 
@@ -2145,7 +2199,7 @@
     gpsStatus.title = canJump ? "Jump to your current location" : "";
   }
 
-  function frameCurrentUserLocation(scaleMultiplier = 1.75) {
+  function frameCurrentUserLocation(scaleMultiplier = USER_LOCATION_FRAME_SCALE) {
     const logicalPoint = currentUserLogicalPoint();
     if (!logicalPoint) return false;
     frameLogicalPoint(logicalPoint, scaleMultiplier, 0);
@@ -2317,10 +2371,11 @@
     }, GEOLOCATION_OPTIONS);
   }
 
-  // Pin/overlay nodes are re-used across searches
-  const hitOverlays = [];   // yellow rectangle overlays (one per hit)
-  const hitPins     = [];   // pulsing pin markers (one per hit)
+  // Overlay nodes are re-used across search and current-detail highlighting.
+  const hitOverlays = [];
+  const hitPins     = [];
   let activeSearchHits = [];
+  let activeDetailHighlight = null;
 
   function clearHits() {
     for (const o of hitOverlays) o.remove();
@@ -2329,10 +2384,13 @@
     hitPins.length = 0;
   }
 
-  function markHits(hits) {
+  function refreshHighlights(extraHits = []) {
     clearHits();
-    for (const el of hits) {
-      // overlay on the hotspot
+    const seen = new Set();
+    const overlays = [];
+    for (const el of [...activeSearchHits, ...extraHits, activeDetailHighlight].filter(Boolean)) {
+      if (seen.has(el)) continue;
+      seen.add(el);
       const ov = document.createElement("div");
       ov.className = "hit-overlay";
       ov.style.left   = (parseFloat(el.style.left) - 2) + "px";
@@ -2341,20 +2399,6 @@
       ov.style.height = (parseFloat(el.style.height) + 4) + "px";
       mapDiv.appendChild(ov);
       hitOverlays.push(ov);
-      // pulsing pin above the hotspot (natural-pixel sized; we undo transform scale so pin stays readable)
-      const pin = document.createElement("div");
-      pin.className = "hit-pin";
-      const label = document.createElement("span");
-      label.className = "hit-label";
-      label.textContent = el.dataset.label;
-      pin.appendChild(label);
-      // anchor: centered horizontally above the hotspot; vertical offset in natural px (~14px)
-      const cx = parseFloat(el.style.left) + parseFloat(el.style.width)/2;
-      const top = parseFloat(el.style.top) - 26;
-      pin.style.left = (cx - 13) + "px";   // pin is 26px; center it
-      pin.style.top  = top + "px";
-      mapDiv.appendChild(pin);
-      hitPins.push(pin);
     }
     updateHitScale();
   }
@@ -2383,12 +2427,11 @@
       const searchOk = !qs || el.dataset.code.toLowerCase().includes(qs)
                            || el.dataset.name.toLowerCase().includes(qs)
                            || el.dataset.tags.includes(qs);
-      const visible = sectionOk && searchOk;
-      el.classList.toggle("filtered-out", !visible);
-      if (qs && visible) hits.push(el);
+      el.classList.toggle("filtered-out", !sectionOk);
+      if (qs && sectionOk && searchOk) hits.push(el);
     }
     activeSearchHits = hits;
-    markHits(activeSearchHits);
+    refreshHighlights();
     // If exactly one hit, fly to it. If a few hits, frame them.
     if (hits.length >= 1 && hits.length <= 12) frameHits(hits);
   }
