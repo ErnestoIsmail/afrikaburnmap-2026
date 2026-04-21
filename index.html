@@ -195,6 +195,22 @@
     display:flex; gap:7px; flex-wrap:wrap; align-items:center;
   }
   .details-title { margin:5px 0 0; font-size:18px; line-height:1.2; }
+  .details-jumps {
+    display:flex; flex-wrap:wrap; gap:6px;
+    margin-top:8px; padding-right:72px;
+  }
+  .details-jump {
+    background:#202020; color:#ddd; border:1px solid #444; border-radius:5px;
+    padding:3px 8px; font-size:11px; font-weight:600; cursor:pointer;
+    line-height:1.2;
+  }
+  .details-jump:hover { background:#2b2b2b; border-color:#777; }
+  .details-jump.theme { color:var(--theme); border-color:rgba(57,194,255,0.45); }
+  .details-jump.art { color:var(--art); border-color:rgba(255,61,138,0.45); }
+  .details-jump.occ { color:var(--occ); border-color:rgba(0,160,215,0.45); }
+  .details-jump.support { color:var(--support); border-color:rgba(141,131,186,0.45); }
+  .details-jump.plaza { color:var(--plaza); border-color:rgba(120,214,75,0.45); }
+  .details-jump.toilet { color:var(--toilet); border-color:rgba(201,201,201,0.45); }
   .details-actions {
     position:absolute; top:8px; right:8px;
     display:flex; gap:6px; align-items:center; justify-content:flex-end;
@@ -247,6 +263,7 @@
     .details-grip { display:block; touch-action:none; }
     .details-head { padding-top:5px; padding-right:72px; }
     .details-title { font-size:17px; }
+    .details-jumps { padding-right:72px; }
     .details-actions { top:7px; right:10px; }
   }
 
@@ -420,6 +437,7 @@
     <div class="details-head">
       <div class="details-kicker" id="details-kicker"></div>
       <h2 class="details-title" id="details-title">Project details</h2>
+      <div class="details-jumps" id="details-jumps"></div>
       <div class="details-actions">
         <button type="button" class="details-icon details-size" id="details-size" aria-label="Maximize details" title="Maximize details"></button>
         <button type="button" class="details-icon details-close" id="details-close" aria-label="Close details" title="Close details"></button>
@@ -476,6 +494,7 @@
   const detailsGrip = document.getElementById("details-grip");
   const detailsKicker = document.getElementById("details-kicker");
   const detailsTitle = document.getElementById("details-title");
+  const detailsJumps = document.getElementById("details-jumps");
   const detailsBody = document.getElementById("details-body");
   const detailsSize = document.getElementById("details-size");
   const detailsClose = document.getElementById("details-close");
@@ -726,6 +745,7 @@
   const hotspots = [];
   const hotspotByCode = new Map();
   const hotspotByEntry = new WeakMap();
+  const entryByHotspotEl = new WeakMap();
   const indexHotspots = [];
   const indexHotspotsByEntry = new WeakMap();
   const userPin = document.createElement("div");
@@ -746,6 +766,7 @@
     hotspots.push({ el, entry: e });
     hotspotByCode.set(e.code, el);
     hotspotByEntry.set(e, el);
+    entryByHotspotEl.set(el, e);
 
     el.addEventListener("mouseenter", (ev) => {
       highlightIndexForEntry(e);
@@ -769,6 +790,134 @@
     (acc[entry.section] ||= []).push(entry);
     return acc;
   }, {});
+  const linkedMapEntriesByEntry = new WeakMap();
+  const mapEntriesByCode = new Map();
+  const mapEntriesByNormalizedName = new Map();
+
+  function normalizeLinkName(name) {
+    return String(name || "")
+      .normalize("NFKD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/&/g, " and ")
+      .replace(/['"]/g, "")
+      .replace(/\([^)]*\)/g, " ")
+      .replace(/[^a-zA-Z0-9]+/g, " ")
+      .trim()
+      .toLowerCase();
+  }
+
+  function nameVariants(name) {
+    const base = String(name || "").trim();
+    const variants = new Set();
+    if (!base) return variants;
+    variants.add(base);
+    const noParens = base.replace(/\([^)]*\)/g, " ").replace(/\s+/g, " ").trim();
+    if (noParens) variants.add(noParens);
+    for (const match of base.matchAll(/\(([^)]+)\)/g)) {
+      const inner = match[1].trim();
+      if (inner) variants.add(inner);
+    }
+    const noLeadingThe = base.replace(/^the\s+/i, "").trim();
+    if (noLeadingThe && noLeadingThe !== base) variants.add(noLeadingThe);
+    return variants;
+  }
+
+  function rememberMapEntryAlias(name, entry) {
+    const normalized = normalizeLinkName(name);
+    if (!normalized) return;
+    let list = mapEntriesByNormalizedName.get(normalized);
+    if (!list) {
+      list = [];
+      mapEntriesByNormalizedName.set(normalized, list);
+    }
+    if (!list.includes(entry)) list.push(entry);
+  }
+
+  for (const entry of data.entries) {
+    let codeList = mapEntriesByCode.get(entry.code);
+    if (!codeList) {
+      codeList = [];
+      mapEntriesByCode.set(entry.code, codeList);
+    }
+    codeList.push(entry);
+    for (const variant of nameVariants(entry.name)) rememberMapEntryAlias(variant, entry);
+    const detail = projectDetails.byCode?.[entry.code];
+    if (detail?.title) {
+      for (const variant of nameVariants(detail.title)) rememberMapEntryAlias(variant, entry);
+    }
+  }
+
+  function addLinkedEntry(sourceEntry, targetEntry) {
+    if (!sourceEntry || !targetEntry || sourceEntry === targetEntry) return;
+    if (sourceEntry.section === targetEntry.section && sourceEntry.code === targetEntry.code) return;
+    let list = linkedMapEntriesByEntry.get(sourceEntry);
+    if (!list) {
+      list = [];
+      linkedMapEntriesByEntry.set(sourceEntry, list);
+    }
+    if (!list.includes(targetEntry)) list.push(targetEntry);
+  }
+
+  function resolveMapEntries(ref) {
+    const found = [];
+    const seen = new Set();
+    const push = (entry) => {
+      if (!entry || seen.has(entry)) return;
+      seen.add(entry);
+      found.push(entry);
+    };
+    if (ref?.code) {
+      for (const entry of mapEntriesByCode.get(ref.code) || []) push(entry);
+    }
+    for (const field of [ref?.title, ref?.name, ref?.label]) {
+      for (const variant of nameVariants(field)) {
+        for (const entry of mapEntriesByNormalizedName.get(normalizeLinkName(variant)) || []) push(entry);
+      }
+    }
+    return found;
+  }
+
+  function collectExplicitLinkRefs(detail) {
+    const refs = [];
+    for (const camp of detail?.relatedCamps || []) refs.push(camp);
+    const text = [detail?.description, detail?.additionalDetails].filter(Boolean).join("\n");
+    for (const match of text.matchAll(/Associated (Artwork|OCC Service|Theme Camp|Support Camp):\s*([^\n]+)/gi)) {
+      refs.push({ name: match[2].trim() });
+    }
+    for (const match of text.matchAll(/crew behind\s+(.+?)\s+and\s+the\s+.+?mutant vehicle/gi)) {
+      refs.push({ name: match[1].trim() });
+    }
+    return refs;
+  }
+
+  for (const sourceEntry of data.entries) {
+    const detail = projectDetails.byCode?.[sourceEntry.code];
+    if (!detail) continue;
+    for (const ref of collectExplicitLinkRefs(detail)) {
+      for (const targetEntry of resolveMapEntries(ref)) {
+        addLinkedEntry(sourceEntry, targetEntry);
+        addLinkedEntry(targetEntry, sourceEntry);
+      }
+    }
+  }
+
+  function linkedEntriesFor(entry) {
+    const list = linkedMapEntriesByEntry.get(entry) || [];
+    return [...list].sort((a, b) =>
+      a.code.localeCompare(b.code)
+      || a.section.localeCompare(b.section)
+      || a.name.localeCompare(b.name)
+    );
+  }
+
+  function jumpToLinkedEntry(entry) {
+    const targetEl = hotspotByEntry.get(entry);
+    if (!targetEl) return;
+    highlightIndexForEntry(entry);
+    markHits([targetEl]);
+    openDetails(targetEl, detailsMode === "full" ? "full" : "fit");
+    frameHits([targetEl]);
+  }
 
   const INDEX_COLUMNS = [
     {
@@ -1259,6 +1408,7 @@
   }
   function openDetails(el, mode = "half") {
     const detail = detailFor(el);
+    const mapEntry = entryByHotspotEl.get(el);
     const code = el.dataset.code;
     const grid = el.dataset.grid;
     const section = el.dataset.section;
@@ -1269,6 +1419,16 @@
       <span class="badge-${section}">${escapeHtml(detail?.type || section)}</span>
     `;
     detailsTitle.textContent = title;
+    const linkedEntries = mapEntry ? linkedEntriesFor(mapEntry) : [];
+    detailsJumps.innerHTML = linkedEntries.map((entry, index) => `
+      <button type="button" class="details-jump ${entry.section}" data-link-index="${index}" title="${escapeHtml(entry.name)}" aria-label="Jump to ${escapeHtml(entry.name)}">${escapeHtml(entry.code)}</button>
+    `).join("");
+    for (const button of detailsJumps.querySelectorAll(".details-jump")) {
+      button.addEventListener("click", () => {
+        const target = linkedEntries[Number(button.dataset.linkIndex)];
+        if (target) jumpToLinkedEntry(target);
+      });
+    }
     const sourceTag = detail?.sourceTag || projectDetails.sourceTag || "community-project-directory";
     const sourceLabel = detail?.sourceLabel || projectDetails.sourceLabel || sourceTag;
     const tags = detail ? [sourceTag, ...(detail.tags || [])] : [sourceTag];
