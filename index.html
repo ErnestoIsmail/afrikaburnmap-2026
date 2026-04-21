@@ -53,9 +53,19 @@
     width:180px; flex:0 0 auto;
   }
   header .search-stack input { background:#222; color:#eee; border:1px solid #444;
-    border-radius:4px; padding:0 7px; font-size:12px; width:100%; height:22px;
+    border-radius:4px; padding:0 24px 0 7px; font-size:12px; width:100%; height:22px;
     line-height:20px; display:block; margin:0;
     appearance:none; -webkit-appearance:none; }
+  .search-clear {
+    position:absolute; top:11px; right:6px; transform:translateY(-50%);
+    width:14px; height:14px; padding:0; border:0; border-radius:50%;
+    background:rgba(255,255,255,0.14); color:#ddd; cursor:pointer;
+    font-size:11px; line-height:14px; text-align:center;
+    display:none;
+  }
+  .search-clear.visible { display:block; }
+  .search-clear:hover,
+  .search-clear:focus-visible { background:rgba(255,255,255,0.22); outline:none; }
   header .search-stack input::-webkit-search-decoration,
   header .search-stack input::-webkit-search-cancel-button,
   header .search-stack input::-webkit-search-results-button,
@@ -545,7 +555,7 @@
       max-width:180px;
     }
     header .search-stack input {
-      padding:0 6px;
+      padding:0 22px 0 6px;
       height:21px;
       line-height:19px;
     }
@@ -595,6 +605,7 @@
     <span class="hint hint-search"><span class="hint-short">zoom · drag</span></span>
     <div class="search-stack">
       <input type="text" id="q" placeholder="search name or code…" inputmode="search" enterkeyhint="search" autocomplete="off" autocapitalize="off" spellcheck="false">
+      <button type="button" class="search-clear" id="search-clear" aria-label="Clear search">×</button>
       <div class="search-results" id="search-results" aria-live="polite"></div>
     </div>
   </div>
@@ -701,8 +712,8 @@
 <script>
 (() => {
   const data = DATA_INLINE;
-  const APP_VERSION = "2026.04.21.9";
-  const APP_CACHE_VERSION = "v36";
+  const APP_VERSION = "2026.04.21.10";
+  const APP_CACHE_VERSION = "v37";
   const projectDetails = typeof PROJECT_DETAILS !== "undefined" ? PROJECT_DETAILS : { byCode: {} };
   const oldWtfDetails = typeof OLD_WTF_DETAILS !== "undefined" ? OLD_WTF_DETAILS : { byCode: {} };
   const viewport = document.getElementById("viewport");
@@ -711,6 +722,7 @@
   const tip = document.getElementById("tip");
   const zlabel = document.getElementById("zlabel");
   const searchResults = document.getElementById("search-results");
+  const searchClear = document.getElementById("search-clear");
   const header = document.querySelector("header");
   const gpsStatus = document.getElementById("gps-status");
   gpsStatus.setAttribute("role", "button");
@@ -2544,6 +2556,10 @@
     searchResults.classList.add("open");
   }
 
+  function syncSearchUi() {
+    searchClear.classList.toggle("visible", Boolean(q.value.trim()));
+  }
+
   function applyFilter() {
     const showTheme = fTheme.checked, showArt = fArt.checked,
           showOcc = fOcc.checked, showPlaza = fPlaza.checked,
@@ -2568,8 +2584,12 @@
     activeSearchHits = hits;
     refreshHighlights();
     renderSearchResults(hits, qs);
+    syncSearchUi();
     // If exactly one hit, fly to it. If a few hits, frame them.
     if (hits.length >= 1 && hits.length <= 12) frameHits(hits);
+    if (qs && hits.length === 1) {
+      openDetails(hits[0], isMobileDetails() ? "half" : "fit");
+    }
   }
 
   function frameHits(hits) {
@@ -2647,6 +2667,12 @@
     // reflect query in URL hash so it's shareable
     const v = q.value.trim();
     history.replaceState(null, "", v ? "#q=" + encodeURIComponent(v) : "#");
+  });
+  searchClear.addEventListener("click", () => {
+    q.value = "";
+    applyFilter();
+    history.replaceState(null, "", "#");
+    q.focus();
   });
 
   // Honor ?q= / #q= on load
