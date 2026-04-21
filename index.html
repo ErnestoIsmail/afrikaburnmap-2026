@@ -572,7 +572,7 @@
       <p>This interactive map is built from the official AfrikaBurn 2026 site map and the 2026 WTF Guide, with additional linking and offline-friendly navigation layered on top.</p>
       <p>Developed by Chris Laidler from the <button type="button" class="about-inline-link" data-about-search="Greasemonkeys">Greasemonkeys</button>.</p>
       <p>The original interactive map project was created by Bernard Bravenboer from <button type="button" class="about-inline-link" data-about-search="Camp 404">camp 404</button>.</p>
-      <p>This is an independent helper tool. There are no guarantees, and some information may still be incomplete or incorrect, but care has been taken to make it as accurate and useful as possible. Heading information is only as accurate as the phone; a mis-calibrated compass can lead to inaccurate heading display.</p>
+      <p>This is an independent helper tool. There are no guarantees, and some information may still be incomplete or incorrect, but care has been taken to make it as accurate and useful as possible. Live GPS includes a short recent-movement trail. Orientation / heading information is only as accurate as the phone; a mis-calibrated compass can lead to inaccurate heading display.</p>
       <div class="about-links">
         <a href="https://www.afrikaburn.org/wp-content/uploads/2026/04/2026_Site_map.pdf" target="_blank" rel="noopener noreferrer">Official AfrikaBurn 2026 site map</a>
         <a href="https://www.afrikaburn.org/binnekringblog/afrikaburn-2026-wtf/" target="_blank" rel="noopener noreferrer">Official AfrikaBurn 2026 WTF Guide</a>
@@ -639,8 +639,8 @@
 <script>
 (() => {
   const data = DATA_INLINE;
-  const APP_VERSION = "2026.04.21.7";
-  const APP_CACHE_VERSION = "v34";
+  const APP_VERSION = "2026.04.21.8";
+  const APP_CACHE_VERSION = "v35";
   const projectDetails = typeof PROJECT_DETAILS !== "undefined" ? PROJECT_DETAILS : { byCode: {} };
   const oldWtfDetails = typeof OLD_WTF_DETAILS !== "undefined" ? OLD_WTF_DETAILS : { byCode: {} };
   const viewport = document.getElementById("viewport");
@@ -1863,7 +1863,7 @@
       <span class="detail-tag">location</span>
     `;
     detailsBody.innerHTML = `
-      ${detailSection("Position", "This marker shows your current estimated GPS position on the map.")}
+      ${detailSection("Position", "This marker shows your current estimated GPS position on the map. The fading trail shows your recent movement. Orientation / heading is only as accurate as the phone, and may be off if the compass is not well calibrated.")}
       ${detailSection("Accuracy", accuracy)}
       ${detailSection("Heading", heading)}
       ${detailSection("Map coordinates", mapCoords, "detail-extra")}
@@ -2053,9 +2053,8 @@
   let initialGpsFrameDone = false;
   let allowInitialGpsFrame = true;
   const USER_TRAIL_LIFETIME_MS = 45000;
-  const USER_TRAIL_MIN_DISTANCE = 9;
-  const USER_TRAIL_MIN_SPEED_MPS = 0.2;
-  const USER_TRAIL_MAX_POINTS = 28;
+  const USER_TRAIL_MIN_DISTANCE = 6;
+  const USER_TRAIL_MAX_POINTS = 72;
   let userTrailPoints = [];
   let lastTrailFixTimestamp = null;
 
@@ -2222,25 +2221,76 @@
     userTrailPoints = userTrailPoints.filter((point) => now - point.timestamp < USER_TRAIL_LIFETIME_MS);
   }
 
-  function updateUserTrailDisplay(now = Date.now()) {
+  function catmullRomPoint(p0, p1, p2, p3, t) {
+    const t2 = t * t;
+    const t3 = t2 * t;
+    return {
+      x: 0.5 * (
+        (2 * p1.x) +
+        (-p0.x + p2.x) * t +
+        (2 * p0.x - 5 * p1.x + 4 * p2.x - p3.x) * t2 +
+        (-p0.x + 3 * p1.x - 3 * p2.x + p3.x) * t3
+      ),
+      y: 0.5 * (
+        (2 * p1.y) +
+        (-p0.y + p2.y) * t +
+        (2 * p0.y - 5 * p1.y + 4 * p2.y - p3.y) * t2 +
+        (-p0.y + 3 * p1.y - 3 * p2.y + p3.y) * t3
+      ),
+    };
+  }
+
+  function buildTrailRenderPoints(currentPoint, now) {
+    const renderPoints = userTrailPoints.slice();
+    if (Number.isFinite(currentPoint?.x) && Number.isFinite(currentPoint?.y)) {
+      const last = renderPoints[renderPoints.length - 1];
+      if (!last || Math.hypot(currentPoint.x - last.x, currentPoint.y - last.y) > 0.1) {
+        renderPoints.push({ x: currentPoint.x, y: currentPoint.y, timestamp: now });
+      }
+    }
+    return renderPoints;
+  }
+
+  function smoothTrailPoints(points) {
+    if (points.length < 3) return points;
+    const smoothed = [points[0]];
+    for (let i = 0; i < points.length - 1; i++) {
+      const p0 = points[Math.max(0, i - 1)];
+      const p1 = points[i];
+      const p2 = points[i + 1];
+      const p3 = points[Math.min(points.length - 1, i + 2)];
+      const segmentLength = Math.hypot(p2.x - p1.x, p2.y - p1.y);
+      const steps = Math.max(4, Math.min(14, Math.round(segmentLength / 5)));
+      for (let step = 1; step <= steps; step++) {
+        const t = step / steps;
+        const point = catmullRomPoint(p0, p1, p2, p3, t);
+        point.timestamp = p1.timestamp + (p2.timestamp - p1.timestamp) * t;
+        smoothed.push(point);
+      }
+    }
+    return smoothed;
+  }
+
+  function updateUserTrailDisplay(currentPoint = null, now = Date.now()) {
     pruneUserTrail(now);
     userTrailLayer.replaceChildren();
-    if (userTrailPoints.length < 2) return;
-    const segmentCount = userTrailPoints.length - 1;
-    for (let i = 1; i < userTrailPoints.length; i++) {
-      const a = userTrailPoints[i - 1];
-      const b = userTrailPoints[i];
+    const renderPoints = smoothTrailPoints(buildTrailRenderPoints(currentPoint, now));
+    if (renderPoints.length < 2) return;
+    const segmentCount = renderPoints.length - 1;
+    for (let i = 1; i < renderPoints.length; i++) {
+      const a = renderPoints[i - 1];
+      const b = renderPoints[i];
       const ageRatio = Math.max(0, 1 - ((now - b.timestamp) / USER_TRAIL_LIFETIME_MS));
       const proximityRatio = i / segmentCount;
-      const alpha = 0.85 * ageRatio * proximityRatio;
+      const alpha = 0.92 * ageRatio * (0.18 + 0.82 * proximityRatio);
       if (alpha <= 0.02) continue;
       const seg = document.createElementNS(SVG_NS, "line");
       seg.setAttribute("x1", mapX(a.x));
       seg.setAttribute("y1", mapY(a.y));
       seg.setAttribute("x2", mapX(b.x));
       seg.setAttribute("y2", mapY(b.y));
-      seg.setAttribute("stroke", `rgba(120, 44, 0, ${alpha.toFixed(3)})`);
-      seg.setAttribute("stroke-width", "3");
+      seg.setAttribute("stroke", `rgba(255, 122, 0, ${alpha.toFixed(3)})`);
+      seg.setAttribute("stroke-width", "4");
       seg.setAttribute("stroke-linecap", "round");
       seg.setAttribute("vector-effect", "non-scaling-stroke");
       userTrailLayer.appendChild(seg);
@@ -2253,17 +2303,20 @@
     userTrailLayer.replaceChildren();
   }
 
-  function maybeAddUserTrailPoint(logicalPoint, timestamp, speed = null) {
+  function maybeAddUserTrailPoint(logicalPoint, timestamp, speed = null, accuracy = null) {
     if (!Number.isFinite(logicalPoint?.x) || !Number.isFinite(logicalPoint?.y)) return;
     if (lastTrailFixTimestamp === timestamp) return;
     lastTrailFixTimestamp = timestamp;
     pruneUserTrail(timestamp);
-    if (Number.isFinite(speed) && speed < USER_TRAIL_MIN_SPEED_MPS) return;
     const last = userTrailPoints[userTrailPoints.length - 1];
     if (last) {
       const dx = logicalPoint.x - last.x;
       const dy = logicalPoint.y - last.y;
-      if (Math.hypot(dx, dy) < USER_TRAIL_MIN_DISTANCE) return;
+      const movementThreshold = Math.max(
+        USER_TRAIL_MIN_DISTANCE,
+        Number.isFinite(accuracy) ? Math.min(14, accuracy * 0.45) : USER_TRAIL_MIN_DISTANCE
+      );
+      if (Math.hypot(dx, dy) < movementThreshold) return;
     }
     const point = { x: logicalPoint.x, y: logicalPoint.y, timestamp };
     userTrailPoints.push(point);
@@ -2312,8 +2365,8 @@
     userPin.style.left = mapX(logicalPoint.x) + "px";
     userPin.style.top = mapY(logicalPoint.y) + "px";
     userPin.style.transform = `translate(-50%, -50%) scale(${1 / scl})`;
-    maybeAddUserTrailPoint(logicalPoint, latestGeoFix.timestamp || Date.now(), latestGeoFix.speed);
-    updateUserTrailDisplay(latestGeoFix.timestamp || Date.now());
+    maybeAddUserTrailPoint(logicalPoint, latestGeoFix.timestamp || Date.now(), latestGeoFix.speed, latestGeoFix.accuracy);
+    updateUserTrailDisplay(logicalPoint, latestGeoFix.timestamp || Date.now());
     if (Number.isFinite(latestHeading)) {
       userPinHeading.style.transform = `translateX(-50%) rotate(${latestHeading}deg)`;
       userPin.classList.add("has-heading");
