@@ -124,31 +124,33 @@
     width:24px; height:24px; transform-origin:50% 100%;
   }
   .user-pin.visible { display:block; }
+  .user-pin.has-heading::after { opacity:1; }
   .user-pin.has-heading .user-pin-heading { opacity:1; }
   .user-pin::before {
     content:""; position:absolute; inset:0; border-radius:50%;
-    background:#00d6ff; border:2px solid #07232c;
-    box-shadow:0 0 0 2px rgba(255,255,255,0.35), 0 0 14px rgba(0,214,255,0.75);
+    background:#ff7a00; border:2px solid #3b1700;
+    box-shadow:0 0 0 2px rgba(255,255,255,0.3), 0 0 14px rgba(255,122,0,0.8);
     animation:user-pin-pulse 1.6s ease-in-out infinite;
   }
   .user-pin::after {
     content:""; position:absolute; left:50%; top:100%;
     transform:translate(-50%, -2px);
+    opacity:0;
     border:6px solid transparent;
-    border-top-color:#00d6ff;
+    border-top-color:#ff7a00;
     filter:drop-shadow(0 1px 0 rgba(0,0,0,0.8));
   }
   @keyframes user-pin-pulse {
-    0%, 100% { box-shadow:0 0 0 2px rgba(255,255,255,0.35), 0 0 14px rgba(0,214,255,0.75); }
-    50% { box-shadow:0 0 0 4px rgba(255,255,255,0.2), 0 0 20px rgba(0,214,255,0.95); }
+    0%, 100% { box-shadow:0 0 0 2px rgba(255,255,255,0.3), 0 0 14px rgba(255,122,0,0.8); }
+    50% { box-shadow:0 0 0 4px rgba(255,255,255,0.18), 0 0 20px rgba(255,122,0,0.98); }
   }
   .user-pin-heading {
     position:absolute; left:50%; top:-12px;
     width:0; height:0; opacity:0;
     border-left:6px solid transparent;
     border-right:6px solid transparent;
-    border-bottom:14px solid #00d6ff;
-    filter:drop-shadow(0 0 2px rgba(0,0,0,0.8)) drop-shadow(0 0 8px rgba(0,214,255,0.75));
+    border-bottom:14px solid #ff7a00;
+    filter:drop-shadow(0 0 2px rgba(0,0,0,0.8)) drop-shadow(0 0 8px rgba(255,122,0,0.8));
     transform-origin:50% 24px;
   }
   .zoom-ctl {
@@ -1826,7 +1828,7 @@
     allowInitialGpsFrame = false;
   }
 
-  function frameLogicalPoint(point, scaleMultiplier = 2.2) {
+  function frameLogicalPoint(point, scaleMultiplier = 1.85, centerYOffsetPx = 0) {
     if (!point) return;
     const vw = viewport.clientWidth, vh = viewport.clientHeight;
     let visibleW = vw;
@@ -1845,6 +1847,7 @@
         visibleCx = visibleW / 2;
       }
     }
+    visibleCy += centerYOffsetPx;
     scl = Math.max(fitScale(), Math.min(MAX_SCALE, fitScale() * scaleMultiplier));
     tx = visibleCx - point.x * scl;
     ty = visibleCy - point.y * scl;
@@ -1855,7 +1858,7 @@
   function maybeFrameInitialGps(logicalPoint) {
     if (initialGpsFrameDone || !allowInitialGpsFrame) return;
     if (q.value.trim()) return;
-    frameLogicalPoint(logicalPoint, 2.4);
+    frameLogicalPoint(logicalPoint, 1.85, 10);
     initialGpsFrameDone = true;
   }
 
@@ -1865,18 +1868,34 @@
     return ((num % 360) + 360) % 360;
   }
 
+  function shortestHeadingDelta(from, to) {
+    return ((to - from + 540) % 360) - 180;
+  }
+
+  function blendHeadingDegrees(current, next, weight = 0.35) {
+    if (!Number.isFinite(next)) return current;
+    if (!Number.isFinite(current)) return normalizeHeadingDegrees(next);
+    return normalizeHeadingDegrees(current + shortestHeadingDelta(current, next) * weight);
+  }
+
+  function currentScreenRotationDegrees() {
+    if (Number.isFinite(screen.orientation?.angle)) return screen.orientation.angle;
+    if (Number.isFinite(window.orientation)) return window.orientation;
+    return 0;
+  }
+
   function headingFromOrientationEvent(ev) {
     if (Number.isFinite(ev.webkitCompassHeading)) {
       return normalizeHeadingDegrees(ev.webkitCompassHeading);
     }
-    if (ev.absolute === true && Number.isFinite(ev.alpha)) {
-      return normalizeHeadingDegrees(360 - ev.alpha);
+    if (Number.isFinite(ev.alpha)) {
+      return normalizeHeadingDegrees(360 - ev.alpha + currentScreenRotationDegrees());
     }
     return null;
   }
 
   function handleDeviceOrientation(ev) {
-    latestHeading = headingFromOrientationEvent(ev);
+    latestHeading = blendHeadingDegrees(latestHeading, headingFromOrientationEvent(ev));
     updateUserLocationDisplay();
   }
 
@@ -1900,12 +1919,18 @@
         return;
       }
     }
+    if ("ondeviceorientationabsolute" in window) {
+      window.addEventListener("deviceorientationabsolute", handleDeviceOrientation, true);
+    }
     window.addEventListener("deviceorientation", handleDeviceOrientation, true);
     orientationListening = true;
   }
 
   function stopOrientationTracking() {
     if (orientationListening) {
+      if ("ondeviceorientationabsolute" in window) {
+        window.removeEventListener("deviceorientationabsolute", handleDeviceOrientation, true);
+      }
       window.removeEventListener("deviceorientation", handleDeviceOrientation, true);
       orientationListening = false;
     }
@@ -1986,6 +2011,10 @@
     setGpsStatus("Waiting for GPS", "pending");
     geoWatchId = navigator.geolocation.watchPosition((position) => {
       const shifted = applyTemporaryGpsShift(position.coords.latitude, position.coords.longitude);
+      const motionHeading = normalizeHeadingDegrees(position.coords.heading);
+      if (Number.isFinite(motionHeading)) {
+        latestHeading = blendHeadingDegrees(latestHeading, motionHeading, 0.5);
+      }
       latestGeoFix = {
         lat: shifted.lat,
         lon: shifted.lon,
