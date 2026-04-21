@@ -165,22 +165,25 @@
   .sprite {
     position:absolute;
     will-change: transform;
-    overflow: hidden;           /* clip sprite-sheet to a single frame */
     opacity: 0;
     animation: sprite-fade 0.4s ease-out forwards;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.35));
   }
   @keyframes sprite-fade { to { opacity: 1; } }
-  .sprite .bob { width:100%; height:100%; }
-  .sprite.bob-on .bob { animation: sprite-bob 0.55s ease-in-out infinite; }
-  .sprite .flipper { width:100%; height:100%; }
-  .sprite .flipper.mirror { transform: scaleX(-1); }
-  .sprite .sheet {
-    display:flex; width:200%; height:100%;
-    animation: sprite-frames infinite steps(2);
+  .sprite .bob {
+    display:flex; align-items:center; gap: 2px;
+    width:100%; height:100%;
   }
-  .sprite .sheet svg { flex: 0 0 50%; width:50%; height:100%; display:block; }
-  @keyframes sprite-frames { to { transform: translateX(-50%); } }
-  @keyframes sprite-bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }
+  .sprite.bob-on .bob { animation: sprite-bob 0.55s ease-in-out infinite; }
+  .sprite .emoji-body, .sprite .emoji-trail {
+    line-height: 1; display: inline-block;
+    user-select:none; -webkit-user-select:none;
+  }
+  @keyframes sprite-bob    { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+  @keyframes emoji-spin    { to { transform: rotate(360deg); } }
+  @keyframes emoji-waddle  { 0%,100% { transform: rotate(-6deg); } 50% { transform: rotate(6deg); } }
+  @keyframes emoji-trail-wiggle { 0%,100% { transform: translateX(0) scale(1); opacity: 0.9; }
+                                   50%     { transform: translateX(-2px) scale(0.9); opacity: 0.55; } }
 
   .sprite-toggle {
     position:absolute; bottom:8px; left:150px; z-index:20;
@@ -692,8 +695,9 @@
 </script>
 
 <script>
-// Pixel-art easter-egg sprites (T-Rex-game vibe): streakers, mutant vehicles, dust devils.
-// They wander across the viewport every 30-90s. Small toggle button lets the user disable them.
+// Easter-egg critters that wander across the viewport every 30-90s.
+// Emoji-based so they render as polished native artwork on every device
+// rather than blurry ad-hoc pixel art. Small toggle lets users disable them.
 (() => {
   const layer = document.getElementById("sprite-layer");
   const toggleBtn = document.getElementById("sprite-toggle");
@@ -715,9 +719,8 @@
   });
   syncToggle();
 
-  // Each frame is a grid of '#' (filled pixel) and '.' (empty). Rows must be equal width.
-  const PIX = {
-    // Streaker — running silhouette, 16w x 17h. Legs alternate between frames.
+  // (archived — previous pixel-grid attempt. Replaced by emoji sprites below.)
+  const _PIX_DISABLED = {
     streaker_a: [
       ".......##.......",
       "......####......",
@@ -865,68 +868,22 @@
     ],
   };
 
-  function buildSVG(rows, color, scale) {
-    const h = rows.length, w = rows[0].length;
-    let rects = "";
-    for (let y = 0; y < h; y++) {
-      for (let x = 0; x < w; x++) {
-        if (rows[y][x] !== ".") {
-          // 1.02 avoids subpixel seams between neighboring rects
-          rects += `<rect x="${x}" y="${y}" width="1.02" height="1.02"/>`;
-        }
-      }
-    }
-    return `<svg viewBox="0 0 ${w} ${h}" width="${w*scale}" height="${h*scale}"
-      preserveAspectRatio="none"
-      style="fill:${color};display:block;shape-rendering:crispEdges;">${rects}</svg>`;
-  }
-
-  // Sprite definitions. yFromBottom is pixels above the viewport bottom.
+  // Emoji sprite definitions. Each sprite is one emoji (or a short combo) rendered
+  // as text at a given size. Lean on the OS emoji set for polished artwork.
+  // - bob: gentle vertical wobble
+  // - spin: continuous rotation (good for the dust devil)
+  // - waddle: small left-right rock
+  // - trail: a tiny emoji that trails behind (e.g. 💨 behind the runner)
   const DEFS = [
-    {
-      kind: "streaker",
-      frames: ["streaker_a", "streaker_b"],
-      color: "#f0dcc2",     // dusty skin
-      scale: 4,
-      cycleMs: 150,          // fast leg-cycle
-      travelMs: [6500, 9000],
-      yFromBottom: [80, 140],
-      weight: 3,
-      bob: false,
-    },
-    {
-      kind: "artcar",
-      frames: ["artcar_a", "artcar_b"],
-      color: "#8b5a3c",     // wood-hull brown
-      scale: 4,
-      cycleMs: 420,          // flag flap / slow wobble
-      travelMs: [18000, 26000],
-      yFromBottom: [90, 170],
-      weight: 2,
-      bob: true,
-    },
-    {
-      kind: "furry",
-      frames: ["furry_a", "furry_b"],
-      color: "#c9a86b",     // tan faux-fur
-      scale: 4,
-      cycleMs: 380,          // plodding walk
-      travelMs: [14000, 20000],
-      yFromBottom: [80, 150],
-      weight: 2,
-      bob: true,
-    },
-    {
-      kind: "dust",
-      frames: ["dust_a", "dust_b"],
-      color: "#c19a6b",     // dust
-      scale: 5,
-      cycleMs: 110,          // fast swirl
-      travelMs: [10000, 14000],
-      yFromBottom: [80, 180],
-      weight: 2,
-      bob: true,
-    },
+    { kind: "streaker",  emoji: "🏃",     trail: "💨", size: 48, travelMs: [6500, 9000],   yFromBottom: [60, 130],  weight: 3, bob: false, waddle: false, spin: false },
+    { kind: "dancer",    emoji: "💃",     size: 52, travelMs: [12000, 18000], yFromBottom: [60, 130],  weight: 2, bob: true,  waddle: true,  spin: false },
+    { kind: "dancer2",   emoji: "🕺",     size: 52, travelMs: [12000, 18000], yFromBottom: [60, 130],  weight: 1, bob: true,  waddle: true,  spin: false },
+    { kind: "fairy",     emoji: "🧚",     size: 48, travelMs: [10000, 15000], yFromBottom: [100, 220], weight: 1, bob: true,  waddle: false, spin: false },
+    { kind: "octobus",   emoji: "🐙",     size: 60, travelMs: [16000, 22000], yFromBottom: [80, 160],  weight: 2, bob: true,  waddle: true,  spin: false },
+    { kind: "artbus",    emoji: "🚌",     trail: "🎈", size: 56, travelMs: [18000, 26000], yFromBottom: [70, 140],  weight: 2, bob: true,  waddle: false, spin: false },
+    { kind: "ufo",       emoji: "🛸",     size: 56, travelMs: [14000, 20000], yFromBottom: [140, 240], weight: 1, bob: true,  waddle: false, spin: false },
+    { kind: "dust",      emoji: "🌪️",    size: 56, travelMs: [10000, 14000], yFromBottom: [60, 180],  weight: 2, bob: false, waddle: false, spin: true  },
+    { kind: "fire",      emoji: "🔥",     size: 42, travelMs: [12000, 16000], yFromBottom: [60, 130],  weight: 1, bob: true,  waddle: true,  spin: false },
   ];
 
   function pickDef() {
@@ -939,31 +896,53 @@
 
   function spawn(def) {
     const vw = layer.clientWidth, vh = layer.clientHeight;
-    const rows = PIX[def.frames[0]];
-    const w = rows[0].length * def.scale;
-    const h = rows.length * def.scale;
-    // 50/50 direction
+    const size = def.size;
+    const h = size, w = size + (def.trail ? size * 0.7 : 0);
     const rtl = Math.random() < 0.5;
     const y = vh - rand(def.yFromBottom) - h;
 
     const el = document.createElement("div");
-    el.className = "sprite" + (def.bob ? " bob-on" : "");
+    el.className = "sprite";
+    if (def.bob) el.classList.add("bob-on");
     el.style.top = Math.max(8, y) + "px";
     el.style.width = w + "px";
     el.style.height = h + "px";
 
     const bob = document.createElement("div");
     bob.className = "bob";
-    const flip = document.createElement("div");
-    flip.className = "flipper" + (rtl ? " mirror" : "");
-    const sheet = document.createElement("div");
-    sheet.className = "sheet";
-    sheet.style.animationDuration = def.cycleMs + "ms";
-    sheet.innerHTML =
-      buildSVG(PIX[def.frames[0]], def.color, def.scale) +
-      buildSVG(PIX[def.frames[1]], def.color, def.scale);
-    flip.appendChild(sheet);
-    bob.appendChild(flip);
+
+    // We keep the emoji facing "forward" by applying a flip when needed.
+    // Trail emoji is positioned behind relative to travel direction.
+    const body = document.createElement("span");
+    body.className = "emoji-body";
+    body.style.fontSize = size + "px";
+    body.textContent = def.emoji;
+
+    let anims = [];
+    if (def.spin) {
+      anims.push("emoji-spin 1.2s linear infinite");
+    } else if (def.waddle) {
+      anims.push("emoji-waddle 0.6s ease-in-out infinite");
+    }
+    // rtl means moving right→left, so the emoji should face left (flip horizontally)
+    if (rtl) body.style.transform = "scaleX(-1)";
+    if (anims.length) body.style.animation = anims.join(", ");
+
+    bob.appendChild(body);
+
+    if (def.trail) {
+      const trail = document.createElement("span");
+      trail.className = "emoji-trail";
+      trail.style.fontSize = (size * 0.6) + "px";
+      trail.textContent = def.trail;
+      // Trail sits behind the body: when moving left-to-right (not rtl), trail is at left.
+      // When moving right-to-left (rtl), trail is at right. The flex order handles that.
+      trail.style.opacity = "0.85";
+      trail.style.animation = "emoji-trail-wiggle 0.4s ease-in-out infinite";
+      if (rtl) bob.appendChild(trail);
+      else bob.insertBefore(trail, body);
+    }
+
     el.appendChild(bob);
     layer.appendChild(el);
 
