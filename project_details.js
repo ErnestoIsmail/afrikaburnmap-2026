@@ -919,7 +919,7 @@ const PROJECT_DETAILS = (() => {
     ],
     "familyFriendly": "MAYBE",
     "times": "Morning, Day Time",
-    "description": "Busted bike, grumpy generator, or a tyre having a wobbly? The Greasemonkeys teach sentient beings to fix their own mechanical mishaps. Self-service Monday to Saturday, closed Sunday. Monkeys may appear 10 am to 12 pm, and 1pm to 3pm, summoned by fate and caffeine. Fix flat car tyres early. Volunteers welcome. Take your MOOP and leave things tidy; we're chaotic, but the workshop shouldn't be.",
+    "description": "Busted bike, grumpy generator, or a tyre having a wobbly? The Greasemonkeys teach sentient beings to fix their own mechanical mishaps. The Greasemonkey workshop is open 24 hours for tool use, and there may be monkeys between 10 am and 12 pm to help with tricksy issues. Fix flat car tyres early. Volunteers welcome. Take your MOOP and leave things tidy; we're chaotic, but the workshop shouldn't be.",
     "additionalDetails": "Family friendly: MAYBE\nOperating times: Morning, Day Time",
     "links": [
       {
@@ -2901,8 +2901,8 @@ const PROJECT_DETAILS = (() => {
   },
   {
     "code": "CS",
-    "slug": "coffee and spill for cyndi",
-    "title": "Coffee and Spill for Cyndi",
+    "slug": "coffee and spliff for cyndi",
+    "title": "Coffee and Spliff for Cyndi",
     "type": "Artwork",
     "sourceTag": "wtf-2026",
     "sourceLabel": "WTF Guide 2026",
@@ -9308,7 +9308,7 @@ const PROJECT_DETAILS = (() => {
       "service"
     ],
     "description": "Off-Centre Camp (OCC) is the civic heart of Tankwa Town, where Welcome Road meets the Binnekring. Think of it as the crossroads of this temporary city: where the curious arrive, the lost get found, the thirsty get ice, and the willing become volunteers. Whether you're looking for a shift, a lost item, a bag of ice, the latest chalkboard schedule, or just someone who knows what's going on — OCC is where you start.\n\nUnder one dust-covered corner of the Binnekring you'll find: the Volunteer Booth (daily 10 am–7 pm), Radio Free Tankwa (99.9 FM), Arteria (art info and burn schedule chalkboard), Artifactory (AfrikaBurn history museum), Theme Camp Saloon (media accreditation with Sweet Lollipop ~10 am), Medics (big red cross — real trauma only), Sanctuary (harm reduction and testing 10 am–12 pm and 3–5 pm daily), Rangers HQ (orange container), Lost & Found, Die Yskas (ice, Mon–Sat 11 am–1 pm), the DMV, and the Chillaz stage.\n\nOpen daily. Main hub hours: Mon–Wed 9 am–7 pm, Thu–Sun 9 am–5 pm.",
-    "additionalDetails": "Civic hub of Tankwa Town. Welcome Road meets the Binnekring, 4-to-6 o'clock sector.",
+    "additionalDetails": "Civic hub of Tankwa Town. Welcome Road (6ish) meets the Binnekring, 5-to-7 o'clock sector.",
     "links": [
       {
         "label": "WTF Guide 2026",

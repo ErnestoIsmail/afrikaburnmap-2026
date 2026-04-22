@@ -74,7 +74,8 @@ const SCHEDULE_DATA = (() => {
       inferred.push("service");
     }
     if (/\b(gathering|community|welcome party|family|lounge|sundowners|citizen|social)\b/.test(text)) inferred.push("community");
-    return normalizeCategories(inferred);
+    const blocked = new Set(normalizeCategories(def.excludeCategories || []));
+    return normalizeCategories(inferred).filter((label) => !blocked.has(label));
   }
 
   function addSeries(def) {
@@ -178,6 +179,21 @@ const SCHEDULE_DATA = (() => {
     sourceLabel: "User-supplied event",
     summaryLabel: "Thu around 12 pm · Love is a Spectrum",
     description: "After brunch at Camp 404, join the Love is a Spectrum matchmaking shenanigans in the cosy lounge. Participants answer a few questions, meet possible matches through a series of curated activities, and can then elope onward into further purple-wedding chaos if the moment feels right. You may also find the crew roaming the playa in wedding finery.",
+  });
+  addSeries({
+    id: "cs-raise-your-cup",
+    title: "Raise Your Cup",
+    kind: "event",
+    days: "tue",
+    timeLabel: "Tuesday 28 April, 4 pm-ish till late",
+    sortStart: "16:00",
+    estimatedEnd: "02:00",
+    estimatedEndNextDay: true,
+    linkedCodes: ["CS"],
+    categories: ["music", "performance", "community"],
+    sourceLabel: "User-supplied event",
+    summaryLabel: "Tue 28 Apr 4 pm-ish-late · Raise Your Cup",
+    description: "Join the celebration of AfrikaBurn's beloved Cyndi Roberts at the Coffee and Spliff for Cyndi artwork, built in her honour. Expect music hosted by The Dung Beetle Project, plus fire, mayhem, drums, fire poi, mutants, and anything else needed to make it a party worthy of celebrating Cyndi and her massive contribution to the burn.",
   });
   addSeries({
     id: "but-beasts-bazaar",
@@ -341,27 +357,31 @@ const SCHEDULE_DATA = (() => {
   });
   addSeries({
     id: "tgm-workshop-morning",
-    title: "Workshop Help Window",
+    title: "Greasemonkeys Around",
     kind: "open",
     days: "mon-sat",
     timeLabel: "10 am to 12 pm",
     sortStart: "10:00",
     sortEnd: "12:00",
     linkedCodes: ["TGM"],
-    summaryLabel: "Mon-Sat 10 am-12 pm · Workshop help",
-    description: "Working Greasemonkeys may appear to help sentient beings fix their mechanical mishaps.",
+    categories: ["community"],
+    excludeCategories: ["workshop"],
+    summaryLabel: "Mon-Sat 10 am-12 pm · Greasemonkeys around",
+    description: "The Greasemonkey workshop is open 24 hours for tool use, and there may be monkeys between 10 am and 12 pm to help with tricksy issues.",
   });
   addSeries({
     id: "tgm-workshop-afternoon",
-    title: "Workshop Help Window",
+    title: "Greasemonkeys Around",
     kind: "open",
     days: "mon-sat",
     timeLabel: "1 pm to 3 pm",
     sortStart: "13:00",
     sortEnd: "15:00",
     linkedCodes: ["TGM"],
-    summaryLabel: "Mon-Sat 1 pm-3 pm · Workshop help",
-    description: "A second staffed Greasemonkeys workshop window for bikes, generators, and wobbly tyres.",
+    categories: ["community"],
+    excludeCategories: ["workshop"],
+    summaryLabel: "Mon-Sat 1 pm-3 pm · Greasemonkeys around",
+    description: "The Greasemonkey workshop is open 24 hours for tool use, and there may be monkeys between 1 pm and 3 pm to help with tricksy issues.",
   });
   addSeries({
     id: "hug-story-time",
@@ -662,6 +682,120 @@ const SCHEDULE_DATA = (() => {
     sourceLabel: "User-supplied event",
     summaryLabel: "Wed 11 am · Swing Dance Workshop",
     description: "A Swing Dance Workshop at The Steampunk Saloon led by Muriel Gravenor.",
+  });
+  addSeries({
+    id: "piccaya-flying-dutchman",
+    title: "Michel Piccaya at Flying Dutchman",
+    kind: "event",
+    days: "tue",
+    timeLabel: "Tuesday sunset",
+    sortStart: "18:00",
+    categories: ["music"],
+    sourceLabel: "User-supplied lineup",
+    summaryLabel: "Tue sunset · Michel Piccaya at Flying Dutchman",
+    description: "Michel Piccaya sunset set at The Flying Dutchman. Left intentionally unlinked until the mutant vehicle has its own map marker, to avoid pointing the event at the support camp instead.",
+  });
+  addSeries({
+    id: "piccaya-dmt-dome",
+    title: "Michel Piccaya at DMT Dome",
+    kind: "event",
+    days: "wed",
+    timeLabel: "Wednesday sunset",
+    sortStart: "18:00",
+    linkedCodes: ["DMT"],
+    categories: ["music"],
+    sourceLabel: "User-supplied lineup",
+    summaryLabel: "Wed sunset · Michel Piccaya at DMT Dome",
+    description: "Michel Piccaya sunset set at DMT Dome.",
+  });
+  addSeries({
+    id: "piccaya-owlion",
+    title: "Michel Piccaya at OwLion",
+    kind: "event",
+    days: "wed",
+    timeLabel: "Wednesday evening",
+    sortStart: "20:00",
+    categories: ["music"],
+    sourceLabel: "User-supplied lineup",
+    summaryLabel: "Wed evening · Michel Piccaya at OwLion",
+    description: "Michel Piccaya evening set at OwLion. Left intentionally unlinked until the mutant vehicle has its own map marker.",
+  });
+  addSeries({
+    id: "piccaya-fractal-chill-thu",
+    title: "Michel Piccaya at Fractal Chill",
+    kind: "event",
+    days: "thu",
+    timeLabel: "Thursday afternoon",
+    sortStart: "15:00",
+    linkedCodes: ["FCC"],
+    categories: ["music"],
+    sourceLabel: "User-supplied lineup",
+    summaryLabel: "Thu afternoon · Michel Piccaya at Fractal Chill",
+    description: "Michel Piccaya afternoon set at Fractal Chill.",
+  });
+  addSeries({
+    id: "piccaya-fractal-chill-fri",
+    title: "Michel Piccaya at Fractal Chill",
+    kind: "event",
+    days: "fri",
+    timeLabel: "Friday afternoon",
+    sortStart: "15:00",
+    linkedCodes: ["FCC"],
+    categories: ["music"],
+    sourceLabel: "User-supplied lineup",
+    summaryLabel: "Fri afternoon · Michel Piccaya at Fractal Chill",
+    description: "Michel Piccaya afternoon set at Fractal Chill.",
+  });
+  addSeries({
+    id: "piccaya-le-petit-paris",
+    title: "Michel Piccaya at Le Petit Paris",
+    kind: "event",
+    days: "sat",
+    timeLabel: "Saturday sunrise",
+    sortStart: "06:00",
+    linkedCodes: ["LPP"],
+    categories: ["music"],
+    sourceLabel: "User-supplied lineup",
+    summaryLabel: "Sat sunrise · Michel Piccaya at Le Petit Paris",
+    description: "Michel Piccaya sunrise set at Le Petit Paris.",
+  });
+  addSeries({
+    id: "piccaya-fractal-chill-sat",
+    title: "Michel Piccaya at Fractal Chill",
+    kind: "event",
+    days: "sat",
+    timeLabel: "Saturday afternoon",
+    sortStart: "15:00",
+    linkedCodes: ["FCC"],
+    categories: ["music"],
+    sourceLabel: "User-supplied lineup",
+    summaryLabel: "Sat afternoon · Michel Piccaya at Fractal Chill",
+    description: "Michel Piccaya afternoon set at Fractal Chill.",
+  });
+  addSeries({
+    id: "piccaya-insight",
+    title: "Michel Piccaya at The Insight",
+    kind: "event",
+    days: "sat",
+    timeLabel: "Saturday sunset",
+    sortStart: "18:00",
+    categories: ["music"],
+    sourceLabel: "User-supplied lineup",
+    summaryLabel: "Sat sunset · Michel Piccaya at The Insight",
+    description: "Michel Piccaya sunset set at The Insight. Left intentionally unlinked until the mutant vehicle has its own map marker.",
+  });
+  addSeries({
+    id: "piccaya-8th-day-of-creation",
+    title: "Michel Piccaya at 8th Day of Creation",
+    kind: "event",
+    days: "sat",
+    timeLabel: "Saturday night",
+    sortStart: "22:00",
+    linkedCodes: ["DC"],
+    categories: ["music"],
+    sourceLabel: "User-supplied lineup",
+    summaryLabel: "Sat night · Michel Piccaya at 8th Day of Creation",
+    description: "Michel Piccaya night set at 8th Day of Creation.",
   });
   addSeries({
     id: "slc-screenings",
