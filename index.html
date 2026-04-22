@@ -1577,8 +1577,8 @@
 <script>
 (() => {
   const data = DATA_INLINE;
-  const APP_VERSION = "2026.04.22.2";
-  const APP_CACHE_VERSION = "v44";
+  const APP_VERSION = "2026.04.22.3";
+  const APP_CACHE_VERSION = "v45";
   const projectDetails = typeof PROJECT_DETAILS !== "undefined" ? PROJECT_DETAILS : { byCode: {} };
   const EMPTY_SCHEDULE_DATA = { days: [], entries: [], byDate: {}, byLinkedCode: {}, series: [], seriesById: {}, seriesByLinkedCode: {} };
   const baseScheduleData = typeof SCHEDULE_DATA !== "undefined" ? SCHEDULE_DATA : EMPTY_SCHEDULE_DATA;
@@ -6044,7 +6044,7 @@
   const looksLikeIOSWebView = isIOS && !/Version\/\d+.*Safari\//.test(ua);
   const isInAppBrowser = inAppMatch || looksLikeIOSWebView;
   const dismissedAt = parseInt(localStorage.getItem("ab-install-dismissed") || "0", 10);
-  const dismissedRecently = (Date.now() - dismissedAt) < 1000*60*60*24*14; // 14 days
+  const dismissedRecently = (Date.now() - dismissedAt) < 1000*60*60*24; // 1 day
 
   function showBanner() {
     if (isStandalone || dismissedRecently) return;
