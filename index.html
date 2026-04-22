@@ -145,7 +145,13 @@
     border: 1.5px solid transparent;
     transition: background 0.12s, border-color 0.12s;
   }
-  .hotspot:hover { background: rgba(255,255,255,0.22); border-color: rgba(255,255,255,0.9); }
+  .hotspot.starred {
+    background:rgba(255,214,91,0.2);
+    border-color:rgba(255,214,91,0.95);
+    box-shadow:0 0 0 1px rgba(0,0,0,0.55) inset, 0 0 10px rgba(255,214,91,0.45);
+  }
+  .hotspot.starred:hover { background:rgba(255,214,91,0.28); border-color:rgba(255,228,141,1); }
+  .hotspot:hover { background: rgba(96,219,255,0.18); border-color: rgba(158,236,255,0.95); }
   .hotspot.filtered-out { opacity: 0.08; pointer-events: none; }
   .index-hotspot {
     position:absolute; z-index:3; cursor:pointer;
@@ -153,9 +159,10 @@
     overflow:visible;
   }
   .index-hotspot.index-hit {
-    background:rgba(255,242,0,0.18);
-    border-color:rgba(255,242,0,0.65);
+    background:rgba(96,219,255,0.16);
+    border-color:rgba(96,219,255,0.68);
   }
+  .index-hotspot::before,
   .index-hotspot::after {
     content:"";
     position:absolute;
@@ -176,12 +183,23 @@
     opacity:0;
     pointer-events:none;
   }
+  .index-hotspot::before {
+    left:-43px;
+    border-color:rgba(255,220,88,0.76);
+    background:rgba(24,20,8,0.96);
+    box-shadow:0 0 0 1px rgba(0,0,0,0.55), 0 0 10px rgba(255,220,88,0.28);
+    color:#ffe48d;
+  }
+  .index-hotspot.starred::before {
+    content:"★";
+    opacity:1;
+  }
   .index-hotspot.visited::after {
     content:"✓";
     opacity:1;
   }
+  .index-hotspot[data-map-source="highres"]::before,
   .index-hotspot[data-map-source="highres"]::after {
-    left:70%;
     top:50%;
     transform:translate(-50%, -50%);
     width:40px;
@@ -189,12 +207,14 @@
     font-size:24px;
     line-height:40px;
   }
+  .index-hotspot[data-map-source="highres"]::before { left:58%; }
+  .index-hotspot[data-map-source="highres"]::after { left:70%; }
   /* search-hit markers: big pulsing pin that sits just above the hotspot */
   .hit-pin {
     position:absolute; pointer-events:none; z-index: 5;
     width: 26px; height: 26px; border-radius: 50%;
-    background: #fff200;
-    box-shadow: 0 0 0 3px #000, 0 0 0 5px #fff200, 0 0 16px 4px rgba(255,242,0,0.8);
+    background: #62ff84;
+    box-shadow: 0 0 0 3px #000, 0 0 0 5px #62ff84, 0 0 16px 4px rgba(98,255,132,0.8);
     animation: hit-pulse 1.1s ease-in-out infinite;
     transform-origin: 50% 50%;
   }
@@ -202,12 +222,12 @@
     content: ""; position:absolute; left: 50%; top: 100%;
     transform: translate(-50%, -2px);
     border: 6px solid transparent;
-    border-top-color: #fff200;
+    border-top-color: #62ff84;
     filter: drop-shadow(0 1px 0 #000);
   }
   .hit-pin .hit-label {
     position: absolute; left: 50%; bottom: 130%; transform: translateX(-50%);
-    background: #fff200; color:#111; font-weight:700; font-size:11px;
+    background: #62ff84; color:#111; font-weight:700; font-size:11px;
     padding:2px 6px; border-radius:3px; white-space:nowrap;
     border: 1.5px solid #000; letter-spacing: 0.04em;
   }
@@ -217,10 +237,10 @@
   }
   .hit-overlay {
     position:absolute; pointer-events:none; z-index: 4;
-    border: 3px solid #fff200;
+    border: 3px solid #62ff84;
     border-radius: 6px;
-    background: rgba(255,242,0,0.18);
-    box-shadow: 0 0 0 2px rgba(0,0,0,0.6) inset, 0 0 12px rgba(255,242,0,0.7);
+    background: rgba(98,255,132,0.18);
+    box-shadow: 0 0 0 2px rgba(0,0,0,0.6) inset, 0 0 12px rgba(98,255,132,0.7);
   }
   .hit-overlay.selected {
     border-color:#ff4d5e;
@@ -411,6 +431,19 @@
   }
   .details-visit-toggle.locked:hover { background:#222; border-color:#444; }
   .details-visit-toggle.locked input { cursor:not-allowed; }
+  .details-star-toggle {
+    display:flex; align-items:center; gap:4px;
+    height:28px; padding:0 8px;
+    background:#222; color:#ddd; border:1px solid #444; border-radius:5px;
+    cursor:pointer; user-select:none; white-space:nowrap;
+    font-size:11px; line-height:1;
+  }
+  .details-star-toggle:hover { border-color:#c3a446; background:#2b2615; }
+  .details-star-toggle input {
+    width:12px; height:12px; margin:0;
+    accent-color:#ffd65b;
+    flex:0 0 auto;
+  }
   .details-visit-badge {
     display:inline-flex;
     align-items:center;
@@ -420,6 +453,19 @@
     border:1px solid rgba(127,245,138,0.42);
     background:rgba(28,58,28,0.34);
     color:#c8ffd1;
+    font-size:10px;
+    line-height:1.2;
+    white-space:nowrap;
+  }
+  .details-star-badge {
+    display:inline-flex;
+    align-items:center;
+    gap:4px;
+    padding:1px 6px;
+    border-radius:999px;
+    border:1px solid rgba(255,214,91,0.42);
+    background:rgba(84,68,18,0.34);
+    color:#ffe48d;
     font-size:10px;
     line-height:1.2;
     white-space:nowrap;
@@ -510,11 +556,13 @@
       border-radius:3px;
     }
     .details-actions { gap:3px; }
+    .details-star-toggle,
     .details-visit-toggle {
       height:24px;
       padding:0 6px;
       font-size:10px;
     }
+    .details-star-toggle input,
     .details-visit-toggle input { width:10px; height:10px; }
     .details-icon {
       width:18px; height:18px; border-radius:3px;
@@ -522,7 +570,8 @@
     .details-close::before, .details-close::after { width:9px; height:1.25px; }
     .details-size::before { width:7px; height:7px; border-width:1.25px; }
     .details-panel.full .details-size::before { width:9px; height:1.25px; }
-    .details-visit-badge { font-size:9px; padding:1px 5px; }
+    .details-visit-badge,
+    .details-star-badge { font-size:9px; padding:1px 5px; }
   }
 
   /* install / offline banner */
@@ -648,6 +697,46 @@
   .about-meta {
     margin-top:14px; padding-top:12px; border-top:1px solid #2c2c2c;
     color:#bbb; font-size:12px;
+  }
+  .usage-backdrop {
+    position:fixed; inset:0; z-index:114; display:none;
+    background:rgba(0,0,0,0.68);
+    align-items:center; justify-content:center; padding:18px;
+  }
+  .usage-backdrop.open { display:flex; }
+  .usage-panel {
+    width:min(620px, calc(100vw - 24px));
+    min-height:240px;
+    background:rgba(18,18,18,0.985); color:#eee;
+    border:1px solid #333; border-radius:8px;
+    box-shadow:0 14px 40px rgba(0,0,0,0.52);
+    display:flex; flex-direction:column;
+  }
+  .usage-head {
+    display:flex; align-items:center;
+    gap:12px; padding:14px 16px; border-bottom:1px solid #333;
+  }
+  .usage-head h2 {
+    margin:0; font-size:20px; line-height:1.2;
+  }
+  .usage-body {
+    padding:18px 16px 16px;
+    display:flex; flex-direction:column; gap:18px;
+  }
+  .usage-copy {
+    font-size:18px; line-height:1.5; color:#f2f2f2;
+  }
+  .usage-actions {
+    display:flex; justify-content:flex-end;
+  }
+  .usage-dismiss {
+    appearance:none; background:#262626; color:#f4f4f4;
+    border:1px solid #4a4a4a; border-radius:6px;
+    padding:10px 14px; font-size:13px; cursor:pointer;
+  }
+  .usage-dismiss:hover,
+  .usage-dismiss:focus-visible {
+    background:#303030; border-color:#6a6a6a; outline:none;
   }
   .schedule-backdrop {
     position:fixed; inset:0; z-index:112; display:none;
@@ -1356,6 +1445,17 @@
       width:100vw; max-height:78vh; border-radius:8px 8px 0 0;
       border-left:0; border-right:0; border-bottom:0;
     }
+    .usage-backdrop { align-items:center; padding:18px; }
+    .usage-panel {
+      width:min(620px, calc(100vw - 24px));
+      border-radius:8px;
+      border:1px solid #333;
+      min-height:220px;
+    }
+    .usage-head { padding:12px 12px 10px; }
+    .usage-head h2 { font-size:18px; }
+    .usage-body { padding:16px 12px 14px; gap:16px; }
+    .usage-copy { font-size:16px; line-height:1.45; }
     .schedule-backdrop { align-items:stretch; justify-content:stretch; padding:0; }
     .schedule-panel {
       width:100vw;
@@ -1481,6 +1581,20 @@
   </section>
 </div>
 
+<div class="usage-backdrop" id="usage-backdrop" aria-hidden="true">
+  <section class="usage-panel" role="dialog" aria-modal="true" aria-labelledby="usage-title">
+    <div class="usage-head">
+      <h2 id="usage-title">Go be at the burn</h2>
+    </div>
+    <div class="usage-body">
+      <div class="usage-copy" id="usage-copy"></div>
+      <div class="usage-actions">
+        <button type="button" class="usage-dismiss" id="usage-dismiss">OK</button>
+      </div>
+    </div>
+  </section>
+</div>
+
 <div class="schedule-backdrop" id="schedule-backdrop" aria-hidden="true">
   <section class="schedule-panel" role="dialog" aria-modal="true" aria-labelledby="schedule-title">
     <div class="schedule-head">
@@ -1578,8 +1692,8 @@
 <script>
 (() => {
   const data = DATA_INLINE;
-  const APP_VERSION = "2026.04.22.5";
-  const APP_CACHE_VERSION = "v47";
+  const APP_VERSION = "2026.04.22.6";
+  const APP_CACHE_VERSION = "v48";
   const projectDetails = typeof PROJECT_DETAILS !== "undefined" ? PROJECT_DETAILS : { byCode: {} };
   const EMPTY_SCHEDULE_DATA = { days: [], entries: [], byDate: {}, byLinkedCode: {}, series: [], seriesById: {}, seriesByLinkedCode: {} };
   const baseScheduleData = typeof SCHEDULE_DATA !== "undefined" ? SCHEDULE_DATA : EMPTY_SCHEDULE_DATA;
@@ -1589,6 +1703,7 @@
   const USER_TRAIL_SETTING_STORAGE_KEY = "ab-user-trail-setting";
   const ABOUT_SEEN_STORAGE_KEY = "ab-about-seen";
   const VISITED_ENTRY_STORAGE_KEY = "ab-map-visited-entries";
+  const STARRED_ENTRY_STORAGE_KEY = "ab-map-starred-entries";
   const SCHEDULE_CATEGORY_OPTIONS = [
     { key: "Burn", label: "Burn", shortLabel: "Burn" },
     { key: "Music", label: "Music", shortLabel: "Music" },
@@ -1622,6 +1737,9 @@
   const aboutClose = document.getElementById("about-close");
   const aboutVersion = document.getElementById("about-version");
   const aboutCacheVersion = document.getElementById("about-cache-version");
+  const usageBackdrop = document.getElementById("usage-backdrop");
+  const usageDismiss = document.getElementById("usage-dismiss");
+  const usageCopy = document.getElementById("usage-copy");
   const scheduleBackdrop = document.getElementById("schedule-backdrop");
   const scheduleClose = document.getElementById("schedule-close");
   const scheduleAdd = document.getElementById("schedule-add");
@@ -1644,6 +1762,8 @@
   const detailsBody = document.getElementById("details-body");
   const detailsSize = document.getElementById("details-size");
   const detailsClose = document.getElementById("details-close");
+  let detailsStarToggle = null;
+  let detailsStarToggleEntry = null;
   let detailsVisitToggle = null;
   let detailsVisitToggleEntry = null;
   let detailsMode = "fit";
@@ -1823,6 +1943,7 @@
 
   let starredScheduleIds = new Set(safeReadStorageJson(SCHEDULE_STAR_STORAGE_KEY, []));
   let customScheduleItems = safeReadStorageJson(SCHEDULE_CUSTOM_STORAGE_KEY, []);
+  let starredEntryKeys = new Set(safeReadStorageJson(STARRED_ENTRY_STORAGE_KEY, []));
   let visitedEntryKeys = new Set(safeReadStorageJson(VISITED_ENTRY_STORAGE_KEY, []));
   scheduleData = buildRuntimeScheduleData(baseScheduleData, customScheduleItems);
 
@@ -1836,6 +1957,10 @@
 
   function persistVisitedEntryKeys() {
     safeWriteStorageJson(VISITED_ENTRY_STORAGE_KEY, [...visitedEntryKeys]);
+  }
+
+  function persistStarredEntryKeys() {
+    safeWriteStorageJson(STARRED_ENTRY_STORAGE_KEY, [...starredEntryKeys]);
   }
 
   function isScheduleItemStarred(itemId) {
@@ -1865,6 +1990,10 @@
   }
 
   function isTrackableVisitEntry(entryLike) {
+    return ["theme", "art"].includes(String(entryLike?.section || "").toLowerCase());
+  }
+
+  function isTrackableStarEntry(entryLike) {
     return ["theme", "art"].includes(String(entryLike?.section || "").toLowerCase());
   }
 
@@ -1918,6 +2047,17 @@
     return true;
   }
 
+  function setEntryStarred(entryLike, starred) {
+    const key = visitKeyForEntry(entryLike);
+    if (!key || !isTrackableStarEntry(entryLike)) return false;
+    if (starred) starredEntryKeys.add(key);
+    else starredEntryKeys.delete(key);
+    persistStarredEntryKeys();
+    refreshVisitedMarkers();
+    syncStarControls();
+    return true;
+  }
+
   function refreshScheduleData() {
     scheduleData = buildRuntimeScheduleData(baseScheduleData, customScheduleItems);
     if (!scheduleData.byDate?.[activeScheduleDate]) {
@@ -1953,6 +2093,61 @@
   function closeAbout() {
     aboutBackdrop.classList.remove("open");
     aboutBackdrop.setAttribute("aria-hidden", "true");
+  }
+
+  const USAGE_PROMPT_DELAY_MS = 5 * 60 * 1000;
+  const USAGE_PROMPT_CHECK_MS = 15000;
+  const USAGE_PROMPT_MESSAGES = [
+    "The map has helped enough for now. Put the phone down, wander a little, and let the burn surprise you.",
+    "Time to look up. Go follow some sound, say hi to a stranger, and see what is happening in front of you.",
+    "Use the map when it helps, then go participate. The best parts of the burn are usually not on a screen.",
+    "You have been on the map for a while. Pocket the phone, trust your feet, and go join something real.",
+    "Try a short detour without the screen. Wander, gift, ask questions, and let Tankwa show you something unexpected.",
+    "The burn happens out there, not in here. Go find some dust, some people, and a moment you did not plan.",
+    "This is your reminder to stop navigating for a bit and start participating. Go be at the burn."
+  ];
+  let usagePromptTimer = null;
+  let usagePromptNextAt = Date.now() + USAGE_PROMPT_DELAY_MS;
+  let usagePromptLastIndex = -1;
+
+  function usagePromptIsInBurnWindow() {
+    return Boolean(scheduleData.byDate?.[currentBurnLocalDateIso()]) && Boolean(currentUserLogicalPoint());
+  }
+
+  function nextUsagePromptMessage() {
+    if (!USAGE_PROMPT_MESSAGES.length) return "";
+    let index = Math.floor(Math.random() * USAGE_PROMPT_MESSAGES.length);
+    if (USAGE_PROMPT_MESSAGES.length > 1 && index === usagePromptLastIndex) {
+      index = (index + 1 + Math.floor(Math.random() * (USAGE_PROMPT_MESSAGES.length - 1))) % USAGE_PROMPT_MESSAGES.length;
+    }
+    usagePromptLastIndex = index;
+    return USAGE_PROMPT_MESSAGES[index];
+  }
+
+  function openUsagePrompt() {
+    usageCopy.textContent = nextUsagePromptMessage();
+    usageBackdrop.classList.add("open");
+    usageBackdrop.setAttribute("aria-hidden", "false");
+  }
+
+  function closeUsagePrompt() {
+    usageBackdrop.classList.remove("open");
+    usageBackdrop.setAttribute("aria-hidden", "true");
+    usagePromptNextAt = Date.now() + USAGE_PROMPT_DELAY_MS;
+  }
+
+  function maybeShowUsagePrompt() {
+    if (usageBackdrop.classList.contains("open")) return;
+    if (document.visibilityState === "hidden") return;
+    if (!usagePromptIsInBurnWindow()) return;
+    if (Date.now() < usagePromptNextAt) return;
+    openUsagePrompt();
+  }
+
+  function startUsagePromptCycle() {
+    if (usagePromptTimer) window.clearInterval(usagePromptTimer);
+    usagePromptNextAt = Date.now() + USAGE_PROMPT_DELAY_MS;
+    usagePromptTimer = window.setInterval(maybeShowUsagePrompt, USAGE_PROMPT_CHECK_MS);
   }
 
   let suppressUiHistory = false;
@@ -2079,6 +2274,7 @@
   aboutBackdrop.addEventListener("click", (ev) => {
     if (ev.target === aboutBackdrop) closeAbout();
   });
+  usageDismiss.addEventListener("click", closeUsagePrompt);
   for (const button of aboutBackdrop.querySelectorAll("[data-about-search]")) {
     button.addEventListener("click", () => {
       jumpToAboutSearch(button.dataset.aboutSearch || "");
@@ -3068,7 +3264,7 @@
   }
 
   function hourLabel(minutes) {
-    const hour = Math.floor(minutes / 60);
+    const hour = ((Math.floor(minutes / 60) % 24) + 24) % 24;
     const suffix = hour >= 12 ? "pm" : "am";
     const display = hour % 12 || 12;
     return `${display}${suffix}`;
@@ -4148,10 +4344,18 @@
   function refreshVisitedMarkers() {
     for (const entry of data.entries) {
       const visited = visitedEntryKeys.has(visitKeyForEntry(entry));
+      const starred = starredEntryKeys.has(visitKeyForEntry(entry));
+      const mapHotspot = hotspotByEntry.get(entry);
+      if (mapHotspot) {
+        mapHotspot.classList.toggle("starred", starred);
+        mapHotspot.dataset.starred = starred ? "1" : "0";
+      }
       const hotspotsForEntry = indexHotspotsByEntry.get(entry) || [];
       for (const el of hotspotsForEntry) {
         el.classList.toggle("visited", visited);
         el.dataset.visited = visited ? "1" : "0";
+        el.classList.toggle("starred", starred);
+        el.dataset.starred = starred ? "1" : "0";
       }
     }
   }
@@ -4170,6 +4374,15 @@
       : canMark
         ? `Mark as ${String(entry.section || "").toLowerCase() === "art" ? "Seen" : "Visited"}`
         : "Move within about 50m to mark this item";
+  }
+
+  function syncStarControls() {
+    if (!detailsStarToggle || !detailsStarToggleEntry) return;
+    const entry = detailsStarToggleEntry;
+    const key = visitKeyForEntry(entry);
+    const starred = starredEntryKeys.has(key);
+    detailsStarToggle.checked = starred;
+    detailsStarToggle.title = starred ? "Remove star" : "Star this item";
   }
 
   refreshVisitedMarkers();
@@ -4571,6 +4784,10 @@
   function closeDetails() {
     activeDetailHighlight = null;
     showingUserLocationDetails = false;
+    detailsPanel.querySelector(".details-star-toggle")?.remove();
+    detailsPanel.querySelector(".details-visit-toggle")?.remove();
+    detailsStarToggle = null;
+    detailsStarToggleEntry = null;
     detailsVisitToggle = null;
     detailsVisitToggleEntry = null;
     detailsPanel.classList.remove("open", "full", "minimized", "dragging");
@@ -4582,6 +4799,10 @@
   function openUserLocationDetails(mode = "half") {
     activeDetailHighlight = null;
     showingUserLocationDetails = true;
+    detailsPanel.querySelector(".details-star-toggle")?.remove();
+    detailsPanel.querySelector(".details-visit-toggle")?.remove();
+    detailsStarToggle = null;
+    detailsStarToggleEntry = null;
     detailsVisitToggle = null;
     detailsVisitToggleEntry = null;
     const point = currentUserLogicalPoint();
@@ -4649,6 +4870,7 @@
     detailsPanel.setAttribute("aria-hidden", "false");
     if (mode === "half" || mode === "fit") fitMobileDetails();
     refreshHighlights();
+    syncStarControls();
     syncVisitedControls();
   }
   function openDetails(el, mode = "half") {
@@ -4667,13 +4889,17 @@
       section,
       grid,
     });
+    const canStar = isTrackableStarEntry(mapEntry || { section });
+    const isStarred = starredEntryKeys.has(visitKey);
     const canMarkVisited = mapEntry ? canMarkVisitedForEntry(mapEntry) : false;
     const isVisited = visitedEntryKeys.has(visitKey);
+    const starBadgeHtml = isStarred ? `<span class="details-star-badge">★ Starred</span>` : "";
     const visitBadgeHtml = isVisited ? `<span class="details-visit-badge">✓ ${escapeHtml(visitLabel)}</span>` : "";
     detailsKicker.innerHTML = `
       <span>${escapeHtml(code)}</span>
       <span>${escapeHtml(grid)}</span>
       <span class="badge-${section}">${escapeHtml(detail?.type || section)}</span>
+      ${starBadgeHtml}
       ${visitBadgeHtml}
     `;
     detailsTitle.textContent = title;
@@ -4723,6 +4949,12 @@
         </div>
       </section>
     ` : "";
+    const starControlHtml = canStar ? `
+      <label class="details-star-toggle" title="${escapeHtml(isStarred ? "Remove star" : "Star this item")}">
+        <input type="checkbox" data-map-star-toggle="${escapeHtml(visitKey)}"${isStarred ? " checked" : ""}>
+        <span>Star</span>
+      </label>
+    ` : "";
     const visitControlHtml = isTrackableVisitEntry(mapEntry || { section }) ? `
       <label class="details-visit-toggle${canMarkVisited || isVisited ? "" : " locked"}" title="${escapeHtml(isVisited ? `Remove ${visitLabel}` : (canMarkVisited ? `Mark as ${visitLabel}` : "Move within about 50m to mark this item"))}">
         <input type="checkbox" data-map-visit-toggle="${escapeHtml(visitKey)}"${isVisited ? " checked" : ""}${canMarkVisited || isVisited ? "" : " disabled"}>
@@ -4747,12 +4979,37 @@
     `;
     const detailsActions = detailsPanel.querySelector(".details-actions");
     if (detailsActions) {
+      const existingStarToggle = detailsActions.querySelector(".details-star-toggle");
       const existingVisitToggle = detailsActions.querySelector(".details-visit-toggle");
+      if (starControlHtml) {
+        if (existingStarToggle) {
+          existingStarToggle.outerHTML = starControlHtml;
+        } else {
+          detailsActions.insertAdjacentHTML("afterbegin", starControlHtml);
+        }
+        detailsStarToggle = detailsPanel.querySelector("[data-map-star-toggle]");
+        detailsStarToggleEntry = mapEntry || null;
+        detailsStarToggle?.addEventListener("change", () => {
+          if (!detailsStarToggleEntry) return;
+          setEntryStarred(detailsStarToggleEntry, detailsStarToggle.checked);
+          openDetails(el, detailsMode === "full" ? "full" : "half");
+          syncUiHistory();
+        });
+      } else if (existingStarToggle) {
+        existingStarToggle.remove();
+        detailsStarToggle = null;
+        detailsStarToggleEntry = null;
+      } else {
+        detailsStarToggle = null;
+        detailsStarToggleEntry = null;
+      }
       if (visitControlHtml) {
         if (existingVisitToggle) {
           existingVisitToggle.outerHTML = visitControlHtml;
         } else {
-          detailsActions.insertAdjacentHTML("afterbegin", visitControlHtml);
+          const anchor = detailsActions.querySelector(".details-size");
+          if (anchor) anchor.insertAdjacentHTML("beforebegin", visitControlHtml);
+          else detailsActions.insertAdjacentHTML("beforeend", visitControlHtml);
         }
         const visitToggleLabel = detailsPanel.querySelector(".details-visit-toggle");
         detailsVisitToggle = detailsPanel.querySelector("[data-map-visit-toggle]");
@@ -4772,6 +5029,9 @@
         existingVisitToggle.remove();
         detailsVisitToggle = null;
         detailsVisitToggleEntry = null;
+      } else {
+        detailsVisitToggle = null;
+        detailsVisitToggleEntry = null;
       }
     }
     for (const button of detailsBody.querySelectorAll(".detail-tag[data-search-tag]")) {
@@ -4787,6 +5047,7 @@
         if (!seriesItem) return;
         const date = chooseScheduleDateForSeries(seriesItem);
         const firstOccurrence = (scheduleData.byDate?.[date] || []).find((item) => item.seriesId === seriesItem.id);
+        syncUiHistory(true);
         openSchedule({ date, eventId: firstOccurrence?.id || null });
         syncUiHistory();
       });
@@ -4796,6 +5057,8 @@
     detailsPanel.setAttribute("aria-hidden", "false");
     if (mode === "half" || mode === "fit") fitMobileDetails();
     refreshHighlights();
+    syncStarControls();
+    syncVisitedControls();
   }
   userPin.addEventListener("pointerdown", (ev) => {
     ev.stopPropagation();
@@ -5991,6 +6254,7 @@
       startGeolocationWatch(false);
     }
     syncUiHistory(true);
+    startUsagePromptCycle();
     if (!localStorage.getItem(ABOUT_SEEN_STORAGE_KEY)) {
       openAbout(true);
     }
