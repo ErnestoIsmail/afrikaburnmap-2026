@@ -91,6 +91,8 @@ const SCHEDULE_DATA = (() => {
       sourceLabel: def.sourceLabel || "WTF Guide 2026",
       sortStart: toMinutes(def.sortStart),
       sortEnd: toMinutes(def.sortEnd),
+      estimatedEnd: toMinutes(def.estimatedEnd),
+      estimatedEndNextDay: Boolean(def.estimatedEndNextDay),
       categories: inferCategories(def),
     };
     series.push(normalized);
@@ -112,6 +114,8 @@ const SCHEDULE_DATA = (() => {
         sourceLabel: normalized.sourceLabel,
         sortStart: normalized.sortStart,
         sortEnd: normalized.sortEnd,
+        estimatedEnd: normalized.estimatedEnd,
+        estimatedEndNextDay: normalized.estimatedEndNextDay,
         categories: normalized.categories,
       });
     }
@@ -161,6 +165,19 @@ const SCHEDULE_DATA = (() => {
     linkedCodes: ["404"],
     summaryLabel: "Daily 11 am-ish · Vegan brunch",
     description: "Camp 404's best vegan brunch in Tankwa Town.",
+  });
+  addSeries({
+    id: "404-love-is-a-spectrum",
+    title: "Love is a Spectrum",
+    kind: "event",
+    days: "thu",
+    timeLabel: "Thursday around 12 pm",
+    sortStart: "12:00",
+    linkedCodes: ["404"],
+    categories: ["community", "performance"],
+    sourceLabel: "User-supplied event",
+    summaryLabel: "Thu around 12 pm · Love is a Spectrum",
+    description: "After brunch at Camp 404, join the Love is a Spectrum matchmaking shenanigans in the cosy lounge. Participants answer a few questions, meet possible matches through a series of curated activities, and can then elope onward into further purple-wedding chaos if the moment feels right. You may also find the crew roaming the playa in wedding finery.",
   });
   addSeries({
     id: "but-beasts-bazaar",
@@ -213,14 +230,15 @@ const SCHEDULE_DATA = (() => {
   });
   addSeries({
     id: "dis-main-party",
-    title: "Main Party",
+    title: "DisFUNKtion Takeover",
     kind: "event",
     days: "thu",
-    timeLabel: "Thursday evening",
-    sortStart: "20:00",
-    linkedCodes: ["DIS"],
-    summaryLabel: "Thu evening · Main party",
-    description: "DisFUNKtion's main party at Mad Hatter's Lounge.",
+    timeLabel: "5 pm",
+    sortStart: "17:00",
+    linkedCodes: ["DIS", "MHV"],
+    categories: ["music", "performance", "community"],
+    summaryLabel: "Thu 5 pm · DisFUNKtion Takeover at Mad Hatter's Village",
+    description: "DisFUNKtion takes over Mad Hatter's Village – get weird... get wild... get a little off-beat.",
   });
   addSeries({
     id: "eno-psy-jol",
@@ -368,6 +386,19 @@ const SCHEDULE_DATA = (() => {
     description: "Deep grooves, cultural connection, and intentional gathering at Imbizo Lounge.",
   });
   addSeries({
+    id: "xon-golden-hour-gathering",
+    title: "Golden Hour Gathering",
+    kind: "event",
+    days: "daily",
+    timeLabel: "60-90 min before sunset (check blackboard)",
+    sortStart: "17:00",
+    linkedCodes: ["XON"],
+    categories: ["music", "movement", "community"],
+    sourceLabel: "User-supplied event",
+    summaryLabel: "Check blackboard · Golden Hour Gathering",
+    description: "Ossewa Nova gathers when the moment feels right and moves together into the golden hour. Bring a drum, a bell, a violin, a rhythm, or just yourself. Walk, play, sway, or simply come as you are. This does not happen every day, so check the blackboard at camp for the timing.",
+  });
+  addSeries({
     id: "jel-creme-brulee",
     title: "Creme Brulee",
     kind: "event",
@@ -433,6 +464,19 @@ const SCHEDULE_DATA = (() => {
     linkedCodes: ["MAR"],
     summaryLabel: "Daily at sunset · Sunset lounge",
     description: "Shade, sweet sounds, chilled vibes, and a raised lounge facing the Binnekring at MARAH.",
+  });
+  addSeries({
+    id: "tcr-kiwiburn-meetup",
+    title: "Kiwiburn Meetup",
+    kind: "event",
+    days: "tue",
+    timeLabel: "Tuesday 2 pm",
+    sortStart: "14:00",
+    linkedCodes: ["TCR"],
+    categories: ["community", "foodDrink"],
+    sourceLabel: "User-supplied event",
+    summaryLabel: "Tue 2 pm · Kiwiburn Meetup",
+    description: "Join the exported Kiwiburn camp at Two Couches & a Rug to meet, relax, and celebrate. Expect a loose afternoon of Kiwi connections, possible chocolate-coated pineapple lollies, kiwi dip, maybe a Battle of the Marmites, maybe karaoke, and whatever else the moment turns into.",
   });
   addSeries({
     id: "mim-mimosas",
@@ -607,6 +651,19 @@ const SCHEDULE_DATA = (() => {
     description: "Glitz, glamour, and delicious trouble at The Steampunk Saloon.",
   });
   addSeries({
+    id: "sps-swing-dance-workshop",
+    title: "Swing Dance Workshop",
+    kind: "event",
+    days: "wed",
+    timeLabel: "Wednesday 11 am",
+    sortStart: "11:00",
+    linkedCodes: ["SPS"],
+    categories: ["workshop", "movement", "community"],
+    sourceLabel: "User-supplied event",
+    summaryLabel: "Wed 11 am · Swing Dance Workshop",
+    description: "A Swing Dance Workshop at The Steampunk Saloon led by Muriel Gravenor.",
+  });
+  addSeries({
     id: "slc-screenings",
     title: "Cinema Screenings",
     kind: "event",
@@ -624,6 +681,8 @@ const SCHEDULE_DATA = (() => {
     days: "daily",
     timeLabel: "11 am until late",
     sortStart: "11:00",
+    estimatedEnd: "02:00",
+    estimatedEndNextDay: true,
     linkedCodes: ["TEA"],
     summaryLabel: "Daily 11 am-late · Tea service",
     description: "Caffeinated and herbal teas with desert views at the Teahouse at the End of the Universe.",
@@ -760,22 +819,48 @@ const SCHEDULE_DATA = (() => {
     days: "fri",
     timeLabel: "Friday from 1-ish",
     sortStart: "13:00",
+    sortEnd: "15:00",
     linkedCodes: ["BDS"],
     categories: ["performance", "movement", "community"],
     summaryLabel: "Fri from 1-ish · Naked Spectrum art walk",
-    description: "A body-positive art walk / human parade leaving from Birthday Suits Theme Camp and roving in and around the Binnekring for an hour or two.",
+    description: "A body-positive art walk / human parade leaving from Birthday Suits Theme Camp and roving in and around the Binnekring for an hour or two.\n\nWhat's that walking kaalgat in the desert wearing nothing but boots and looking as colourful as my auntie's home-sewn quilt? It's the Naked Spectrum parading their hueman-ness in celebration of their human form. Undressing to express radical acceptance of our radical selves radically! Please ask for consent before taking any close photographs. Art by Matt-hue.",
+  });
+  addSeries({
+    id: "critical-tits-workshop",
+    title: "Pastie-Making Workshop & Burlesque",
+    kind: "event",
+    days: "sat",
+    timeLabel: "2 pm",
+    sortStart: "14:00",
+    sortEnd: "16:30",
+    linkedCodes: ["SPS"],
+    categories: ["performance", "workshop", "community"],
+    summaryLabel: "Sat 2 pm · Pastie-Making Workshop & Burlesque",
+    description: "A celebration of body freedom and radical self-expression at the Steampunk Saloon. Come make your pasties and enjoy some burlesque before the Critical Tits Parade. All femme and nonbinary bodies welcome!",
   });
   addSeries({
     id: "critical-tits-parade",
     title: "Critical Tits Parade",
     kind: "event",
     days: "sat",
-    timeLabel: "Saturday 2 pm",
-    sortStart: "14:00",
+    timeLabel: "4:30 pm",
+    sortStart: "16:30",
     linkedCodes: ["SPS"],
-    categories: ["performance", "workshop", "community"],
-    summaryLabel: "Sat 2 pm · Critical Tits Parade",
-    description: "A celebration of body freedom and radical self-expression at the Steampunk Saloon, with a pastie-making workshop and burlesque.",
+    categories: ["performance", "community"],
+    summaryLabel: "Sat 4:30 pm · Critical Tits Parade",
+    description: "The topless parade kicks off at 4:30 pm, ending with a champagne party. Come sparkle, strut, and celebrate! All femme and nonbinary bodies welcome!",
+  });
+  addSeries({
+    id: "die-saamte-market",
+    title: "Die Saamte Market",
+    kind: "event",
+    days: "sat",
+    timeLabel: "1 pm-ish until sunset",
+    sortStart: "13:00",
+    categories: ["music", "performance", "foodDrink", "community"],
+    sourceLabel: "User-supplied event",
+    summaryLabel: "Sat 1 pm-ish until sunset · Die Saamte Market",
+    description: "A daytime festive market somewhere on the Binnekring with music, gifts, food, drinks, strange little interactions, mutant vehicles, performances, and general beautiful chaos. Everyone is welcome to wander, meet people, dance, discover something unexpected, and enjoy the afternoon. If you want to bring a mutant vehicle, gift, food, drinks, a game, an installation, a performance, or any other interactive experience into the market, reach out directly to the organiser.",
   });
   addSeries({
     id: "alex-convention",
@@ -789,16 +874,17 @@ const SCHEDULE_DATA = (() => {
     description: "The Great Gathering of Alexes: roll calls, rituals, ridiculousness, and snacks for the Alexocalypse.",
   });
   addSeries({
-    id: "moop-march",
-    title: "MOOP March",
+    id: "prism-run",
+    title: "The Prism Run",
     kind: "event",
     days: "thu",
     timeLabel: "7:30 am",
     sortStart: "07:30",
+    sortEnd: "09:30",
     linkedCodes: ["TB"],
     categories: ["movement", "community"],
-    summaryLabel: "Thu 7:30 am · MOOP March",
-    description: "A 5 km or 10 km scandal of colour through the dusty heart of AfrikaBurn, gathering at Triple Bypass.",
+    summaryLabel: "Thu 7:30 am · The Prism Run",
+    description: "Unleash your inner light and scatter into scandalous colour on a 5km or 10km loop through the dusty heart of AfrikaBurn. Join us at Triple Bypass, 7:30 am on Thursday, 30 April. Bring a curated goodie bag, chase ice-cold bubbly, and sprint for one of our coveted, ever-vanishing upcycled medals. Run. Shine. Transform.",
   });
   addSeries({
     id: "friday-moop-swoop",
@@ -807,9 +893,10 @@ const SCHEDULE_DATA = (() => {
     days: "fri",
     timeLabel: "2 pm-ish",
     sortStart: "14:00",
+    linkedCodes: ["OCC"],
     categories: ["movement", "community", "service"],
     summaryLabel: "Fri 2 pm-ish · MOOP Swoop",
-    description: "Gather at OCC in your finest regalia for a massive group MOOP swoop. This is not a chore, it's a carnival.",
+    description: "On Friday at 2 pm(ish), you're invited to gather at the OCC, dressed in your finest regalia, to take part in a massive group MOOP swoop. Oh! The things you'll find on the floor in Tankwa Town… This is not a chore, it's a carnival! If you've got a trombone or tambourine, bring it along and help to create a net-positive cacophony. By Conductor Coco and the MOOP Majorettes.",
   });
   addSeries({
     id: "dpw-parade",
@@ -823,13 +910,37 @@ const SCHEDULE_DATA = (() => {
     description: "The DPW crew remix their identities and cruise around the Binnekring in their work-vehicle chariots.",
   });
   addSeries({
+    id: "dmv-mutant-parade",
+    title: "Mutant Parade",
+    kind: "event",
+    days: "fri",
+    timeLabel: "4:30 pm onward",
+    sortStart: "16:30",
+    linkedCodes: ["DMV"],
+    categories: ["movement", "community", "performance"],
+    summaryLabel: "Fri 4:30 pm onward · Mutant Parade",
+    description: "Meet outside the DMV facing north at 4:30 pm on Friday afternoon. The parade proceeds along the Binnekring, with permission to drive on the Binnekring, to 12-ish; then along Rainbow and back down to 6-ish; and from there on to 2-ish.",
+  });
+  addSeries({
+    id: "wh0es-burn",
+    title: "WH0ES Burn",
+    kind: "event",
+    days: "fri",
+    timeLabel: "Friday 6 pm",
+    sortStart: "18:00",
+    linkedCodes: ["WH"],
+    categories: ["burn", "community"],
+    summaryLabel: "Fri 6 pm · WH0ES burn",
+    description: "WH0ES burns at 6 pm on Friday afternoon.",
+  });
+  addSeries({
     id: "sc-sunrise-practice",
     title: "Sunrise Meditation and Yoga",
     kind: "event",
     days: "daily",
     timeLabel: "Sunrise",
     sortStart: "06:00",
-    linkedCodes: ["SC", "XSC"],
+    linkedCodes: ["SC"],
     summaryLabel: "Daily at sunrise · Meditation and yoga",
     description: "Sunrise meditations and gentle yoga at SongCatcher: The Continuum.",
   });
@@ -911,6 +1022,7 @@ const SCHEDULE_DATA = (() => {
     timeLabel: "9 am to 7 pm",
     sortStart: "09:00",
     sortEnd: "19:00",
+    linkedCodes: ["OCC"],
     categories: ["service", "community"],
     summaryLabel: "Mon-Wed 9 am-7 pm · OCC main hub",
     description: "The official OCC business hours for the main civic hub during the first half of the burn week.",
@@ -923,6 +1035,7 @@ const SCHEDULE_DATA = (() => {
     timeLabel: "9 am to 5 pm",
     sortStart: "09:00",
     sortEnd: "17:00",
+    linkedCodes: ["OCC"],
     categories: ["service", "community"],
     summaryLabel: "Thu-Sun 9 am-5 pm · OCC main hub",
     description: "The official OCC business hours for the main civic hub later in the burn week.",
@@ -985,6 +1098,278 @@ const SCHEDULE_DATA = (() => {
     linkedCodes: ["ICE"],
     summaryLabel: "Mon-Sat 11 am-1 pm · Ice sales",
     description: "The only place in Tankwa Town where money still matters: ice at Die Yskas.",
+  });
+  addSeries({
+    id: "dance-of-1000-flames",
+    title: "The Dance of 1,000 Flames",
+    kind: "event",
+    days: "sat",
+    timeLabel: "Saturday at sunset",
+    sortStart: "18:30",
+    linkedCodes: ["404"],
+    categories: ["performance", "community"],
+    summaryLabel: "Sat at sunset · The Dance of 1,000 Flames",
+    description: "The biggest Fire Dancing Jam in Africa! Gathered around the Clan before it burns on Saturday, all the fire dancers of Burn will share their love of Fire and Flow with you. NB: Fire Dancers must meet at Camp 404 on Saturday at Sunset before Spinning. Any experienced spinners welcome! More info at Camp 404.",
+  });
+  addSeries({
+    id: "burnt-sugar-mon",
+    title: "Burnt Sugar and Salvation",
+    kind: "event",
+    days: "mon",
+    timeLabel: "Monday during the day",
+    sortStart: "12:00",
+    linkedCodes: ["LPP"],
+    categories: ["performance", "wellness", "community"],
+    summaryLabel: "Mon during the day · Burnt Sugar and Salvation",
+    description: "Lay down with kindness to yourself all that no longer serves you. Let what has been carried too long be given to the dust and the dusk, your offering as the sun sets, your confession setting you free. The space is safe; the ritual is guided, renewed, and revered. Near to Le Petit Paris. By Monique Woodborne and Salome Schonken.",
+  });
+  addSeries({
+    id: "burnt-sugar-fri",
+    title: "Burnt Sugar and Salvation",
+    kind: "event",
+    days: "fri",
+    timeLabel: "Friday at sunset",
+    sortStart: "18:30",
+    linkedCodes: ["LPP"],
+    categories: ["performance", "wellness", "community"],
+    summaryLabel: "Fri at sunset · Burnt Sugar and Salvation",
+    description: "Lay down with kindness to yourself all that no longer serves you. Let what has been carried too long be given to the dust and the dusk, your offering as the sun sets, your confession setting you free. The space is safe; the ritual is guided, renewed, and revered. Near to Le Petit Paris. By Monique Woodborne and Salome Schonken.",
+  });
+  addSeries({
+    id: "the-last-drop-wed",
+    title: "The Last Drop",
+    kind: "event",
+    days: "wed",
+    timeLabel: "3 pm",
+    sortStart: "15:00",
+    categories: ["performance"],
+    summaryLabel: "Wed 3 pm · The Last Drop",
+    description: "A powerful 10-minute physical theatre production portraying the harsh water struggles faced by citizens of Makhanda. Performed in expressive masks with no dialogue, the play relies on raw physical language to tell a deeply human story. By Ntomboxolo Donyeli.",
+  });
+  addSeries({
+    id: "the-last-drop-fri-morning",
+    title: "The Last Drop",
+    kind: "event",
+    days: "fri",
+    timeLabel: "10 am",
+    sortStart: "10:00",
+    categories: ["performance"],
+    summaryLabel: "Fri 10 am · The Last Drop",
+    description: "A powerful 10-minute physical theatre production portraying the harsh water struggles faced by citizens of Makhanda. Performed in expressive masks with no dialogue, the play relies on raw physical language to tell a deeply human story. By Ntomboxolo Donyeli.",
+  });
+  addSeries({
+    id: "the-last-drop-fri-afternoon",
+    title: "The Last Drop",
+    kind: "event",
+    days: "fri",
+    timeLabel: "3 pm",
+    sortStart: "15:00",
+    categories: ["performance"],
+    summaryLabel: "Fri 3 pm · The Last Drop",
+    description: "A powerful 10-minute physical theatre production portraying the harsh water struggles faced by citizens of Makhanda. Performed in expressive masks with no dialogue, the play relies on raw physical language to tell a deeply human story. By Ntomboxolo Donyeli.",
+  });
+  addSeries({
+    id: "unbirthday-party",
+    title: "The Unbirthday Party",
+    kind: "event",
+    days: "daily",
+    timeLabel: "Throughout the day",
+    sortStart: "12:00",
+    categories: ["performance", "community"],
+    summaryLabel: "Daily · The Unbirthday Party",
+    description: "Celebrate your unbirthday every day in the whackiest of ways at the Burn! By Natalie Stewart.",
+  });
+
+  // Mad Hatter's Village — daily rhythm
+  addSeries({
+    id: "mhv-coffee-tea",
+    title: "Coffee & Tea Service",
+    kind: "open",
+    days: "daily",
+    timeLabel: "9 am to 11 am",
+    sortStart: "09:00",
+    sortEnd: "11:00",
+    linkedCodes: ["MHV"],
+    categories: ["foodDrink", "community"],
+    summaryLabel: "Daily 9 am-11 am · Coffee & Tea at Mad Hatter's Village",
+    description: "Start the morning right at Mad Hatter's Village with coffee and tea service from 9 to 11 am.",
+  });
+  addSeries({
+    id: "mhv-intentional-session",
+    title: "Intentional Session",
+    kind: "event",
+    days: "daily",
+    timeLabel: "11 am to 1 pm",
+    sortStart: "11:00",
+    sortEnd: "13:00",
+    linkedCodes: ["MHV"],
+    categories: ["wellness", "community", "workshop"],
+    summaryLabel: "Daily 11 am-1 pm · Intentional Session at Mad Hatter's Village",
+    description: "Mid-morning intentional session at Mad Hatter's Village — a space for connection, creativity, and conscious gathering before the day tips into mischief.",
+  });
+  addSeries({
+    id: "mhv-lounge-sessions",
+    title: "Lounge Sessions",
+    kind: "open",
+    days: "daily",
+    timeLabel: "1 pm to 5 pm",
+    sortStart: "13:00",
+    sortEnd: "17:00",
+    linkedCodes: ["MHV"],
+    categories: ["music", "community"],
+    summaryLabel: "Daily 1 pm-5 pm · Lounge Sessions at Mad Hatter's Village",
+    description: "Afternoon lounge sessions at Mad Hatter's Village — settle in before the Extravaganza tips the village into chaos.",
+  });
+  addSeries({
+    id: "mhv-extravaganza",
+    title: "Mad Hatter's Extravaganza",
+    kind: "event",
+    days: ["tue", "wed", "thu", "fri", "sat"],
+    timeLabel: "5 pm",
+    sortStart: "17:00",
+    sortEnd: "19:00",
+    linkedCodes: ["MHV"],
+    categories: ["music", "performance", "community"],
+    summaryLabel: "Daily 5 pm · Mad Hatter's Extravaganza",
+    description: "Every day at 5 pm the village tips into mischief. The wheel spins. Drinks flow. Music rises. Things get a little out of hand. Each day a different camp takes over — come find out who's running things today.",
+  });
+  addSeries({
+    id: "mhv-djs",
+    title: "DJs",
+    kind: "open",
+    days: "daily",
+    timeLabel: "7 pm to 2 am",
+    sortStart: "19:00",
+    sortEnd: "26:00",
+    linkedCodes: ["MHV"],
+    categories: ["music"],
+    summaryLabel: "Daily 7 pm-2 am · DJs at Mad Hatter's Village",
+    description: "DJs carry the Mad Hatter's Village energy into the night, every night from 7 pm to 2 am.",
+  });
+
+  // Mad Hatter's Village — daily takeovers
+  addSeries({
+    id: "mhv-opening-mon",
+    title: "Lounge Opening Night",
+    kind: "event",
+    days: "mon",
+    timeLabel: "8 pm",
+    sortStart: "20:00",
+    linkedCodes: ["MHV"],
+    categories: ["music", "community"],
+    summaryLabel: "Mon 8 pm · Mad Hatter's Village Lounge Opening",
+    description: "The Mad Hatters have arrived on the Binnekring. Lounge Opening from 8 pm on Monday night — come play with us.",
+  });
+  addSeries({
+    id: "mhv-sexico-city",
+    title: "Sexico City Takeover",
+    kind: "event",
+    days: "tue",
+    timeLabel: "5 pm",
+    sortStart: "17:00",
+    linkedCodes: ["SEX", "MHV"],
+    categories: ["music", "performance", "community"],
+    summaryLabel: "Tue 5 pm · Sexico City Takeover at Mad Hatter's Village",
+    description: "Sexico City takes over Mad Hatter's Village on Tuesday – the Mexpocalypse is now.",
+  });
+  addSeries({
+    id: "mhv-family-business",
+    title: "Family Business Takeover",
+    kind: "event",
+    days: "wed",
+    timeLabel: "5 pm",
+    sortStart: "17:00",
+    linkedCodes: ["FAM", "MHV"],
+    categories: ["music", "performance", "community"],
+    summaryLabel: "Wed 5 pm · Family Business Takeover at Mad Hatter's Village",
+    description: "Family Business takes over Mad Hatter's Village on Wednesday – madness is the dress code!",
+  });
+  addSeries({
+    id: "mhv-cymatica",
+    title: "Cymatica Takeover",
+    kind: "event",
+    days: "fri",
+    timeLabel: "5 pm",
+    sortStart: "17:00",
+    linkedCodes: ["CYM", "MHV"],
+    categories: ["music", "performance", "community"],
+    summaryLabel: "Fri 5 pm · Cymatica Takeover at Mad Hatter's Village",
+    description: "Cymatica takes over Mad Hatter's Village on Friday – lose yourself in sound, frequency, and flow.",
+  });
+  addSeries({
+    id: "mhv-curiocity",
+    title: "CurioCity Takeover",
+    kind: "event",
+    days: "sat",
+    timeLabel: "5 pm",
+    sortStart: "17:00",
+    linkedCodes: ["CUR", "MHV"],
+    categories: ["music", "performance", "community"],
+    summaryLabel: "Sat 5 pm · CurioCity Takeover at Mad Hatter's Village",
+    description: "CurioCity takes over Mad Hatter's Village on Saturday – the unexpected is everything expected.",
+  });
+  addSeries({
+    id: "mhv-jam-jam",
+    title: "Sunday Jam Jam Party",
+    kind: "event",
+    days: "sun",
+    timeLabel: "Post-Temple Burn",
+    sortStart: "21:00",
+    linkedCodes: ["MHV"],
+    categories: ["music", "community"],
+    summaryLabel: "Sun post-Temple Burn · Sunday Jam Jam Party",
+    description: "The last hurrah... under the stars. Slip into your PJs and join the Jam Jam Session at Mad Hatter's Village Lounge after Temple Burn. Come land before we all let go. Follow the lasers.",
+  });
+
+  addSeries({
+    id: "guided-art-tour",
+    title: "Guided Art Tour",
+    kind: "event",
+    days: "wed",
+    timeLabel: "4 pm to 7 pm",
+    sortStart: "16:00",
+    sortEnd: "19:00",
+    linkedCodes: ["PAN"],
+    categories: ["community", "movement"],
+    summaryLabel: "Wed 4 pm-7 pm · Guided Art Tour, starting at The Pancake People",
+    description: "A guided tour of the Binnekring artworks, starting at The Pancake People (3-ish and Binnekring) at 4 pm on Wednesday. A lovely way to explore the art with a knowledgeable guide. Open to all.",
+  });
+  addSeries({
+    id: "tankwa-mask-workshop",
+    title: "Mask-Making Workshop",
+    kind: "event",
+    days: "wed",
+    timeLabel: "9 am",
+    sortStart: "09:00",
+    sortEnd: "12:00",
+    linkedCodes: ["MAL"],
+    categories: ["workshop", "wellness", "community"],
+    summaryLabel: "Wed 9 am · Mask-Making Workshop at MAHALA",
+    description: "A 3-hour deep dive into releasing the patterns, habits, and beliefs that bind us — and dreaming into what we want to create. Reconnect to who you innately are and celebrate that beauty. The process involves meditation, movement, mask-making, dialogue, and ceremonial release. All materials provided. At MAHALA. Note: this workshop is fully booked — but the Unmasked Ball at 6 pm is open to all. A mask is the only requirement for the ball.",
+  });
+  addSeries({
+    id: "tankwa-unmasked-ball",
+    title: "The Tankwa Unmasked Ball",
+    kind: "event",
+    days: "wed",
+    timeLabel: "6 pm",
+    sortStart: "18:00",
+    linkedCodes: ["UB"],
+    categories: ["performance", "music", "community"],
+    summaryLabel: "Wed 6 pm · The Tankwa Unmasked Ball — near the Clan",
+    description: "As the sun begins its slow descent over the playa, a constellation of musicians gathers — strings, voices, and rhythms weaving together to breathe orchestral magic into the desert air. Adorn yourself in your most ethereal desert finery: flowing gowns, tailored suits, textures kissed by dust and light. Don a mask that reveals as much as it conceals. As darkness deepens and the music swells, we arrive at the great unmasking — a moment of truth, vulnerability, and recognition. Near the Clan. A mask is the only requirement. Come as you are not. Leave as you are.",
+  });
+  addSeries({
+    id: "calling-all-crones",
+    title: "Calling All Crones",
+    kind: "event",
+    days: "fri",
+    timeLabel: "5:30 pm",
+    sortStart: "17:30",
+    linkedCodes: ["EM"],
+    categories: ["wellness", "community"],
+    summaryLabel: "Fri 5:30 pm · Calling All Crones — at the Temple",
+    description: "A council of wise women gathers at the Temple at 5:30 pm on Friday 1 May to welcome in the Flower Full Moon and call in peace to shift the current global structures. This gathering is for crones — all menopausal women who have ceased menstruation. Mature men over 50 who feel called are also welcome to form a circle around the women, holding a silent, strong container of spaciousness and reverent presence. Please bring a crown to wear — flowers, jewels, feathers, etc. Initiated by Leigh Barratt.",
   });
 
   entries.sort((a, b) =>

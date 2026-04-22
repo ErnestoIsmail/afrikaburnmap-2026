@@ -1578,8 +1578,8 @@
 <script>
 (() => {
   const data = DATA_INLINE;
-  const APP_VERSION = "2026.04.22.4";
-  const APP_CACHE_VERSION = "v46";
+  const APP_VERSION = "2026.04.22.5";
+  const APP_CACHE_VERSION = "v47";
   const projectDetails = typeof PROJECT_DETAILS !== "undefined" ? PROJECT_DETAILS : { byCode: {} };
   const EMPTY_SCHEDULE_DATA = { days: [], entries: [], byDate: {}, byLinkedCode: {}, series: [], seriesById: {}, seriesByLinkedCode: {} };
   const baseScheduleData = typeof SCHEDULE_DATA !== "undefined" ? SCHEDULE_DATA : EMPTY_SCHEDULE_DATA;
@@ -3035,6 +3035,10 @@
   function estimateScheduleEnd(item, start) {
     if (Number.isFinite(item.sortEnd) && item.sortEnd > start) {
       return { end: item.sortEnd, openEnded: false, nextDay: item.sortEnd >= 24 * 60 };
+    }
+    if (Number.isFinite(item.estimatedEnd)) {
+      const estimated = item.estimatedEnd + (item.estimatedEndNextDay ? 24 * 60 : 0);
+      return { end: estimated, openEnded: true, nextDay: estimated >= 24 * 60 };
     }
     const label = String(item.timeLabel || "").toLowerCase();
     const description = String(item.description || "").toLowerCase();

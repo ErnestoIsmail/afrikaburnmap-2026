@@ -15,8 +15,8 @@ const PROJECT_DETAILS = (() => {
     ],
     "familyFriendly": "YES",
     "times": "Day Time",
-    "description": "Kaggen Meets Rainbow Dancers is an indigenous-inspired Theme Camp rooted in storytelling, ceremony, and living heritage. We gather as a village of wisdom keepers, artists, healers, and dancers, weaving water, word, and womb into shared experience. Through ritual, craft, and conversation, we honour ancestral memory while co-creating a vibrant, inclusive space of connection, culture, and conscious celebration.\nMorning: 7am(ish)-11am(ish) Day Time: 11am(ish)-sunset Night Time: sunset-2am(ish) All Night: sunset-sunrise",
-    "additionalDetails": "Family friendly: YES\nOperating times: Day Time",
+    "description": "Associated Artwork: The Hut of Echoes\nArtist: Lana Cavernelis\nKaggen Meets Rainbow Dancers is an indigenous-inspired Theme Camp rooted in storytelling, ceremony, living heritage, and fireside gathering. The story of the camp is framed as a meeting between the True North and the Aboriginal South, growing into a village of wisdom keepers, artists, activists, water bearers, musicians, shamans, First Nation elders, People of the Soil, seekers, and lovers of life.\n\nThrough ritual, craft, conversation, song, and campfire jams, the camp honours ancestral memory while co-creating a vibrant space of connection, culture, and conscious celebration. Bring your instruments and let the Hut of Echoes be a guide as the camp listens for the songs the land wants to hear.\n\nThere are openings for 2026 if you feel called to join this offering. Connect directly with Lana Cavernelis if you want to be part of it.\nMorning: 7am(ish)-11am(ish) Day Time: 11am(ish)-sunset Night Time: sunset-2am(ish) All Night: sunset-sunrise",
+    "additionalDetails": "Family friendly: YES\nOperating times: Day Time\nCamp note: ceremony, song, and fireside jams are central to the camp.\n2026 note: openings available for aligned participants and musicians; connect with Lana Cavernelis.",
     "links": [
       {
         "label": "WTF Guide 2026",
@@ -176,7 +176,7 @@ const PROJECT_DETAILS = (() => {
     ],
     "familyFriendly": "MAYBE",
     "times": "Day Time",
-    "description": "Birthday Suits is a naturist camp and The Power Shower is our gift. Participants enjoy a naturist experience by queuing naked for the shower and receiving a warm, soapy wash. Cold orange juice during shower hour, and in the afternoon and evening, our space is open for poetry, storytelling, and art workshops.",
+    "description": "Birthday Suits is a naturist camp and The Power Shower is our gift. Participants enjoy a naturist experience by queuing naked for the shower and receiving a warm, soapy wash. Cold orange juice during shower hour, and in the afternoon and evening, our space is open for poetry, storytelling, and art workshops.\n\nNaked Spectrum Art Walk: What's that walking kaalgat in the desert wearing nothing but boots and looking as colourful as my auntie's home-sewn quilt? It's the Naked Spectrum parading their hueman-ness in celebration of their human form. A body-positive art walk: undressing to express radical acceptance of our radical selves radically! Please ask for consent before taking any close photographs. Art walk / human parade – Friday from 1(ish), leaving from Birthday Suits. Roving in and around the Binnekring for an hour or two. Art by Matt-hue.",
     "additionalDetails": "Family friendly: MAYBE\nOperating times: Day Time",
     "links": [
       {
@@ -299,8 +299,8 @@ const PROJECT_DETAILS = (() => {
     ],
     "familyFriendly": "MAYBE",
     "times": "Morning, Day Time, Night Time, All Night",
-    "description": "Feeling lost? We are also not found. 404 is a blanket fort of confused and delicious nonsense. Our 24/7 lounge is a comfy, safe space with snacks, games, downtime tunes, and lamps to talk to. Join us at 11 am(ish) for the best vegan brunch in Tankwa Town. Check our activity board for daily shenanigans.",
-    "additionalDetails": "Family friendly: MAYBE\nOperating times: Morning, Day Time, Night Time, All Night",
+    "description": "Feeling lost? We are also not found. 404 is a blanket fort of confused and delicious nonsense. Our 24/7 lounge is a comfy, safe space with snacks, games, downtime tunes, and lamps to talk to. Join us at 11 am(ish) for the best vegan brunch in Tankwa Town, then check our activity board for whatever daily shenanigans have escaped into the desert.\n\nThe camp is also home to Love is a Spectrum, a romance-and-possibility offering that follows on from 2025's Let's Fuck for Love. The idea is simple and ridiculous in equal measure: answer a few questions, turn up after brunch on Thursday, and let a very human-powered algorithm steer you into curated matchmaking nonsense in 404's cosy lounge. From there, you may find yourself drifting onward into a purple wedding, wedding-finery playa antics, or something far stranger.",
+    "additionalDetails": "Family friendly: MAYBE\nOperating times: Morning, Day Time, Night Time, All Night\nCamp note: 404's cosy lounge is used for matchmaking and other social shenanigans linked to Love is a Spectrum.",
     "links": [
       {
         "label": "WTF Guide 2026",
@@ -1307,8 +1307,8 @@ const PROJECT_DETAILS = (() => {
     ],
     "familyFriendly": "MAYBE",
     "times": "Morning, Day Time, Night Time",
-    "description": "Mad Hatter's Village is a creative hub where local and international AfrikaBurn participants unite to co-create whimsical, interactive experiences rooted in family, magic, and joyful madness. Five distinct camps, five identities, personalities, gifting styles, and schedules come together under one village banner, woven by a golden thread of connection, collaboration, and play.",
-    "additionalDetails": "Family friendly: MAYBE\nOperating times: Morning, Day Time, Night Time",
+    "description": "Mad Hatter's Village is one village with seven takeover days and a completely different flavour each day. Local and international burners come together here to co-create whimsical, interactive experiences rooted in family, magic, music, gifting, and joyful madness. Every day at 17:00 the village tips into mischief with the Mad Hatter's Extravaganza as the wheel spins, drinks flow, music rises, and the energy shifts from daytime lounge into evening revelry.",
+    "additionalDetails": "Family friendly: MAYBE\nOperating times: Morning, Day Time, Night Time\nDaily rhythm: 09:00-11:00 Coffee & Tea Service; 11:00-13:00 Intentional Session; 13:00-17:00 Lounge Sessions; 17:00-19:00 Mad Hatter's Extravaganza; 19:00-02:00 DJs\nTakeover days: Monday Lounge Opening from 20:00; Tuesday Sexico City; Wednesday Family Business; Thursday DisFUNKtion; Friday Cymatica; Saturday CurioCity; Sunday Jam Jam Party after the Temple Burn\nVillage note: Every camp brings its own personality, gifting style, and schedule, but they play together under one village banner.",
     "links": [
       {
         "label": "WTF Guide 2026",
@@ -2544,8 +2544,8 @@ const PROJECT_DETAILS = (() => {
     ],
     "familyFriendly": "YES",
     "times": "Morning, Day Time, Night Time, All Night",
-    "description": "Vagabonds is a wellness camp where everyone can feel at home. Escape the dust in our Scandinavian forest-inspired lounge, cosy up around our cabin campfire, stargaze over the Binnekring from our Sky Lounge, and free your inner child in our rainbowtastic Unicorn Room. Plus, daily massages and workshops to enrich your body, mind, and soul.",
-    "additionalDetails": "Family friendly: YES\nOperating times: Morning, Day Time, Night Time, All Night",
+    "description": "Vagabonds is a wellness camp where everyone can feel at home. Escape the dust in our Scandinavian forest-inspired lounge, cosy up around our cabin campfire, stargaze over the Binnekring from our Sky Lounge, and free your inner child in our rainbowtastic Unicorn Room. Expect daily massages, dance, touch, smushing, sharing circles, and other workshops to enrich your body, mind, and soul.\n\nVagabonds is also putting out a call for workshop magic. If you have something that fits under the wellness umbrella, the camp has multiple spaces available for offerings, including a fluffy Unicorn Room container, a comfy Reflections Lounge, and the Sky Lounge.",
+    "additionalDetails": "Family friendly: YES\nOperating times: Morning, Day Time, Night Time, All Night\nLocation note: Between 8ish and 9ish on the Binnekring.\nWorkshop callout: Vagabonds welcomes wellness-aligned workshops and participatory offerings in camp.",
     "links": [
       {
         "label": "WTF Guide 2026",
@@ -4170,6 +4170,13 @@ const PROJECT_DETAILS = (() => {
       {
         "label": "WTF Guide 2026",
         "url": "./WTF-%202026%20-%20Through%20The%20Prism.pdf"
+      }
+    ],
+    "relatedCamps": [
+      {
+        "code": "KAG",
+        "name": "Kaggen Meets Rainbow Dancers",
+        "type": "Theme Camp"
       }
     ]
   },
@@ -9280,6 +9287,28 @@ const PROJECT_DETAILS = (() => {
     ],
     "description": "Look for the chimneys and lights. If it did not come out of your body, it does not go in the potty. The throne toilets are located around the edges of the camping areas and some are in the Binnekring. Use them. No more longdrops or porta potties.\n\nThe toilets are kitted with tampon, wet wipes, or condom bins. Use those rather than putting those items in the toilets. Please put the paper back in the bucket. If you do not, the wind will create toilet snakes across the Tankwa, which is severely kak for the Leave No Trace crew.\n\nDuring Build Week and early event rollout, some toilets are kept battened shut to reduce pumping, cleaning, maintenance, and smell. Please respect closed loos and do not open them for general use. There are also toilets placed specifically for disabled participants, requested ahead of time by those who need them.",
     "additionalDetails": "Map grid: S6",
+    "links": [
+      {
+        "label": "WTF Guide 2026",
+        "url": "./WTF-%202026%20-%20Through%20The%20Prism.pdf"
+      }
+    ]
+  }
+  ,{
+    "code": "OCC",
+    "slug": "off-centre-camp",
+    "title": "Off-Centre Camp (OCC)",
+    "type": "OCC Service",
+    "sourceTag": "wtf-2026",
+    "sourceLabel": "WTF Guide 2026",
+    "sourceUrl": "./WTF-%202026%20-%20Through%20The%20Prism.pdf",
+    "tags": [
+      "landmark",
+      "occ",
+      "service"
+    ],
+    "description": "Off-Centre Camp (OCC) is the civic heart of Tankwa Town, where Welcome Road meets the Binnekring. Think of it as the crossroads of this temporary city: where the curious arrive, the lost get found, the thirsty get ice, and the willing become volunteers. Whether you're looking for a shift, a lost item, a bag of ice, the latest chalkboard schedule, or just someone who knows what's going on — OCC is where you start.\n\nUnder one dust-covered corner of the Binnekring you'll find: the Volunteer Booth (daily 10 am–7 pm), Radio Free Tankwa (99.9 FM), Arteria (art info and burn schedule chalkboard), Artifactory (AfrikaBurn history museum), Theme Camp Saloon (media accreditation with Sweet Lollipop ~10 am), Medics (big red cross — real trauma only), Sanctuary (harm reduction and testing 10 am–12 pm and 3–5 pm daily), Rangers HQ (orange container), Lost & Found, Die Yskas (ice, Mon–Sat 11 am–1 pm), the DMV, and the Chillaz stage.\n\nOpen daily. Main hub hours: Mon–Wed 9 am–7 pm, Thu–Sun 9 am–5 pm.",
+    "additionalDetails": "Civic hub of Tankwa Town. Welcome Road meets the Binnekring, 4-to-6 o'clock sector.",
     "links": [
       {
         "label": "WTF Guide 2026",
