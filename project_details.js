@@ -919,8 +919,8 @@ const PROJECT_DETAILS = (() => {
     ],
     "familyFriendly": "MAYBE",
     "times": "Morning, Day Time",
-    "description": "Busted bike, grumpy generator, or a tyre having a wobbly? The Greasemonkeys teach sentient beings to fix their own mechanical mishaps. The Greasemonkey workshop is open 24 hours for tool use, and there may be monkeys between 10 am and 12 pm to help with tricksy issues. Fix flat car tyres early. Volunteers welcome. Take your MOOP and leave things tidy; we're chaotic, but the workshop shouldn't be.",
-    "additionalDetails": "Family friendly: MAYBE\nOperating times: Morning, Day Time",
+    "description": "Busted bike, grumpy generator, or a tyre having a wobbly? The Greasemonkeys teach sentient beings to fix their own mechanical mishaps. Self-service in the workshop 24h Monday to Saturday, closed Sunday. Monkeys may appear 10 am to 12 pm, and 1pm to 3pm, summoned by fate and caffeine. Fix flat car tyres early. Volunteers welcome. Take your MOOP and leave things tidy; we're chaotic, but the workshop shouldn't be.",
+    "additionalDetails": "Family friendly: MAYBE\nOperating times: Morning, Day Time\nWorkshop open 24 hours for tool use. Greasemonkeys around Monday to Saturday, 10 am-12 pm and 1 pm-3 pm.",
     "links": [
       {
         "label": "WTF Guide 2026",

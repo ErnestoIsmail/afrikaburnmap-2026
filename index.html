@@ -387,6 +387,10 @@
     margin:0; font-size:18px; line-height:1.2;
     flex:1 1 auto; min-width:0;
   }
+  .details-meta-actions {
+    display:flex; align-items:center; justify-content:flex-end; gap:6px;
+    min-width:0;
+  }
   .details-jumps {
     display:flex; flex-wrap:nowrap; justify-content:flex-end; gap:6px;
     flex:0 1 auto; min-width:0; max-width:min(220px, 40vw);
@@ -405,6 +409,21 @@
   .details-jump.support { color:var(--support); border-color:rgba(141,131,186,0.45); }
   .details-jump.plaza { color:var(--plaza); border-color:rgba(120,214,75,0.45); }
   .details-jump.toilet { color:var(--toilet); border-color:rgba(201,201,201,0.45); }
+  .details-goto {
+    appearance:none;
+    background:#1e241d; color:#b8ffb8;
+    border:1px solid rgba(98,255,132,0.44);
+    border-radius:5px;
+    padding:3px 8px;
+    font-size:11px; font-weight:600; line-height:1.2;
+    cursor:pointer; white-space:nowrap;
+    flex:0 0 auto;
+  }
+  .details-goto:hover,
+  .details-goto:focus-visible {
+    background:#263125; border-color:rgba(98,255,132,0.72);
+    outline:none;
+  }
   .details-actions {
     position:static;
     display:flex; gap:6px; align-items:center; justify-content:flex-end;
@@ -563,9 +582,15 @@
       margin:0;
       max-width:72px;
     }
+    .details-meta-actions { gap:3px; }
     .details-jump {
       flex:0 0 auto;
       padding:1px 4px;
+      font-size:8px;
+      border-radius:3px;
+    }
+    .details-goto {
+      padding:1px 5px;
       font-size:8px;
       border-radius:3px;
     }
@@ -1636,9 +1661,9 @@
         <p><strong>Best live info:</strong> ask the people running it, check the chalkboards at <button type="button" class="about-inline-link" data-schedule-help-entry="ART">Arteria</button>, and listen to <button type="button" class="about-inline-link" data-schedule-help-entry="RFT">RFT</button> for updates. The app can help you track possibilities, but reality still outranks the schedule.</p>
       </div>
       <p>Some time markers are estimates. If a card has a striped, zig-zag looking edge in the timeline, that edge is uncertain. A striped left edge means the start time is estimated. A striped right edge means the end time is estimated. That usually happens when the original wording was fuzzy and had to be interpreted into something drawable. For example, a start like <strong>sunset</strong>, <strong>after dark</strong>, or <strong>4 pm-ish</strong> gets turned into an estimated start time, and an end like <strong>late</strong> gets turned into an estimated finish so the event can actually appear in the timeline.</p>
-      <p>If timing matters, read the camp or artwork blurb and the original wording that fed the estimate. The details panel and the <a href="https://www.afrikaburn.org/binnekringblog/afrikaburn-2026-wtf/" target="_blank" rel="noopener noreferrer">official WTF Guide</a> will usually give you the fuller wording that this schedule had to condense.</p>
-      <p>There was not much confirmed information available ahead of the burn for major sound cars, some music lineups, or the actual burn schedule itself. Those things tend to become real on site. Arteria is one of the main places to get the updated version, and once you have that information you can use the <strong>Add</strong> button here to create your own custom events inside the app.</p>
-      <p>The aim of this section is to help people find things to do and then go do them. Participation and interaction are what make the burn beautiful, so says the Damn Dirty Hippie.</p>
+      <p>If timing matters, read the camp or artwork blurb and the original wording that fed the estimate. Those are usually linked at the bottom. The details panel and the <a href="https://www.afrikaburn.org/binnekringblog/afrikaburn-2026-wtf/" target="_blank" rel="noopener noreferrer">official WTF Guide</a> will usually give you the fuller wording that this schedule had to condense.</p>
+      <p>There was not much confirmed information available ahead of the burn for major sound cars, some music lineups, or the actual burn schedule itself. Those things tend to become real on site. <button type="button" class="about-inline-link" data-schedule-help-entry="ART">Arteria</button> is one of the main places to get the updated version, and once you have that information you can use the <strong>Add</strong> button here to create your own custom events inside the app.</p>
+      <p>The aim of this section is to help people find things to do and then go do them. Participation and interaction are one of the main things that make the burn so beautiful, you won't find those in your phone, so says the Damn Dirty Hippie.</p>
     </div>
   </section>
 </div>
@@ -1699,7 +1724,10 @@
       </div>
       <div class="details-meta-row">
         <div class="details-kicker" id="details-kicker"></div>
-        <div class="details-jumps" id="details-jumps"></div>
+        <div class="details-meta-actions">
+          <div class="details-jumps" id="details-jumps"></div>
+          <button type="button" class="details-goto" id="details-goto" hidden>Go to</button>
+        </div>
       </div>
     </div>
     <div class="details-body" id="details-body"></div>
@@ -1741,8 +1769,8 @@
 <script>
 (() => {
   const data = DATA_INLINE;
-  const APP_VERSION = "2026.04.22.7";
-  const APP_CACHE_VERSION = "v49";
+  const APP_VERSION = "2026.04.22.8";
+  const APP_CACHE_VERSION = "v50";
   const projectDetails = typeof PROJECT_DETAILS !== "undefined" ? PROJECT_DETAILS : { byCode: {} };
   const EMPTY_SCHEDULE_DATA = { days: [], entries: [], byDate: {}, byLinkedCode: {}, series: [], seriesById: {}, seriesByLinkedCode: {} };
   const baseScheduleData = typeof SCHEDULE_DATA !== "undefined" ? SCHEDULE_DATA : EMPTY_SCHEDULE_DATA;
@@ -1811,6 +1839,7 @@
   const detailsKicker = document.getElementById("details-kicker");
   const detailsTitle = document.getElementById("details-title");
   const detailsJumps = document.getElementById("details-jumps");
+  const detailsGoto = document.getElementById("details-goto");
   const detailsBody = document.getElementById("details-body");
   const detailsSize = document.getElementById("details-size");
   const detailsClose = document.getElementById("details-close");
@@ -1818,6 +1847,7 @@
   let detailsStarToggleEntry = null;
   let detailsVisitToggle = null;
   let detailsVisitToggleEntry = null;
+  let detailsGotoEntry = null;
   let detailsMode = "fit";
   let detailsDrag = null;
   let detailsUserHeight = null;
@@ -2257,13 +2287,49 @@
     history[method](snapshotUiHistoryState(), "", currentQueryHash());
   }
 
+  function sameHistoryDetailState(a, b) {
+    if (!a && !b) return true;
+    if (!a || !b) return false;
+    return a.type === b.type
+      && a.code === b.code
+      && a.name === b.name
+      && a.section === b.section
+      && a.mode === b.mode;
+  }
+
+  function sameHistoryScheduleState(a, b) {
+    if (!a && !b) return true;
+    if (!a || !b) return false;
+    return a.date === b.date
+      && a.eventId === b.eventId
+      && a.view === b.view;
+  }
+
+  function ensureCurrentUiParentHistoryState() {
+    if (suppressUiHistory) return;
+    const current = snapshotUiHistoryState();
+    const prior = history.state;
+    const sameAsCurrent = Boolean(
+      prior?.abMapUi
+      && prior?.map?.source === current.map.source
+      && prior?.map?.scl === current.map.scl
+      && prior?.map?.tx === current.map.tx
+      && prior?.map?.ty === current.map.ty
+      && sameHistoryDetailState(prior.detail, current.detail)
+      && sameHistoryScheduleState(prior.schedule, current.schedule)
+    );
+    history[sameAsCurrent ? "replaceState" : "pushState"](current, "", currentQueryHash());
+  }
+
   function findHotspotForHistoryDetail(detail) {
     if (!detail || detail.type !== "entry") return null;
-    return hotspots.find((el) =>
-      el.dataset.code === detail.code &&
-      el.dataset.name === detail.name &&
-      el.dataset.section === detail.section
-    ) || null;
+    const record = hotspots.find((item) => {
+      const el = item?.el || item;
+      return el?.dataset?.code === detail.code &&
+        el?.dataset?.name === detail.name &&
+        el?.dataset?.section === detail.section;
+    });
+    return record?.el || record || null;
   }
 
   function applyHistoryState(state) {
@@ -2912,6 +2978,7 @@
   const mapEntriesByNormalizedName = new Map();
   const detailLinkEntryByAlias = new Map();
   let detailLinkCandidates = [];
+  const detailLinkAliasBlocklist = new Set(["plane", "volunteer", "volunteers"]);
 
   function normalizeLinkName(name) {
     return String(name || "")
@@ -2972,6 +3039,7 @@
   function rememberDetailLinkAlias(alias, entry) {
     const raw = String(alias || "").trim();
     if (!raw || entry?.section === "toilet") return;
+    if (detailLinkAliasBlocklist.has(normalizeLinkName(raw))) return;
     if (/^(?:the|camp|theme camp|support camp|occ service|artwork)$/i.test(raw)) return;
     const existing = detailLinkEntryByAlias.get(raw);
     if (existing === undefined) {
@@ -2998,6 +3066,10 @@
       for (const alias of detailLinkNameParts(entry.name)) rememberDetailLinkAlias(alias, entry);
       if (detail?.title) {
         for (const alias of detailLinkNameParts(detail.title)) rememberDetailLinkAlias(alias, entry);
+      }
+      if (entry.code === "VOL") {
+        rememberDetailLinkAlias("Volunteer Booth", entry);
+        rememberDetailLinkAlias("The Volunteer Booth", entry);
       }
     }
   }
@@ -4984,6 +5056,8 @@
   function closeDetails() {
     activeDetailHighlight = null;
     showingUserLocationDetails = false;
+    detailsGotoEntry = null;
+    detailsGoto.hidden = true;
     detailsPanel.querySelector(".details-star-toggle")?.remove();
     detailsPanel.querySelector(".details-visit-toggle")?.remove();
     detailsStarToggle = null;
@@ -4999,6 +5073,8 @@
   function openUserLocationDetails(mode = "half") {
     activeDetailHighlight = null;
     showingUserLocationDetails = true;
+    detailsGotoEntry = null;
+    detailsGoto.hidden = true;
     detailsPanel.querySelector(".details-star-toggle")?.remove();
     detailsPanel.querySelector(".details-visit-toggle")?.remove();
     detailsStarToggle = null;
@@ -5107,6 +5183,8 @@
     detailsJumps.innerHTML = linkedEntries.map((entry, index) => `
       <button type="button" class="details-jump ${entry.section}" data-link-index="${index}" title="${escapeHtml(entry.name)}" aria-label="Jump to ${escapeHtml(entry.name)}">${escapeHtml(entry.code)}</button>
     `).join("");
+    detailsGotoEntry = mapEntry || null;
+    detailsGoto.hidden = !detailsGotoEntry;
     for (const button of detailsJumps.querySelectorAll(".details-jump")) {
       button.addEventListener("click", () => {
         const target = linkedEntries[Number(button.dataset.linkIndex)];
@@ -5304,6 +5382,11 @@
   detailsSize.addEventListener("click", () => {
     setDetailsMode(detailsMode === "full" ? "fit" : "full");
     syncUiHistory();
+  });
+  detailsGoto.addEventListener("click", () => {
+    if (!detailsGotoEntry) return;
+    ensureCurrentUiParentHistoryState();
+    jumpToLinkedEntry(detailsGotoEntry);
   });
   detailsClose.addEventListener("click", () => {
     closeDetails();
