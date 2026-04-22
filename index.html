@@ -491,6 +491,20 @@
   .detail-section { margin:0 0 13px; }
   .detail-label { color:#aaa; font-size:11px; text-transform:uppercase; letter-spacing:.04em; margin-bottom:3px; }
   .detail-text { margin:0; white-space:pre-line; }
+  .detail-inline-link {
+    appearance:none; -webkit-appearance:none;
+    display:inline;
+    margin:0; padding:0;
+    border:0; background:none;
+    color:#9edcff; text-decoration:underline;
+    cursor:pointer;
+    font:inherit; line-height:inherit; white-space:inherit;
+  }
+  .detail-inline-link:hover,
+  .detail-inline-link:focus-visible {
+    color:#c7ebff;
+    outline:none;
+  }
   .detail-tags { display:flex; flex-wrap:wrap; gap:5px; margin:6px 0 0; }
   .detail-tag {
     background:#262626; color:#ddd; border:1px solid #3b3b3b; border-radius:4px;
@@ -666,6 +680,16 @@
     padding:14px; overflow:auto; line-height:1.45; font-size:13px;
   }
   .about-body p { margin:0 0 12px; }
+  .about-body a {
+    color:#9ed2ff;
+    text-decoration:underline;
+    text-underline-offset:2px;
+  }
+  .about-body a:hover,
+  .about-body a:focus-visible {
+    color:#c3e3ff;
+    outline:none;
+  }
   .about-callout {
     margin:0 0 12px;
     padding:10px 12px;
@@ -697,6 +721,9 @@
   .about-meta {
     margin-top:14px; padding-top:12px; border-top:1px solid #2c2c2c;
     color:#bbb; font-size:12px;
+  }
+  .schedule-help-panel {
+    width:min(680px, calc(100vw - 24px));
   }
   .usage-backdrop {
     position:fixed; inset:0; z-index:114; display:none;
@@ -934,8 +961,8 @@
     box-shadow:0 0 0 1px rgba(124,255,170,0.16), 0 0 18px rgba(124,255,170,0.08);
   }
   .schedule-item.selected {
-    border-color:rgba(255,242,0,0.6);
-    box-shadow:0 0 0 1px rgba(255,242,0,0.22), 0 0 18px rgba(255,242,0,0.12);
+    border-color:rgba(98,255,132,0.72);
+    box-shadow:0 0 0 1px rgba(98,255,132,0.24), 0 0 18px rgba(98,255,132,0.12);
   }
   .schedule-item-row {
     display:grid; grid-template-columns:minmax(0, 1fr) auto; align-items:stretch;
@@ -1260,13 +1287,13 @@
     top:-1px;
     right:-1px;
     bottom:-1px;
-    width:8px;
+    width:10px;
     background:
       linear-gradient(-45deg,
-        transparent 0 2px,
-        rgba(255,255,255,0.75) 2px 3px,
-        transparent 3px 5px);
-    background-size:8px 5px;
+        transparent 0 3px,
+        rgba(255,255,255,0.75) 3px 4px,
+        transparent 4px 7px);
+    background-size:10px 7px;
     background-repeat:repeat-y;
     opacity:0.7;
     pointer-events:none;
@@ -1277,13 +1304,13 @@
     top:-1px;
     left:-1px;
     bottom:-1px;
-    width:8px;
+    width:10px;
     background:
       linear-gradient(45deg,
-        transparent 0 2px,
-        rgba(255,255,255,0.75) 2px 3px,
-        transparent 3px 5px);
-    background-size:8px 5px;
+        transparent 0 3px,
+        rgba(255,255,255,0.75) 3px 4px,
+        transparent 4px 7px);
+    background-size:10px 7px;
     background-repeat:repeat-y;
     opacity:0.7;
     pointer-events:none;
@@ -1333,8 +1360,8 @@
     box-shadow:0 0 0 1px rgba(255,214,92,0.24), 0 0 12px rgba(255,214,92,0.1);
   }
   .schedule-timeline-card.selected {
-    border-color:rgba(255,242,0,0.75);
-    box-shadow:0 0 0 1px rgba(255,242,0,0.24);
+    border-color:rgba(98,255,132,0.8);
+    box-shadow:0 0 0 1px rgba(98,255,132,0.24), 0 0 12px rgba(98,255,132,0.12);
   }
   .schedule-timeline-card:hover,
   .schedule-timeline-card:focus-visible {
@@ -1445,6 +1472,7 @@
       width:100vw; max-height:78vh; border-radius:8px 8px 0 0;
       border-left:0; border-right:0; border-bottom:0;
     }
+    .schedule-help-panel { width:min(680px, calc(100vw - 24px)); }
     .usage-backdrop { align-items:center; padding:18px; }
     .usage-panel {
       width:min(620px, calc(100vw - 24px));
@@ -1595,12 +1623,33 @@
   </section>
 </div>
 
+<div class="about-backdrop" id="schedule-help-backdrop" aria-hidden="true">
+  <section class="about-panel schedule-help-panel" role="dialog" aria-modal="true" aria-labelledby="schedule-help-title">
+    <div class="about-head">
+      <h2 id="schedule-help-title">Schedule help</h2>
+      <button type="button" class="about-close" id="schedule-help-close" aria-label="Close schedule help">×</button>
+    </div>
+    <div class="about-body">
+      <p>This schedule is a finder for possibilities, not a definitive timetable. Use it to discover things to do, then go participate. If it helps you find a dance floor, a parade, a weird ritual, or a place to lend a hand, it has done its job.</p>
+      <div class="about-callout">
+        <p><strong>Schedule warning:</strong> event times, openings, locations, and even whether something happens at all are all very likely to change at the burn.</p>
+        <p><strong>Best live info:</strong> ask the people running it, check the chalkboards at <button type="button" class="about-inline-link" data-schedule-help-entry="ART">Arteria</button>, and listen to <button type="button" class="about-inline-link" data-schedule-help-entry="RFT">RFT</button> for updates. The app can help you track possibilities, but reality still outranks the schedule.</p>
+      </div>
+      <p>Some time markers are estimates. If a card has a striped, zig-zag looking edge in the timeline, that edge is uncertain. A striped left edge means the start time is estimated. A striped right edge means the end time is estimated. That usually happens when the original wording was fuzzy and had to be interpreted into something drawable. For example, a start like <strong>sunset</strong>, <strong>after dark</strong>, or <strong>4 pm-ish</strong> gets turned into an estimated start time, and an end like <strong>late</strong> gets turned into an estimated finish so the event can actually appear in the timeline.</p>
+      <p>If timing matters, read the camp or artwork blurb and the original wording that fed the estimate. The details panel and the <a href="https://www.afrikaburn.org/binnekringblog/afrikaburn-2026-wtf/" target="_blank" rel="noopener noreferrer">official WTF Guide</a> will usually give you the fuller wording that this schedule had to condense.</p>
+      <p>There was not much confirmed information available ahead of the burn for major sound cars, some music lineups, or the actual burn schedule itself. Those things tend to become real on site. Arteria is one of the main places to get the updated version, and once you have that information you can use the <strong>Add</strong> button here to create your own custom events inside the app.</p>
+      <p>The aim of this section is to help people find things to do and then go do them. Participation and interaction are what make the burn beautiful, so says the Damn Dirty Hippie.</p>
+    </div>
+  </section>
+</div>
+
 <div class="schedule-backdrop" id="schedule-backdrop" aria-hidden="true">
   <section class="schedule-panel" role="dialog" aria-modal="true" aria-labelledby="schedule-title">
     <div class="schedule-head">
       <div class="schedule-title-row">
         <h2 id="schedule-title">Burn schedule</h2>
         <div class="schedule-actions">
+          <button type="button" class="schedule-nav" id="schedule-help-btn" aria-label="Open schedule help">?</button>
           <button type="button" class="schedule-nav" id="schedule-add">Add</button>
           <button type="button" class="schedule-nav" id="schedule-prev" aria-label="Previous burn day">‹</button>
           <button type="button" class="schedule-nav" id="schedule-today">Today</button>
@@ -1692,8 +1741,8 @@
 <script>
 (() => {
   const data = DATA_INLINE;
-  const APP_VERSION = "2026.04.22.6";
-  const APP_CACHE_VERSION = "v48";
+  const APP_VERSION = "2026.04.22.7";
+  const APP_CACHE_VERSION = "v49";
   const projectDetails = typeof PROJECT_DETAILS !== "undefined" ? PROJECT_DETAILS : { byCode: {} };
   const EMPTY_SCHEDULE_DATA = { days: [], entries: [], byDate: {}, byLinkedCode: {}, series: [], seriesById: {}, seriesByLinkedCode: {} };
   const baseScheduleData = typeof SCHEDULE_DATA !== "undefined" ? SCHEDULE_DATA : EMPTY_SCHEDULE_DATA;
@@ -1740,6 +1789,9 @@
   const usageBackdrop = document.getElementById("usage-backdrop");
   const usageDismiss = document.getElementById("usage-dismiss");
   const usageCopy = document.getElementById("usage-copy");
+  const scheduleHelpBackdrop = document.getElementById("schedule-help-backdrop");
+  const scheduleHelpBtn = document.getElementById("schedule-help-btn");
+  const scheduleHelpClose = document.getElementById("schedule-help-close");
   const scheduleBackdrop = document.getElementById("schedule-backdrop");
   const scheduleClose = document.getElementById("schedule-close");
   const scheduleAdd = document.getElementById("schedule-add");
@@ -2095,6 +2147,16 @@
     aboutBackdrop.setAttribute("aria-hidden", "true");
   }
 
+  function openScheduleHelp() {
+    scheduleHelpBackdrop.classList.add("open");
+    scheduleHelpBackdrop.setAttribute("aria-hidden", "false");
+  }
+
+  function closeScheduleHelp() {
+    scheduleHelpBackdrop.classList.remove("open");
+    scheduleHelpBackdrop.setAttribute("aria-hidden", "true");
+  }
+
   const USAGE_PROMPT_DELAY_MS = 5 * 60 * 1000;
   const USAGE_PROMPT_CHECK_MS = 15000;
   const USAGE_PROMPT_MESSAGES = [
@@ -2269,10 +2331,43 @@
     }
   }
 
+  function jumpToScheduleHelpSearch(query) {
+    closeScheduleHelp();
+    closeSchedule();
+    q.value = query;
+    applyFilter();
+    const v = q.value.trim();
+    history.replaceState(null, "", v ? "#q=" + encodeURIComponent(v) : "#");
+    if (activeSearchHits.length === 1) {
+      openDetails(activeSearchHits[0], isMobileDetails() ? "half" : "fit");
+    }
+  }
+
+  function jumpToScheduleHelpEntry(identifier) {
+    const key = String(identifier || "").trim();
+    if (!key) return;
+    const direct = mapEntryForCode(key.toUpperCase())
+      || [...entryByHotspotEl.values()].find((entry) => entry?.code === key || entry?.name === key)
+      || null;
+    if (!direct) {
+      jumpToScheduleHelpSearch(key);
+      return;
+    }
+    closeScheduleHelp();
+    closeSchedule();
+    clearIndexHighlights();
+    jumpToLinkedEntry(direct);
+  }
+
   aboutBtn.addEventListener("click", openAbout);
   aboutClose.addEventListener("click", closeAbout);
   aboutBackdrop.addEventListener("click", (ev) => {
     if (ev.target === aboutBackdrop) closeAbout();
+  });
+  scheduleHelpBtn.addEventListener("click", openScheduleHelp);
+  scheduleHelpClose.addEventListener("click", closeScheduleHelp);
+  scheduleHelpBackdrop.addEventListener("click", (ev) => {
+    if (ev.target === scheduleHelpBackdrop) closeScheduleHelp();
   });
   usageDismiss.addEventListener("click", closeUsagePrompt);
   for (const button of aboutBackdrop.querySelectorAll("[data-about-search]")) {
@@ -2280,8 +2375,19 @@
       jumpToAboutSearch(button.dataset.aboutSearch || "");
     });
   }
+  for (const button of scheduleHelpBackdrop.querySelectorAll("[data-schedule-help-entry]")) {
+    button.addEventListener("click", () => {
+      jumpToScheduleHelpEntry(button.dataset.scheduleHelpEntry || "");
+    });
+  }
+  for (const button of scheduleHelpBackdrop.querySelectorAll("[data-schedule-help-search]")) {
+    button.addEventListener("click", () => {
+      jumpToScheduleHelpSearch(button.dataset.scheduleHelpSearch || "");
+    });
+  }
   window.addEventListener("keydown", (ev) => {
     if (ev.key === "Escape") closeAbout();
+    if (ev.key === "Escape") closeScheduleHelp();
     if (ev.key === "Escape") closeSchedule();
   });
 
@@ -2804,6 +2910,8 @@
   const linkedMapEntriesByEntry = new WeakMap();
   const mapEntriesByCode = new Map();
   const mapEntriesByNormalizedName = new Map();
+  const detailLinkEntryByAlias = new Map();
+  let detailLinkCandidates = [];
 
   function normalizeLinkName(name) {
     return String(name || "")
@@ -2844,6 +2952,35 @@
     if (!list.includes(entry)) list.push(entry);
   }
 
+  function detailLinkNameParts(name) {
+    const parts = new Set();
+    const raw = String(name || "").trim();
+    if (!raw) return parts;
+    parts.add(raw);
+    for (const variant of nameVariants(raw)) {
+      if (variant) parts.add(variant);
+      const campless = String(variant || "").replace(/^camp\s+/i, "").trim();
+      if (campless) parts.add(campless);
+      for (const bit of String(variant || "").split(/\s*(?:&|\/|\|)\s*/)) {
+        const trimmed = bit.trim();
+        if (trimmed) parts.add(trimmed);
+      }
+    }
+    return parts;
+  }
+
+  function rememberDetailLinkAlias(alias, entry) {
+    const raw = String(alias || "").trim();
+    if (!raw || entry?.section === "toilet") return;
+    if (/^(?:the|camp|theme camp|support camp|occ service|artwork)$/i.test(raw)) return;
+    const existing = detailLinkEntryByAlias.get(raw);
+    if (existing === undefined) {
+      detailLinkEntryByAlias.set(raw, entry);
+      return;
+    }
+    if (existing !== entry) detailLinkEntryByAlias.set(raw, null);
+  }
+
   for (const entry of data.entries) {
     let codeList = mapEntriesByCode.get(entry.code);
     if (!codeList) {
@@ -2856,7 +2993,19 @@
     if (detail?.title) {
       for (const variant of nameVariants(detail.title)) rememberMapEntryAlias(variant, entry);
     }
+    if (entry.section !== "toilet") {
+      rememberDetailLinkAlias(entry.code, entry);
+      for (const alias of detailLinkNameParts(entry.name)) rememberDetailLinkAlias(alias, entry);
+      if (detail?.title) {
+        for (const alias of detailLinkNameParts(detail.title)) rememberDetailLinkAlias(alias, entry);
+      }
+    }
   }
+
+  detailLinkCandidates = [...detailLinkEntryByAlias.entries()]
+    .filter(([, entry]) => entry)
+    .map(([alias, entry]) => ({ alias, entry }))
+    .sort((a, b) => b.alias.length - a.alias.length || a.alias.localeCompare(b.alias));
 
   function addLinkedEntry(sourceEntry, targetEntry) {
     if (!sourceEntry || !targetEntry || sourceEntry === targetEntry) return;
@@ -2928,6 +3077,10 @@
     openDetails(targetEl, detailsMode === "full" ? "full" : "fit");
     frameHits([targetEl]);
     syncUiHistory();
+  }
+
+  function sameMapEntryIdentity(a, b) {
+    return Boolean(a && b && a.code === b.code && a.section === b.section);
   }
 
   let activeScheduleDate = null;
@@ -3275,6 +3428,7 @@
   }
 
   function closeSchedule() {
+    closeScheduleHelp();
     scheduleBackdrop.classList.remove("open");
     scheduleBackdrop.setAttribute("aria-hidden", "true");
     syncScheduleNowTimer();
@@ -3282,6 +3436,7 @@
 
   function openSchedule(options = {}) {
     closeAbout();
+    closeScheduleHelp();
     setScheduleDate(options.date || activeScheduleDate || defaultScheduleDate());
     activeScheduleEventId = options.eventId || activeScheduleEventId || null;
     scheduleBackdrop.classList.add("open");
@@ -4624,12 +4779,57 @@
   function escapeRegex(s) {
     return String(s).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   }
-  function detailSection(label, text, extraClass = "") {
+  function isDetailLinkWordChar(ch) {
+    return Boolean(ch && /[A-Za-z0-9]/.test(ch));
+  }
+  function detailLinkMatchesAt(text, index, alias) {
+    if (!text.startsWith(alias, index)) return false;
+    const prev = text[index - 1] || "";
+    const next = text[index + alias.length] || "";
+    if (isDetailLinkWordChar(alias[0]) && isDetailLinkWordChar(prev)) return false;
+    if (isDetailLinkWordChar(alias[alias.length - 1]) && isDetailLinkWordChar(next)) return false;
+    return true;
+  }
+  function rememberRenderedDetailLink(entry, linkState) {
+    if (!linkState) return -1;
+    let index = linkState.entryToIndex.get(entry);
+    if (index != null) return index;
+    index = linkState.entries.length;
+    linkState.entries.push(entry);
+    linkState.entryToIndex.set(entry, index);
+    return index;
+  }
+  function linkifyDetailText(text, sourceEntry, linkState) {
+    const raw = String(text || "");
+    if (!raw) return "";
+    let html = "";
+    let cursor = 0;
+    while (cursor < raw.length) {
+      let matched = null;
+      for (const candidate of detailLinkCandidates) {
+        if (sameMapEntryIdentity(sourceEntry, candidate.entry)) continue;
+        if (detailLinkMatchesAt(raw, cursor, candidate.alias)) {
+          matched = candidate;
+          break;
+        }
+      }
+      if (!matched) {
+        html += escapeHtml(raw[cursor]);
+        cursor += 1;
+        continue;
+      }
+      const index = rememberRenderedDetailLink(matched.entry, linkState);
+      html += `<button type="button" class="detail-inline-link ${escapeHtml(matched.entry.section)}" data-detail-link-index="${index}">${escapeHtml(matched.alias)}</button>`;
+      cursor += matched.alias.length;
+    }
+    return html;
+  }
+  function detailSection(label, text, extraClass = "", sourceEntry = null, linkState = null) {
     if (!text) return "";
     return `
       <section class="detail-section ${extraClass}">
         <div class="detail-label">${escapeHtml(label)}</div>
-        <p class="detail-text">${escapeHtml(text)}</p>
+        <p class="detail-text">${linkifyDetailText(text, sourceEntry, linkState)}</p>
       </section>
     `;
   }
@@ -4719,12 +4919,12 @@
     }
     return current;
   }
-  function oldWtfSection(items, extraClass = "detail-extra") {
+  function oldWtfSection(items, extraClass = "detail-extra", sourceEntry = null, linkState = null) {
     if (!items?.length) return "";
     return items.map((item) => `
       <section class="detail-section ${extraClass}">
         <div class="detail-label">Old WTF ${escapeHtml(item.year)}</div>
-        <p class="detail-text">${escapeHtml(item.summary)}</p>
+        <p class="detail-text">${linkifyDetailText(item.summary, sourceEntry, linkState)}</p>
       </section>
     `).join("");
   }
@@ -4927,6 +5127,13 @@
       section,
     });
     const tagsSectionHtml = detailTagsSection(tagHtml);
+    const inlineDetailLinkState = { entries: [], entryToIndex: new Map() };
+    const detailLinkSourceEntry = mapEntry || {
+      code,
+      name: el.dataset.name,
+      section,
+      grid,
+    };
     const sourceLinks = detail?.links?.length
       ? detail.links
       : detail?.sourceUrl
@@ -4962,13 +5169,13 @@
       </label>
     ` : "";
     detailsBody.innerHTML = detail ? `
-      ${detailSection("Project Description", projectDescription)}
-      ${detailSection("Details of Gift", detail.gift)}
-      ${detailSection("Artist", detail.artist, "detail-extra")}
-      ${detailSection("Family Friendly", detail.familyFriendly, "detail-extra")}
-      ${detailSection("Operating Times", detail.times, "detail-extra")}
-      ${detailSection("Additional Details", detail.additionalDetails, "detail-extra")}
-      ${oldWtfSection(detail.oldWtf, hasPrimaryDetail ? "detail-extra" : "")}
+      ${detailSection("Project Description", projectDescription, "", detailLinkSourceEntry, inlineDetailLinkState)}
+      ${detailSection("Details of Gift", detail.gift, "", detailLinkSourceEntry, inlineDetailLinkState)}
+      ${detailSection("Artist", detail.artist, "detail-extra", detailLinkSourceEntry, inlineDetailLinkState)}
+      ${detailSection("Family Friendly", detail.familyFriendly, "detail-extra", detailLinkSourceEntry, inlineDetailLinkState)}
+      ${detailSection("Operating Times", detail.times, "detail-extra", detailLinkSourceEntry, inlineDetailLinkState)}
+      ${detailSection("Additional Details", detail.additionalDetails, "detail-extra", detailLinkSourceEntry, inlineDetailLinkState)}
+      ${oldWtfSection(detail.oldWtf, hasPrimaryDetail ? "detail-extra" : "", detailLinkSourceEntry, inlineDetailLinkState)}
       ${sourceHtml}
       ${scheduleSectionHtml}
       ${tagsSectionHtml}
@@ -5039,6 +5246,14 @@
         q.value = button.dataset.searchTag || "";
         applyFilter();
         syncUiHistory(true);
+      });
+    }
+    for (const button of detailsBody.querySelectorAll(".detail-inline-link[data-detail-link-index]")) {
+      button.addEventListener("click", () => {
+        const target = inlineDetailLinkState.entries[Number(button.dataset.detailLinkIndex)];
+        if (!target) return;
+        syncUiHistory(true);
+        jumpToLinkedEntry(target);
       });
     }
     for (const button of detailsBody.querySelectorAll(".detail-schedule-link[data-schedule-series]")) {
