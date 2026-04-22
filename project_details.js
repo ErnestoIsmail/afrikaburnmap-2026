@@ -6215,8 +6215,8 @@ const PROJECT_DETAILS = (() => {
       "occ",
       "service"
     ],
-    "description": "The Theme Camp Saloon is an Off-Centre Camp stop for theme-camp business and community coordination. The WTF guide mentions it as the place to register media accreditation with Sweet Lollipop around 10 am-ish.",
-    "additionalDetails": "At Off-Centre Camp around 10 am-ish for the media-accreditation note in the WTF guide.",
+    "description": "The Theme Camp Saloon is an Off-Centre Camp coordination stop for theme-camp business, practical questions, and the general social admin of keeping Tankwa Town stitched together.\n\nThe WTF guide specifically points media creators here to register with Sweet Lollipop around 10 am-ish. It is the place to make your intentions official, get guidance on documenting AfrikaBurn ethically, and make sure your work respects privacy, decommodification, and the boundaries of participants.",
+    "additionalDetails": "Off-Centre Camp stop for theme-camp coordination. Media accreditation note: pop by around 10 am-ish to register with Sweet Lollipop.",
     "links": [
       {
         "label": "WTF Guide 2026",
@@ -6226,8 +6226,8 @@ const PROJECT_DETAILS = (() => {
   },
   {
     "code": "ART",
-    "slug": "artifactory and arteria",
-    "title": "Artifactory & Arteria",
+    "slug": "arteria and artifactory",
+    "title": "Arteria & Artifactory",
     "type": "OCC Service",
     "sourceTag": "wtf-2026",
     "sourceLabel": "WTF Guide 2026",
@@ -6236,8 +6236,8 @@ const PROJECT_DETAILS = (() => {
       "occ",
       "service"
     ],
-    "description": "The Artifactory is a white, quiet time capsule between OCC and Tankwa Town. The story of AfrikaBurn unfolds here: the history of the organisation, the evolution of the community, and the moments that shaped us. Tucked into corners and layered across the space are tangible memories: MOOP stories, collateral, archival news, photographs, and moving visuals that capture the dust, the fire, and the feeling.\n\nArteria is where the magic gets its coordinates. This is where artists check in with the Art Team to get advice on placement and assistance from volunteers. It is also where you can find a generally updated large map of registered artworks, the Burn Schedule chalkboard, burn times, and a chalkboard for performances and happenings.\n\nBringing a Creative Project, burning artwork, managing fuel or gas, looking for creative-project information, or wanting to volunteer on fire perimeter? Come to Arteria.",
-    "additionalDetails": "Artifactory operating hours: 9 am-late. Arteria is open 9 am to 3 pm every day during the event.",
+    "description": "Arteria is where the magic gets its coordinates, and one of the most important real-time information points in Tankwa Town. This is where artists check in with the Art Team for placement advice and volunteer support, where you can find the generally updated large map of registered artworks, the Burn Schedule chalkboard, updated burn times through the day, and a chalkboard for performances and happenings.\n\nIf you are trying to work out what is actually happening right now at the burn, start here. When the chalkboards or burn updates change, you can use that fresh info to add your own personal events in this app's Schedule section so you can keep track of it offline afterwards.\n\nArteria is also the place to come if you are bringing a Creative Project, burning artwork, looking for creative-project information, needing help with a performance or activity listing, volunteering on fire perimeter, or trying to work out whether your fuel, gas, or project logistics are about to become someone's problem.\n\nThe Artifactory sits beside it as a white, quiet time capsule between OCC and Tankwa Town. The story of AfrikaBurn unfolds here: the history of the organisation, the evolution of the community, and the moments that shaped us. Tucked into corners and layered across the space are tangible memories: MOOP stories, collateral, archival news, photographs, and moving visuals that capture the dust, the fire, and the feeling.",
+    "additionalDetails": "Arteria: open 9 am-3 pm daily during the event. Artifactory: open 9 am-late. For live burn times, performance notes, artwork updates, and other changing on-site information, Arteria is one of the key places to check.",
     "links": [
       {
         "label": "WTF Guide 2026",
@@ -6278,8 +6278,8 @@ const PROJECT_DETAILS = (() => {
       "occ",
       "service"
     ],
-    "description": "The Volunteer Booth is your get-involved HQ. Check in for your shifts, sign up for something new, or grab the latest intel on what's happening in the dust.\n\nPeople arrive here curious, dusty, and a little unsure about what they have signed up for. The Volunteer Booth points them towards projects, shifts, and general mischief. It is also a lekker cosy corner where you will find an outdoor cinema showing the odd nature doccie and AfrikaBurn art film.\n\nVolunteering is one of the fastest ways to feel like you actually belong here. It takes almost 4,000 volunteer shifts to keep Tankwa Town running, from greeting mense at the gate to helping run Radio Free Tankwa, keeping mutant vehicles in line, or joining the Leave No Trace crew on a MOOP Swoop.",
-    "additionalDetails": "Find the Volunteer Booth at Off-Centre Camp where Welcome Road meets the Binnekring. Open daily from 10 am to 7 pm.",
+    "description": "The Volunteer Booth is your get-involved HQ: the crossroads of Tankwa Town, where people arrive curious, dusty, and a little unsure about what they have signed up for. Come here to check in for shifts, sign up for something new, or grab the latest intel on what is happening in the dust.\n\nThe crew will point you towards a shift that suits your vibe, your skills, or just your curiosity. It is also a lekker hangout in its own right, with music, games, fireside chats, and the occasional nature doccie or AfrikaBurn art film rolling in the background.\n\nVolunteering is one of the fastest ways to feel like you actually belong here. It takes almost 4,000 volunteer shifts to keep Tankwa Town running, from greeting mense at the gate to helping run Radio Free Tankwa, keeping mutant vehicles in line, or joining the Leave No Trace crew on a MOOP Swoop.",
+    "additionalDetails": "Find the Volunteer Booth where Welcome Road meets the Binnekring at OCC. Open daily from 10 am to 7 pm.",
     "links": [
       {
         "label": "WTF Guide 2026",
@@ -6320,8 +6320,8 @@ const PROJECT_DETAILS = (() => {
       "occ",
       "service"
     ],
-    "description": "The Sanctuary is a safe, supportive space for anyone who needs a break from overwhelm or some quiet. You can find it at OCC on Binnekring Road between Medics and Rangers; the blue-and-white sign is visible day and night.\n\nVolunteers offer peer support for challenging psychedelic or emotional experiences, with rest, refreshment, and company available inside or around the fire. Guests can stay for a few hours, after which campmates can help them return to camp. The Sanctuary is not an alternative sleeping space if your camp is noisy or annoying.\n\nThe Hub at the Sanctuary offers harm reduction and safety education, including information and testing. Testing takes place daily from 10 am to 12 pm and 3 pm to 5 pm. Free breathalysers are available if you are worried about driving home or operating your body safely.",
-    "additionalDetails": "Between Medics and Rangers at OCC. Testing: daily 10 am-12 pm and 3 pm-5 pm.",
+    "description": "The Sanctuary is a safe, supportive space for anyone who needs a break from overwhelm or some quiet. You can find it at OCC on Binnekring Road between Medics and Rangers; the blue-and-white sign is visible day and night.\n\nThis is where peer support, crisis care, and practical calm converge. Volunteers offer support for challenging psychedelic or emotional experiences, with rest, refreshment, and company available inside or around the fire. Guests can stay for a few hours, after which campmates can help them return to camp. The Sanctuary is not an alternative sleeping space if your camp is noisy or annoying.\n\nThe Hub at the Sanctuary offers harm reduction and safety education, including information, testing, and free breathalysers if you are worried about driving home or operating your body safely. Check the chalkboard for more information, safety meet-ups, and support sessions. If you or someone you know needs urgent help, ask the Sanctuary shift lead to contact Support, or ask Rangers or Guardians to make contact in the field.",
+    "additionalDetails": "Between Medics and Rangers at OCC. Support provides 24/7 crisis care for mental health or emotional emergencies. Testing daily: 10 am-12 pm and 3 pm-5 pm.",
     "links": [
       {
         "label": "WTF Guide 2026",
@@ -6383,7 +6383,7 @@ const PROJECT_DETAILS = (() => {
       "occ",
       "service"
     ],
-    "description": "In the only city where money is of no use to you, Die Yskas is the one exception. It is the only place in Tankwa Town where commerce actually happens, and for good reason: lukewarm gin and vrot boerewors are the enemies of a good Burn.\n\nThe cold hard facts: open daily from 11 am to 1 pm, Monday to Saturday. Ice is R100 per 5 kg bag. The entrance is at Off-Centre Camp on the Binnekring; follow the sound of rattling coins and the sight of melting dreams.\n\nIce etiquette: leave your bike on the rack and your car at your campsite. A 5 kg bag gets surprisingly heavy when trekking through 38 C dust, so bring a friend, gym bag, backpack, or foldable cooler. By Wednesday or Thursday, the crew inside Die Yskas has explained the process roughly 4,000 times. Please keep the vibes chilled and remember that the beasts of Die Yskas are volunteers too.",
+    "description": "In the only city where money is of no use to you, Die Yskas is the one exception. It is the only place in Tankwa Town where commerce actually happens, and for good reason: lukewarm gin and vrot boerewors are the enemies of a good Burn.\n\nThis is frontline desert survival. From managing the epic Binnekring queue to tossing 5 kg bags into the arms of overheating burners, the Die Yskas crew keeps one of OCC's most practical services alive.\n\nThe cold hard facts: open daily from 11 am to 1 pm, Monday to Saturday. Ice is R100 per 5 kg bag. The entrance is at Off-Centre Camp on the Binnekring; follow the sound of rattling coins and the sight of melting dreams.\n\nIce etiquette: leave your bike on the rack and your car at your campsite. A 5 kg bag gets surprisingly heavy when trekking through 38 C dust, so bring a friend, gym bag, backpack, or foldable cooler. By Wednesday or Thursday, the crew inside Die Yskas has explained the process roughly 4,000 times. Please keep the vibes chilled and remember that the beasts of Die Yskas are volunteers too.",
     "additionalDetails": "Open Monday to Saturday, 11 am-1 pm. R100 per 5 kg bag.",
     "links": [
       {
@@ -6404,8 +6404,8 @@ const PROJECT_DETAILS = (() => {
       "occ",
       "service"
     ],
-    "description": "Chillaz is AfrikaBurn's official Off-Centre Camp stage and a platform of expression for artists. In the volunteer copy it is described as the soul of the Burn: an Afrocentric creative hub for storytelling, live performance, and rootsy vibes.\n\nIt is a ground-up community effort where many hands make light work. OCC after-hours keeps the pulse of the city alive; Chillaz might be jamming until 10 pm.",
-    "additionalDetails": "Look out for the neon-blue Chillaz sign. Part of the OCC after-hours vibe.",
+    "description": "Chillaz is AfrikaBurn's official Off-Centre Camp stage and a platform of expression for artists, creatives, and dreamers to share their gifts and stories with the community. In the WTF it is described as the soul of the Burn: an Afrocentric creative hub for storytelling, live performance, rootsy vibes, and open participation.\n\nThe heart of Chillaz is the open-mic stage, and it is open to everyone. Start the day with a sound journey, poetry, conversation, yoga, meditation, isiXhosa lessons, or workshops; drift into live music, jam sessions, and open mic in the afternoon; and let DJs and performances carry the place into the night. The line-up changes, so check the chalkboard.\n\nOCC after-hours keeps the pulse of the city alive. Do not let the office-hours vibe fool you: Chillaz is one of the places where the city keeps breathing after dark.",
+    "additionalDetails": "Look out for the neon-blue Chillaz sign. Programme blocks run daily, with line-up details on the chalkboard. OCC after-hours note: Chillaz might be jamming until 10 pm.",
     "links": [
       {
         "label": "WTF Guide 2026",

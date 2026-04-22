@@ -1458,14 +1458,15 @@
     </div>
     <div class="about-body">
       <p>This interactive map is built from the official AfrikaBurn 2026 site map and the 2026 WTF Guide, with additional linking and offline-friendly navigation layered on top.</p>
+      <p><strong>This map can be saved for offline use at the burn.</strong> The app is under active development, so revisit this site while you still have reception if you want the latest updates to download automatically before you head out of signal. There may also be newer content available at the burn on a local Wi-Fi version of the map hosted at OCC / <button type="button" class="about-inline-link" data-about-search="Radio Free Tankwa">RFT</button>.</p>
       <p>It is meant to be a useful helper, not a replacement for participation. AfrikaBurn works best when people look up, wander, talk to strangers, follow curiosity, and let the city surprise them. Use the map when it helps, then put the phone away again. If this tool gets you somewhere interesting, helps you help someone else, helps you find a loo, or saves you when you are lost in the dust, that is enough.</p>
       <p>Please do not let the map become the whole experience. Some of the best parts of the burn are unplanned, not on the schedule, or found by accident. Radical self-reliance matters, but so does immediacy, participation, gifting, and being present with the people around you.</p>
       <div class="about-callout">
         <p><strong>Location warning:</strong> map locations may be incorrect, may change during the burn, and reality sometimes overwrites the map.</p>
         <p><strong>Event warning:</strong> some events, times, names, or links may be missing or wrong. Please treat the schedule as a helpful guide and double-check anything important on site or with the people running the event.</p>
       </div>
-      <p>Developed by Chris (AKA The Damn Dirty Hippie) from the <button type="button" class="about-inline-link" data-about-search="Greasemonkeys">Greasemonkeys</button>. Feel free to pop by and say hi, or thanks, in person. Feedback, suggestions, or bugs/issues can be emailed to <a href="mailto:chris.laidler+ab@gmail.com">chris.laidler+ab@gmail.com</a>.</p>
-      <p>The original interactive map project was created by Bernard from <button type="button" class="about-inline-link" data-about-search="Camp 404">camp 404</button>.</p>
+      <p>Developed by Chris (AKA The Damn Dirty Hippie) from the <button type="button" class="about-inline-link" data-about-search="Greasemonkeys">Greasemonkeys</button>. Feel free to pop by and say hi, or thanks, in person. Feedback, suggestions, or bugs/issues can be sent by <a href="mailto:chris.laidler+ab@gmail.com">e-mail</a>, or find me at the burn, to help improve this or future interactive AB maps.</p>
+      <p>The <a href="https://bernardbravenboer.github.io/afrikaburnmap-2026/" target="_blank" rel="noopener noreferrer">original interactive map</a> project was created by Bernard from <button type="button" class="about-inline-link" data-about-search="Camp 404">camp 404</button>.</p>
       <p>This is an independent helper tool. There are no guarantees, and some information may still be incomplete or incorrect, but care has been taken to make it as accurate and useful as possible. Live GPS includes a short recent-movement trail. Orientation / heading information is only as accurate as the phone; a mis-calibrated compass can lead to inaccurate heading display.</p>
       <div class="about-links">
         <a href="https://www.afrikaburn.org/wp-content/uploads/2026/04/2026_Site_map.pdf" target="_blank" rel="noopener noreferrer">Official AfrikaBurn 2026 site map</a>
@@ -1577,8 +1578,8 @@
 <script>
 (() => {
   const data = DATA_INLINE;
-  const APP_VERSION = "2026.04.22.3";
-  const APP_CACHE_VERSION = "v45";
+  const APP_VERSION = "2026.04.22.4";
+  const APP_CACHE_VERSION = "v46";
   const projectDetails = typeof PROJECT_DETAILS !== "undefined" ? PROJECT_DETAILS : { byCode: {} };
   const EMPTY_SCHEDULE_DATA = { days: [], entries: [], byDate: {}, byLinkedCode: {}, series: [], seriesById: {}, seriesByLinkedCode: {} };
   const baseScheduleData = typeof SCHEDULE_DATA !== "undefined" ? SCHEDULE_DATA : EMPTY_SCHEDULE_DATA;
@@ -2738,7 +2739,7 @@
   let activeScheduleView = "timeline";
   let scheduleShowEvents = true;
   let scheduleShowOpen = true;
-  let scheduleStarredFilterEnabled = false;
+  let scheduleStarredFilterEnabled = true;
   let scheduleTimelineNeedsMorningAnchor = true;
   let scheduleNowTimer = null;
   let scheduleTimelineZoom = 1;
