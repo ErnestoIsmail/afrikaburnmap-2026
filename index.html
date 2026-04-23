@@ -1989,6 +1989,10 @@
           <button type="button" class="about-refresh-btn" id="about-refresh-btn">Get latest revision</button>
           <span class="about-refresh-note" id="about-refresh-note">Use this while online if a cache bump has not shown up yet. Your custom changes stay in place; this only refreshes the bundled app data. Offline use keeps the current saved bundle.</span>
         </div>
+        <div class="about-meta-actions about-live-auth" id="about-live-auth">
+          <button type="button" class="about-refresh-btn" id="live-auth-btn">Live admin: sign in</button>
+          <span class="about-refresh-note" id="live-auth-note">Sign in to enable publishing events to the live schedule feed.</span>
+        </div>
       </div>
     </div>
   </section>
@@ -2145,7 +2149,7 @@
 <script>
 (() => {
   const data = DATA_INLINE;
-  const APP_VERSION = "2026.04.23.8";
+  const APP_VERSION = "2026.04.23.9";
   const CACHE_NAME_PREFIX = "ab-map-";
   async function getInstalledCacheVersion() {
     if (!("caches" in window)) return null;
@@ -2183,6 +2187,7 @@
   ];
   let scheduleData = baseScheduleData;
   let liveScheduleUpdates = [];
+  let isLiveAdmin = Boolean(sessionStorage.getItem(LIVE_ADMIN_PIN_SESSION_KEY));
   const oldWtfDetails = typeof OLD_WTF_DETAILS !== "undefined" ? OLD_WTF_DETAILS : { byCode: {} };
   const viewport = document.getElementById("viewport");
   const mapDiv = document.getElementById("map");
@@ -2963,6 +2968,8 @@
         return false;
       }
       sessionStorage.setItem(LIVE_ADMIN_PIN_SESSION_KEY, pin);
+      isLiveAdmin = true;
+      updateLiveAuthUi();
       await fetchLiveUpdates(true);
       showPlainMessage("Published to live feed!");
       return true;
@@ -2993,6 +3000,8 @@
         return false;
       }
       sessionStorage.setItem(LIVE_ADMIN_PIN_SESSION_KEY, pin);
+      isLiveAdmin = true;
+      updateLiveAuthUi();
       await fetchLiveUpdates(true);
       showPlainMessage("Removed from live feed.");
       return true;
@@ -3004,6 +3013,19 @@
 
   function liveUpdateForId(id) {
     return liveScheduleUpdates.find((u) => String(u.id) === String(id)) || null;
+  }
+
+  function updateLiveAuthUi() {
+    const btn = document.getElementById("live-auth-btn");
+    const note = document.getElementById("live-auth-note");
+    if (!btn || !note) return;
+    if (isLiveAdmin) {
+      btn.textContent = "Live admin: sign out";
+      note.textContent = "You can publish events to the live schedule feed. Sign out to hide those controls.";
+    } else {
+      btn.textContent = "Live admin: sign in";
+      note.textContent = "Sign in to enable publishing events to the live schedule feed.";
+    }
   }
 
   appVersion.textContent = `app ${APP_VERSION} · cache …`;
@@ -3030,6 +3052,7 @@
   function openAbout(markSeen = true) {
     if (markSeen) localStorage.setItem(ABOUT_SEEN_STORAGE_KEY, "1");
     updateAboutRefreshAvailability();
+    updateLiveAuthUi();
     aboutBackdrop.classList.add("open");
     aboutBackdrop.setAttribute("aria-hidden", "false");
   }
@@ -3370,6 +3393,25 @@
     jumpToLinkedEntry(direct);
   }
 
+  const liveAuthBtn = document.getElementById("live-auth-btn");
+  liveAuthBtn?.addEventListener("click", () => {
+    if (isLiveAdmin) {
+      sessionStorage.removeItem(LIVE_ADMIN_PIN_SESSION_KEY);
+      isLiveAdmin = false;
+      updateLiveAuthUi();
+      showPlainMessage("Signed out of live admin.");
+      renderSchedule();
+    } else {
+      const pin = window.prompt("Enter live admin password:") || "";
+      if (!pin) return;
+      sessionStorage.setItem(LIVE_ADMIN_PIN_SESSION_KEY, pin);
+      isLiveAdmin = true;
+      updateLiveAuthUi();
+      showPlainMessage("Signed in as live admin.");
+      renderSchedule();
+    }
+    closeAbout();
+  });
   aboutBtn.addEventListener("click", openAbout);
   aboutTopBtn?.addEventListener("click", openAbout);
   aboutClose.addEventListener("click", closeAbout);
@@ -5361,7 +5403,7 @@
     }
     const existingLiveEntry = liveUpdateForId(item.id);
     const isInLiveFeed = Boolean(existingLiveEntry);
-    const canPublish = (item.isCustom || item.isEditedBase) && !isInLiveFeed;
+    const canPublish = isLiveAdmin && (item.isCustom || item.isEditedBase) && !isInLiveFeed;
     scheduleDetail.innerHTML = `
       <div class="schedule-detail-head">
         <div>
@@ -5387,8 +5429,8 @@
           ${(item.isCustom || item.isEditedBase) ? '<button type="button" class="schedule-detail-btn" data-schedule-share>Share QR</button>' : ""}
           <button type="button" class="schedule-detail-btn" data-schedule-edit>Edit</button>
           ${canPublish ? '<button type="button" class="schedule-detail-btn publish" data-schedule-publish>Publish to live</button>' : ""}
-          ${isInLiveFeed ? '<button type="button" class="schedule-detail-btn publish" data-schedule-publish-update>Update live</button>' : ""}
-          ${isInLiveFeed ? '<button type="button" class="schedule-detail-btn danger" data-schedule-remove-live>Remove from live</button>' : ""}
+          ${(isLiveAdmin && isInLiveFeed) ? '<button type="button" class="schedule-detail-btn publish" data-schedule-publish-update>Update live</button>' : ""}
+          ${(isLiveAdmin && isInLiveFeed) ? '<button type="button" class="schedule-detail-btn danger" data-schedule-remove-live>Remove from live</button>' : ""}
           ${item.isCustom ? '<button type="button" class="schedule-detail-btn danger" data-schedule-delete>Delete</button>' : ""}
           ${item.isEditedBase ? '<button type="button" class="schedule-detail-btn danger" data-schedule-revert>Revert</button>' : ""}
         </div>
