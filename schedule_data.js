@@ -23,6 +23,7 @@ const SCHEDULE_DATA = (() => {
     movement: "Movement",
     community: "Community",
   };
+  const WTF_HOURS_SOURCE = "WTF Guide 2026 — operating hours";
 
   function toMinutes(value) {
     if (typeof value === "number" && Number.isFinite(value)) return value;
@@ -74,7 +75,8 @@ const SCHEDULE_DATA = (() => {
       inferred.push("service");
     }
     if (/\b(gathering|community|welcome party|family|lounge|sundowners|citizen|social)\b/.test(text)) inferred.push("community");
-    return normalizeCategories(inferred);
+    const blocked = new Set(normalizeCategories(def.excludeCategories || []));
+    return normalizeCategories(inferred).filter((label) => !blocked.has(label));
   }
 
   function addSeries(def) {
@@ -156,6 +158,34 @@ const SCHEDULE_DATA = (() => {
     description: "Nightly bowls, banter, fire performances, and full-blown chaos at BabaDoof.",
   });
   addSeries({
+    id: "bee-morning-journeys",
+    title: "Sound, Meditation, and Yoga Journeys",
+    kind: "open",
+    days: "daily",
+    timeLabel: "Mornings",
+    sortStart: "09:00",
+    estimatedEnd: "12:00",
+    linkedCodes: ["BEE"],
+    categories: ["wellness", "community"],
+    excludeCategories: ["music", "performance", "service"],
+    summaryLabel: "Daily mornings · Sound, meditation, and yoga journeys",
+    description: "Bee-Have hosts sound, meditation, and yoga journeys on the beehive stage, mainly in the mornings.",
+  });
+  addSeries({
+    id: "bee-afternoon-performances",
+    title: "Performances and Workshops",
+    kind: "open",
+    days: "daily",
+    timeLabel: "Afternoons",
+    sortStart: "13:00",
+    estimatedEnd: "17:00",
+    linkedCodes: ["BEE"],
+    categories: ["performance", "workshop", "community"],
+    excludeCategories: ["service"],
+    summaryLabel: "Daily afternoons · Performances and workshops",
+    description: "Bee-Have hosts performances and workshops on the beehive stage in the afternoons.",
+  });
+  addSeries({
     id: "404-vegan-brunch",
     title: "Vegan Brunch",
     kind: "event",
@@ -165,6 +195,19 @@ const SCHEDULE_DATA = (() => {
     linkedCodes: ["404"],
     summaryLabel: "Daily 11 am-ish · Vegan brunch",
     description: "Camp 404's best vegan brunch in Tankwa Town.",
+  });
+  addSeries({
+    id: "ass-beer-tasting",
+    title: "Beer Tasting",
+    kind: "event",
+    days: "daily",
+    timeLabel: "2 pm to 4 pm",
+    sortStart: "14:00",
+    sortEnd: "16:00",
+    linkedCodes: ["ASS"],
+    categories: ["foodDrink", "community"],
+    summaryLabel: "Daily 2 pm-4 pm · Beer tasting",
+    description: "Alegra Space Station roves the Binnekring from 2 pm to 4 pm with camp-brewed craft beer, cold juice, and roaming connection. This is a Binnekring gifting window rather than a fixed in-camp location.",
   });
   addSeries({
     id: "404-love-is-a-spectrum",
@@ -178,6 +221,21 @@ const SCHEDULE_DATA = (() => {
     sourceLabel: "User-supplied event",
     summaryLabel: "Thu around 12 pm · Love is a Spectrum",
     description: "After brunch at Camp 404, join the Love is a Spectrum matchmaking shenanigans in the cosy lounge. Participants answer a few questions, meet possible matches through a series of curated activities, and can then elope onward into further purple-wedding chaos if the moment feels right. You may also find the crew roaming the playa in wedding finery.",
+  });
+  addSeries({
+    id: "cs-raise-your-cup",
+    title: "Raise Your Cup",
+    kind: "event",
+    days: "tue",
+    timeLabel: "Tuesday 28 April, 4 pm-ish till late",
+    sortStart: "16:00",
+    estimatedEnd: "02:00",
+    estimatedEndNextDay: true,
+    linkedCodes: ["CS"],
+    categories: ["music", "performance", "community"],
+    sourceLabel: "User-supplied event",
+    summaryLabel: "Tue 28 Apr 4 pm-ish-late · Raise Your Cup",
+    description: "Join the celebration of AfrikaBurn's beloved Cyndi Roberts at the Coffee and Spliff for Cyndi artwork, built in her honour. Expect music hosted by The Dung Beetle Project, plus fire, mayhem, drums, fire poi, mutants, and anything else needed to make it a party worthy of celebrating Cyndi and her massive contribution to the burn.",
   });
   addSeries({
     id: "but-beasts-bazaar",
@@ -341,27 +399,31 @@ const SCHEDULE_DATA = (() => {
   });
   addSeries({
     id: "tgm-workshop-morning",
-    title: "Workshop Help Window",
+    title: "Greasemonkeys Around",
     kind: "open",
     days: "mon-sat",
     timeLabel: "10 am to 12 pm",
     sortStart: "10:00",
     sortEnd: "12:00",
     linkedCodes: ["TGM"],
-    summaryLabel: "Mon-Sat 10 am-12 pm · Workshop help",
-    description: "Working Greasemonkeys may appear to help sentient beings fix their mechanical mishaps.",
+    categories: ["community"],
+    excludeCategories: ["workshop"],
+    summaryLabel: "Mon-Sat 10 am-12 pm · Greasemonkeys around",
+    description: "The Greasemonkey workshop is open 24 hours for tool use, and there may be monkeys between 10 am and 12 pm to help with tricksy issues.",
   });
   addSeries({
     id: "tgm-workshop-afternoon",
-    title: "Workshop Help Window",
+    title: "Greasemonkeys Around",
     kind: "open",
     days: "mon-sat",
     timeLabel: "1 pm to 3 pm",
     sortStart: "13:00",
     sortEnd: "15:00",
     linkedCodes: ["TGM"],
-    summaryLabel: "Mon-Sat 1 pm-3 pm · Workshop help",
-    description: "A second staffed Greasemonkeys workshop window for bikes, generators, and wobbly tyres.",
+    categories: ["community"],
+    excludeCategories: ["workshop"],
+    summaryLabel: "Mon-Sat 1 pm-3 pm · Greasemonkeys around",
+    description: "The Greasemonkey workshop is open 24 hours for tool use, and there may be monkeys between 1 pm and 3 pm to help with tricksy issues.",
   });
   addSeries({
     id: "hug-story-time",
@@ -436,10 +498,11 @@ const SCHEDULE_DATA = (() => {
     title: "Sunset Bar",
     kind: "open",
     days: "daily",
-    timeLabel: "Sunset",
-    sortStart: "18:30",
+    timeLabel: "About 1 hour before sunset to about 2 hours after",
+    sortStart: "17:30",
+    estimatedEnd: "20:30",
     linkedCodes: ["LPP"],
-    summaryLabel: "Daily at sunset · Sunset bar",
+    summaryLabel: "Daily around sunset · Sunset bar",
     description: "Pastis, bubbles, and the first step into the night at Le Petit Paris.",
   });
   addSeries({
@@ -459,10 +522,11 @@ const SCHEDULE_DATA = (() => {
     title: "Sunset Lounge",
     kind: "open",
     days: "daily",
-    timeLabel: "Sunset",
+    timeLabel: "About 1 hour before sunset to about 2 hours after",
     sortStart: "18:30",
+    estimatedEnd: "20:30",
     linkedCodes: ["MAR"],
-    summaryLabel: "Daily at sunset · Sunset lounge",
+    summaryLabel: "Daily around sunset · Sunset lounge",
     description: "Shade, sweet sounds, chilled vibes, and a raised lounge facing the Binnekring at MARAH.",
   });
   addSeries({
@@ -488,6 +552,19 @@ const SCHEDULE_DATA = (() => {
     linkedCodes: ["MIM"],
     summaryLabel: "Daily from 12 pm · Mimosas and beats",
     description: "Ice-cold mimosas, rogue rhythm, and daytime mischief at Mimosa Avenue.",
+  });
+  addSeries({
+    id: "pap-morning-rooibos",
+    title: "Morning Rooibos and Rusks",
+    kind: "open",
+    days: "daily",
+    timeLabel: "Mornings",
+    sortStart: "09:00",
+    estimatedEnd: "12:00",
+    linkedCodes: ["PAP"],
+    categories: ["foodDrink", "community"],
+    summaryLabel: "Daily mornings · Rooibos and rusks",
+    description: "During the mornings, come by our camp for rooibos and rusks and new global connections.",
   });
   addSeries({
     id: "pap-afro-house",
@@ -662,6 +739,133 @@ const SCHEDULE_DATA = (() => {
     sourceLabel: "User-supplied event",
     summaryLabel: "Wed 11 am · Swing Dance Workshop",
     description: "A Swing Dance Workshop at The Steampunk Saloon led by Muriel Gravenor.",
+  });
+  addSeries({
+    id: "piccaya-flying-dutchman",
+    title: "Michel Piccaya at Flying Dutchman",
+    kind: "event",
+    days: "tue",
+    timeLabel: "Tuesday sunset",
+    sortStart: "18:00",
+    categories: ["music"],
+    sourceLabel: "User-supplied lineup",
+    summaryLabel: "Tue sunset · Michel Piccaya at Flying Dutchman",
+    description: "Michel Piccaya sunset set at The Flying Dutchman. Left intentionally unlinked until the mutant vehicle has its own map marker, to avoid pointing the event at the support camp instead.",
+  });
+  addSeries({
+    id: "piccaya-dmt-dome",
+    title: "Michel Piccaya at DMT Dome",
+    kind: "event",
+    days: "wed",
+    timeLabel: "Wednesday sunset",
+    sortStart: "18:00",
+    linkedCodes: ["DMT"],
+    categories: ["music"],
+    sourceLabel: "User-supplied lineup",
+    summaryLabel: "Wed sunset · Michel Piccaya at DMT Dome",
+    description: "Michel Piccaya sunset set at DMT Dome.",
+  });
+  addSeries({
+    id: "piccaya-owlion",
+    title: "Michel Piccaya at OwLion",
+    kind: "event",
+    days: "wed",
+    timeLabel: "Wednesday evening",
+    sortStart: "20:00",
+    categories: ["music"],
+    sourceLabel: "User-supplied lineup",
+    summaryLabel: "Wed evening · Michel Piccaya at OwLion",
+    description: "Michel Piccaya evening set at OwLion. Left intentionally unlinked until the mutant vehicle has its own map marker.",
+  });
+  addSeries({
+    id: "fractal-chill-open",
+    title: "Fractal Chill Open",
+    kind: "open",
+    days: "daily",
+    timeLabel: "midday to late afternoon",
+    sortStart: "12:00",
+    estimatedEnd: "17:00",
+    linkedCodes: ["FCC"],
+    categories: ["food & drink", "community"],
+    summaryLabel: "Daily midday-late afternoon · Fractal Chill open",
+    description: "Open from midday to late afternoon, serving freshly roasted Arabica coffee, chai, rooibos, and mint teas.",
+  });
+  addSeries({
+    id: "piccaya-fractal-chill-thu",
+    title: "Michel Piccaya at Fractal Chill",
+    kind: "event",
+    days: "thu",
+    timeLabel: "Thursday afternoon",
+    sortStart: "15:00",
+    linkedCodes: ["FCC"],
+    categories: ["music"],
+    sourceLabel: "User-supplied lineup",
+    summaryLabel: "Thu afternoon · Michel Piccaya at Fractal Chill",
+    description: "Michel Piccaya afternoon set at Fractal Chill.",
+  });
+  addSeries({
+    id: "piccaya-fractal-chill-fri",
+    title: "Michel Piccaya at Fractal Chill",
+    kind: "event",
+    days: "fri",
+    timeLabel: "Friday afternoon",
+    sortStart: "15:00",
+    linkedCodes: ["FCC"],
+    categories: ["music"],
+    sourceLabel: "User-supplied lineup",
+    summaryLabel: "Fri afternoon · Michel Piccaya at Fractal Chill",
+    description: "Michel Piccaya afternoon set at Fractal Chill.",
+  });
+  addSeries({
+    id: "piccaya-le-petit-paris",
+    title: "Michel Piccaya at Le Petit Paris",
+    kind: "event",
+    days: "sat",
+    timeLabel: "Saturday sunrise",
+    sortStart: "06:00",
+    linkedCodes: ["LPP"],
+    categories: ["music"],
+    sourceLabel: "User-supplied lineup",
+    summaryLabel: "Sat sunrise · Michel Piccaya at Le Petit Paris",
+    description: "Michel Piccaya sunrise set at Le Petit Paris.",
+  });
+  addSeries({
+    id: "piccaya-fractal-chill-sat",
+    title: "Michel Piccaya at Fractal Chill",
+    kind: "event",
+    days: "sat",
+    timeLabel: "Saturday afternoon",
+    sortStart: "15:00",
+    linkedCodes: ["FCC"],
+    categories: ["music"],
+    sourceLabel: "User-supplied lineup",
+    summaryLabel: "Sat afternoon · Michel Piccaya at Fractal Chill",
+    description: "Michel Piccaya afternoon set at Fractal Chill.",
+  });
+  addSeries({
+    id: "piccaya-insight",
+    title: "Michel Piccaya at The Insight",
+    kind: "event",
+    days: "sat",
+    timeLabel: "Saturday sunset",
+    sortStart: "18:00",
+    categories: ["music"],
+    sourceLabel: "User-supplied lineup",
+    summaryLabel: "Sat sunset · Michel Piccaya at The Insight",
+    description: "Michel Piccaya sunset set at The Insight. Left intentionally unlinked until the mutant vehicle has its own map marker.",
+  });
+  addSeries({
+    id: "piccaya-8th-day-of-creation",
+    title: "Michel Piccaya at 8th Day of Creation",
+    kind: "event",
+    days: "sat",
+    timeLabel: "Saturday night",
+    sortStart: "22:00",
+    linkedCodes: ["DC"],
+    categories: ["music"],
+    sourceLabel: "User-supplied lineup",
+    summaryLabel: "Sat night · Michel Piccaya at 8th Day of Creation",
+    description: "Michel Piccaya night set at 8th Day of Creation.",
   });
   addSeries({
     id: "slc-screenings",
@@ -1083,7 +1287,7 @@ const SCHEDULE_DATA = (() => {
     days: "mon-wed",
     timeLabel: "9 am",
     sortStart: "09:00",
-    linkedCodes: ["RNG", "XRK"],
+    linkedCodes: ["RNG"],
     summaryLabel: "Mon-Wed 9 am · Ranger training",
     description: "Training for people keen to step up and join the Rangers.",
   });
@@ -1360,6 +1564,32 @@ const SCHEDULE_DATA = (() => {
     description: "As the sun begins its slow descent over the playa, a constellation of musicians gathers — strings, voices, and rhythms weaving together to breathe orchestral magic into the desert air. Adorn yourself in your most ethereal desert finery: flowing gowns, tailored suits, textures kissed by dust and light. Don a mask that reveals as much as it conceals. As darkness deepens and the music swells, we arrive at the great unmasking — a moment of truth, vulnerability, and recognition. Near the Clan. A mask is the only requirement. Come as you are not. Leave as you are.",
   });
   addSeries({
+    id: "sun-coffee-open",
+    title: "Sunrisers",
+    kind: "open",
+    days: "mon-sat",
+    timeLabel: "9 am to 12 pm",
+    sortStart: "09:00",
+    sortEnd: "12:00",
+    linkedCodes: ["SUN"],
+    categories: ["foodDrink", "community"],
+    summaryLabel: "Mon-Sat 9 am-12 pm · Sunrisers",
+    description: "Warm brewed coffee gifted from 9 am till midday at Sunrisers. Friday and Saturday mornings also tip into a Coffee Rave.",
+  });
+  addSeries({
+    id: "sun-coffee-rave",
+    title: "Coffee Rave",
+    kind: "event",
+    days: ["fri", "sat"],
+    timeLabel: "9 am to 12 pm",
+    sortStart: "09:00",
+    sortEnd: "12:00",
+    linkedCodes: ["SUN"],
+    categories: ["foodDrink", "music", "community"],
+    summaryLabel: "Fri & Sat 9 am-12 pm · Coffee Rave at Sunrisers",
+    description: "The Sunrisers Coffee Rave — warm brewed coffee from 9 am till midday, with music and 40-odd sunnies turning the morning into a proper jol. Friday and Saturday only.",
+  });
+  addSeries({
     id: "calling-all-crones",
     title: "Calling All Crones",
     kind: "event",
@@ -1372,7 +1602,891 @@ const SCHEDULE_DATA = (() => {
     description: "A council of wise women gathers at the Temple at 5:30 pm on Friday 1 May to welcome in the Flower Full Moon and call in peace to shift the current global structures. This gathering is for crones — all menopausal women who have ceased menstruation. Mature men over 50 who feel called are also welcome to form a circle around the women, holding a silent, strong container of spaciousness and reverent presence. Please bring a crown to wear — flowers, jewels, feathers, etc. Initiated by Leigh Barratt.",
   });
 
-  entries.sort((a, b) =>
+
+  // --- Open times generated from WTF time tags ---
+  addSeries({
+    id: "kag-open",
+    title: "KAG",
+    kind: "open",
+    days: "daily",
+    timeLabel: "11 am to sunset",
+    sortStart: "11:00",
+    sortEnd: "18:30",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["KAG"],
+  });
+  addSeries({
+    id: "abb-open",
+    title: "ABB",
+    kind: "open",
+    days: "daily",
+    timeLabel: "24 hours",
+    sortStart: "00:00",
+    sortEnd: "30:00",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["ABB"],
+  });
+  addSeries({
+    id: "ass-open",
+    title: "ASS",
+    kind: "open",
+    days: "daily",
+    timeLabel: "11 am to sunset",
+    sortStart: "11:00",
+    sortEnd: "18:30",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["ASS"],
+  });
+  addSeries({
+    id: "bee-open",
+    title: "BEE",
+    kind: "open",
+    days: "daily",
+    timeLabel: "7 am to sunset",
+    sortStart: "07:00",
+    sortEnd: "18:30",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["BEE"],
+  });
+  addSeries({
+    id: "bio-open",
+    title: "BIO",
+    kind: "open",
+    days: "daily",
+    timeLabel: "11 am to 2 am",
+    sortStart: "11:00",
+    sortEnd: "26:00",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["BIO"],
+  });
+  addSeries({
+    id: "bds-open",
+    title: "BDS",
+    kind: "open",
+    days: "daily",
+    timeLabel: "11 am to sunset",
+    sortStart: "11:00",
+    sortEnd: "18:30",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["BDS"],
+  });
+  addSeries({
+    id: "blm-open",
+    title: "BLM",
+    kind: "open",
+    days: "daily",
+    timeLabel: "7 am to 11 am",
+    sortStart: "07:00",
+    sortEnd: "11:00",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["BLM"],
+  });
+  addSeries({
+    id: "bey-open",
+    title: "BEY",
+    kind: "open",
+    days: "daily",
+    timeLabel: "11 am to sunset",
+    sortStart: "11:00",
+    sortEnd: "18:30",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["BEY"],
+  });
+  addSeries({
+    id: "bma-open",
+    title: "BMA",
+    kind: "open",
+    days: "daily",
+    timeLabel: "11 am to sunset",
+    sortStart: "11:00",
+    sortEnd: "18:30",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["BMA"],
+  });
+  addSeries({
+    id: "but-open",
+    title: "BUT",
+    kind: "open",
+    days: "daily",
+    timeLabel: "11 am to sunset",
+    sortStart: "11:00",
+    sortEnd: "18:30",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["BUT"],
+  });
+  addSeries({
+    id: "404-open",
+    title: "404",
+    kind: "open",
+    days: "daily",
+    timeLabel: "7 am to sunrise",
+    sortStart: "07:00",
+    sortEnd: "30:00",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["404"],
+  });
+  addSeries({
+    id: "sam-open",
+    title: "SAM",
+    kind: "open",
+    days: "daily",
+    timeLabel: "11 am to sunset",
+    sortStart: "11:00",
+    sortEnd: "18:30",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["SAM"],
+  });
+  addSeries({
+    id: "cwn-open",
+    title: "CWN",
+    kind: "open",
+    days: "daily",
+    timeLabel: "7 am to sunrise",
+    sortStart: "07:00",
+    sortEnd: "30:00",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["CWN"],
+  });
+  addSeries({
+    id: "cha-open",
+    title: "CHA",
+    kind: "open",
+    days: "daily",
+    timeLabel: "11 am to sunset",
+    sortStart: "11:00",
+    sortEnd: "18:30",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["CHA"],
+  });
+  addSeries({
+    id: "cct-open",
+    title: "CCT",
+    kind: "open",
+    days: "daily",
+    timeLabel: "7 am to sunset",
+    sortStart: "07:00",
+    sortEnd: "18:30",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["CCT"],
+  });
+  addSeries({
+    id: "cop-open",
+    title: "COP",
+    kind: "open",
+    days: "daily",
+    timeLabel: "Sunset to 2 am",
+    sortStart: "18:30",
+    sortEnd: "26:00",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["COP"],
+  });
+  addSeries({
+    id: "cos-open",
+    title: "COS",
+    kind: "open",
+    days: "daily",
+    timeLabel: "11 am to 2 am",
+    sortStart: "11:00",
+    sortEnd: "26:00",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["COS"],
+  });
+  addSeries({
+    id: "cra-open",
+    title: "CRA",
+    kind: "open",
+    days: "daily",
+    timeLabel: "7 am to sunset",
+    sortStart: "07:00",
+    sortEnd: "18:30",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["CRA"],
+  });
+  addSeries({
+    id: "did-open",
+    title: "DID",
+    kind: "open",
+    days: "daily",
+    timeLabel: "11 am to 2 am",
+    sortStart: "11:00",
+    sortEnd: "26:00",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["DID"],
+  });
+  addSeries({
+    id: "dmt-open",
+    title: "DMT",
+    kind: "open",
+    days: "daily",
+    timeLabel: "11 am to sunrise",
+    sortStart: "11:00",
+    sortEnd: "30:00",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["DMT"],
+  });
+  addSeries({
+    id: "dds-open",
+    title: "DDS",
+    kind: "open",
+    days: "daily",
+    timeLabel: "11 am to sunset",
+    sortStart: "11:00",
+    sortEnd: "18:30",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["DDS"],
+  });
+  addSeries({
+    id: "eka-open",
+    title: "EKA",
+    kind: "open",
+    days: "daily",
+    timeLabel: "11 am to sunset",
+    sortStart: "11:00",
+    sortEnd: "18:30",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["EKA"],
+  });
+  addSeries({
+    id: "fam-open",
+    title: "FAM",
+    kind: "open",
+    days: "daily",
+    timeLabel: "11 am to sunset",
+    sortStart: "11:00",
+    sortEnd: "18:30",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["FAM"],
+  });
+  addSeries({
+    id: "ffi-open",
+    title: "FFI",
+    kind: "open",
+    days: "daily",
+    timeLabel: "11 am to sunset",
+    sortStart: "11:00",
+    sortEnd: "18:30",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["FFI"],
+  });
+  addSeries({
+    id: "hsp-open",
+    title: "HSP",
+    kind: "open",
+    days: "daily",
+    timeLabel: "7 am to sunset",
+    sortStart: "07:00",
+    sortEnd: "18:30",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["HSP"],
+  });
+  addSeries({
+    id: "cat-open",
+    title: "CAT",
+    kind: "open",
+    days: "daily",
+    timeLabel: "7 am to sunrise",
+    sortStart: "07:00",
+    sortEnd: "30:00",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["CAT"],
+  });
+  addSeries({
+    id: "hyd-open",
+    title: "HYD",
+    kind: "open",
+    days: "daily",
+    timeLabel: "11 am to sunrise",
+    sortStart: "11:00",
+    sortEnd: "30:00",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["HYD"],
+  });
+  addSeries({
+    id: "imb-open",
+    title: "IMB",
+    kind: "open",
+    days: "daily",
+    timeLabel: "11 am to sunrise",
+    sortStart: "11:00",
+    sortEnd: "30:00",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["IMB"],
+  });
+  addSeries({
+    id: "ins-open",
+    title: "INS",
+    kind: "open",
+    days: "daily",
+    timeLabel: "11 am to sunset",
+    sortStart: "11:00",
+    sortEnd: "18:30",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["INS"],
+  });
+  addSeries({
+    id: "kee-open",
+    title: "KEE",
+    kind: "open",
+    days: "daily",
+    timeLabel: "11 am to sunrise",
+    sortStart: "11:00",
+    sortEnd: "30:00",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["KEE"],
+  });
+  addSeries({
+    id: "koo-open",
+    title: "KOO",
+    kind: "open",
+    days: "daily",
+    timeLabel: "7 am to sunset",
+    sortStart: "07:00",
+    sortEnd: "18:30",
+    categories: ["foodDrink"],
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["KOO"],
+  });
+  addSeries({
+    id: "lol-open",
+    title: "LOL",
+    kind: "open",
+    days: "daily",
+    timeLabel: "7 am to sunset",
+    sortStart: "07:00",
+    sortEnd: "18:30",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["LOL"],
+  });
+  addSeries({
+    id: "lns-open",
+    title: "LNS",
+    kind: "open",
+    days: "daily",
+    timeLabel: "11 am to sunset",
+    sortStart: "11:00",
+    sortEnd: "18:30",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["LNS"],
+  });
+  addSeries({
+    id: "mad-open",
+    title: "MAD",
+    kind: "open",
+    days: "daily",
+    timeLabel: "7 am to sunset",
+    sortStart: "07:00",
+    sortEnd: "18:30",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["MAD"],
+  });
+  addSeries({
+    id: "mem-open",
+    title: "MEM",
+    kind: "open",
+    days: "daily",
+    timeLabel: "11 am to sunset",
+    sortStart: "11:00",
+    sortEnd: "18:30",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["MEM"],
+  });
+  addSeries({
+    id: "mud-open",
+    title: "MUD",
+    kind: "open",
+    days: "daily",
+    timeLabel: "Sunset to 2 am",
+    sortStart: "18:30",
+    sortEnd: "26:00",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["MUD"],
+  });
+  addSeries({
+    id: "ndl-open",
+    title: "NDL",
+    kind: "open",
+    days: "daily",
+    timeLabel: "11 am to sunset",
+    sortStart: "11:00",
+    sortEnd: "18:30",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["NDL"],
+  });
+  addSeries({
+    id: "qtb-open",
+    title: "QTB",
+    kind: "open",
+    days: "daily",
+    timeLabel: "11 am to sunset",
+    sortStart: "11:00",
+    sortEnd: "18:30",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["QTB"],
+  });
+  addSeries({
+    id: "pfp-open",
+    title: "PFP",
+    kind: "open",
+    days: "daily",
+    timeLabel: "11 am to sunset",
+    sortStart: "11:00",
+    sortEnd: "18:30",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["PFP"],
+  });
+  addSeries({
+    id: "pcm-open",
+    title: "PCM",
+    kind: "open",
+    days: "daily",
+    timeLabel: "7 am to sunset",
+    sortStart: "07:00",
+    sortEnd: "18:30",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["PCM"],
+  });
+  addSeries({
+    id: "bkr-open",
+    title: "BKR",
+    kind: "open",
+    days: "daily",
+    timeLabel: "7 am to sunset",
+    sortStart: "07:00",
+    sortEnd: "18:30",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["BKR"],
+  });
+  addSeries({
+    id: "sso-open",
+    title: "SSO",
+    kind: "open",
+    days: "daily",
+    timeLabel: "11 am to sunset",
+    sortStart: "11:00",
+    sortEnd: "18:30",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["SSO"],
+  });
+  addSeries({
+    id: "str-open",
+    title: "STR",
+    kind: "open",
+    days: "daily",
+    timeLabel: "11 am to sunset",
+    sortStart: "11:00",
+    sortEnd: "18:30",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["STR"],
+  });
+  addSeries({
+    id: "swr-open",
+    title: "SWR",
+    kind: "open",
+    days: "daily",
+    timeLabel: "7 am to 11 am",
+    sortStart: "07:00",
+    sortEnd: "11:00",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["SWR"],
+  });
+  addSeries({
+    id: "taq-open",
+    title: "TAQ",
+    kind: "open",
+    days: "daily",
+    timeLabel: "7 am to 11 am",
+    sortStart: "07:00",
+    sortEnd: "11:00",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["TAQ"],
+  });
+  addSeries({
+    id: "tas-open",
+    title: "TAS",
+    kind: "open",
+    days: "daily",
+    timeLabel: "7 am to 11 am",
+    sortStart: "07:00",
+    sortEnd: "11:00",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["TAS"],
+  });
+  addSeries({
+    id: "tba-open",
+    title: "TBA",
+    kind: "open",
+    days: "daily",
+    timeLabel: "11 am to sunset",
+    sortStart: "11:00",
+    sortEnd: "18:30",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["TBA"],
+  });
+  addSeries({
+    id: "dha-open",
+    title: "DHA",
+    kind: "open",
+    days: "daily",
+    timeLabel: "7 am to 2 am",
+    sortStart: "07:00",
+    sortEnd: "26:00",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["DHA"],
+  });
+  addSeries({
+    id: "tdd-open",
+    title: "TDD",
+    kind: "open",
+    days: "daily",
+    timeLabel: "11 am to 2 am",
+    sortStart: "11:00",
+    sortEnd: "26:00",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["TDD"],
+  });
+  addSeries({
+    id: "thm-open",
+    title: "THM",
+    kind: "open",
+    days: "daily",
+    timeLabel: "7 am to 2 am",
+    sortStart: "07:00",
+    sortEnd: "26:00",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["THM"],
+  });
+  addSeries({
+    id: "hob-open",
+    title: "HOB",
+    kind: "open",
+    days: "daily",
+    timeLabel: "7 am to 11 am",
+    sortStart: "07:00",
+    sortEnd: "11:00",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["HOB"],
+  });
+  addSeries({
+    id: "tld-open",
+    title: "TLD",
+    kind: "open",
+    days: "daily",
+    timeLabel: "11 am to 2 am",
+    sortStart: "11:00",
+    sortEnd: "26:00",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["TLD"],
+  });
+  addSeries({
+    id: "tmb-open",
+    title: "TMB",
+    kind: "open",
+    days: "daily",
+    timeLabel: "11 am to sunset",
+    sortStart: "11:00",
+    sortEnd: "18:30",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["TMB"],
+  });
+  addSeries({
+    id: "mfq-open",
+    title: "MFQ",
+    kind: "open",
+    days: "daily",
+    timeLabel: "7 am to 2 am",
+    sortStart: "07:00",
+    sortEnd: "26:00",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["MFQ"],
+  });
+  addSeries({
+    id: "sms-open",
+    title: "SMS",
+    kind: "open",
+    days: "daily",
+    timeLabel: "11 am to 2 am",
+    sortStart: "11:00",
+    sortEnd: "26:00",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["SMS"],
+  });
+  addSeries({
+    id: "sob-open",
+    title: "SOB",
+    kind: "open",
+    days: "daily",
+    timeLabel: "11 am to 2 am",
+    sortStart: "11:00",
+    sortEnd: "26:00",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["SOB"],
+  });
+  addSeries({
+    id: "scb-open",
+    title: "SCB",
+    kind: "open",
+    days: "daily",
+    timeLabel: "11 am to sunrise",
+    sortStart: "11:00",
+    sortEnd: "30:00",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["SCB"],
+  });
+  addSeries({
+    id: "tts-open",
+    title: "TTS",
+    kind: "open",
+    days: "daily",
+    timeLabel: "11 am to 2 am",
+    sortStart: "11:00",
+    sortEnd: "26:00",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["TTS"],
+  });
+  addSeries({
+    id: "vag-open",
+    title: "VAG",
+    kind: "open",
+    days: "daily",
+    timeLabel: "7 am to sunrise",
+    sortStart: "07:00",
+    sortEnd: "30:00",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["VAG"],
+  });
+  addSeries({
+    id: "waj-open",
+    title: "WAJ",
+    kind: "open",
+    days: "daily",
+    timeLabel: "11 am to 2 am",
+    sortStart: "11:00",
+    sortEnd: "26:00",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["WAJ"],
+  });
+  addSeries({
+    id: "wrw-open",
+    title: "WRW",
+    kind: "open",
+    days: "daily",
+    timeLabel: "7 am to 11 am",
+    sortStart: "07:00",
+    sortEnd: "11:00",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["WRW"],
+  });
+  addSeries({
+    id: "ypf-open",
+    title: "YPF",
+    kind: "open",
+    days: "daily",
+    timeLabel: "11 am to sunset",
+    sortStart: "11:00",
+    sortEnd: "18:30",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["YPF"],
+  });
+  addSeries({
+    id: "sex-open",
+    title: "SEX",
+    kind: "open",
+    days: "daily",
+    timeLabel: "Sunset to 2 am",
+    sortStart: "18:30",
+    sortEnd: "26:00",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["SEX"],
+  });
+  addSeries({
+    id: "lpp-open-day",
+    title: "LPP",
+    kind: "open",
+    days: "daily",
+    timeLabel: "11 am to sunset",
+    sortStart: "11:00",
+    sortEnd: "18:30",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["LPP"],
+  });
+  addSeries({
+    id: "mar-open-day",
+    title: "MAR",
+    kind: "open",
+    days: "daily",
+    timeLabel: "About 11 am to about 6 pm",
+    sortStart: "11:00",
+    estimatedEnd: "18:00",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["MAR"],
+  });
+  addSeries({
+    id: "del-open-night",
+    title: "DEL",
+    kind: "open",
+    days: "daily",
+    timeLabel: "Sunset to sunrise",
+    sortStart: "18:30",
+    sortEnd: "30:00",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["DEL"],
+  });
+  addSeries({
+    id: "eno-open",
+    title: "ENO",
+    kind: "open",
+    days: "daily",
+    timeLabel: "7 am to sunrise",
+    sortStart: "07:00",
+    sortEnd: "30:00",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["ENO"],
+  });
+  addSeries({
+    id: "hug-open",
+    title: "HUG",
+    kind: "open",
+    days: "daily",
+    timeLabel: "7 am to 2 am",
+    sortStart: "07:00",
+    sortEnd: "26:00",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["HUG"],
+  });
+  addSeries({
+    id: "jel-open",
+    title: "JEL",
+    kind: "open",
+    days: "daily",
+    timeLabel: "7 am to 2 am",
+    sortStart: "07:00",
+    sortEnd: "26:00",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["JEL"],
+  });
+  addSeries({
+    id: "kre-open",
+    title: "KRE",
+    kind: "open",
+    days: "daily",
+    timeLabel: "11 am to sunrise",
+    sortStart: "11:00",
+    sortEnd: "30:00",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["KRE"],
+  });
+  addSeries({
+    id: "lct-open-day",
+    title: "LCT",
+    kind: "open",
+    days: "daily",
+    timeLabel: "11 am to sunset",
+    sortStart: "11:00",
+    sortEnd: "18:30",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["LCT"],
+  });
+  addSeries({
+    id: "pap-open-morning",
+    title: "PAP",
+    kind: "open",
+    days: "daily",
+    timeLabel: "7 am to 11 am",
+    sortStart: "07:00",
+    sortEnd: "11:00",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["PAP"],
+  });
+  addSeries({
+    id: "tlr-open",
+    title: "TLR",
+    kind: "open",
+    days: "daily",
+    timeLabel: "7 am to sunrise",
+    sortStart: "07:00",
+    sortEnd: "30:00",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["TLR"],
+  });
+  addSeries({
+    id: "cur-open",
+    title: "CUR",
+    kind: "open",
+    days: "daily",
+    timeLabel: "Sunset to 2 am",
+    sortStart: "18:30",
+    sortEnd: "26:00",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["CUR"],
+  });
+  addSeries({
+    id: "cym-open",
+    title: "CYM",
+    kind: "open",
+    days: "daily",
+    timeLabel: "11 am to sunrise",
+    sortStart: "11:00",
+    sortEnd: "30:00",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["CYM"],
+  });
+  addSeries({
+    id: "dis-open-morning",
+    title: "DIS",
+    kind: "open",
+    days: "daily",
+    timeLabel: "7 am to 11 am",
+    sortStart: "07:00",
+    sortEnd: "11:00",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["DIS"],
+  });
+  addSeries({
+    id: "dis-open-night",
+    title: "DIS",
+    kind: "open",
+    days: "daily",
+    timeLabel: "Sunset to 2 am",
+    sortStart: "18:30",
+    sortEnd: "26:00",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["DIS"],
+  });
+  addSeries({
+    id: "mal-open",
+    title: "MAL",
+    kind: "open",
+    days: "daily",
+    timeLabel: "7 am to 2 am",
+    sortStart: "07:00",
+    sortEnd: "26:00",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["MAL"],
+  });
+  addSeries({
+    id: "pan-open",
+    title: "PAN",
+    kind: "open",
+    days: "daily",
+    timeLabel: "7 am to 2 am",
+    sortStart: "07:00",
+    sortEnd: "26:00",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["PAN"],
+  });
+  addSeries({
+    id: "sps-open",
+    title: "SPS",
+    kind: "open",
+    days: "daily",
+    timeLabel: "7 am to 2 am",
+    sortStart: "07:00",
+    sortEnd: "26:00",
+    sourceLabel: "WTF Guide 2026 — operating hours",
+    linkedCodes: ["SPS"],
+  });
+
+    entries.sort((a, b) =>
     a.date.localeCompare(b.date)
     || (a.sortStart ?? 0) - (b.sortStart ?? 0)
     || a.kind.localeCompare(b.kind)
