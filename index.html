@@ -815,6 +815,39 @@
     color:#888;
     font-size:11px;
   }
+  .about-meta-top {
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:8px;
+  }
+  .about-live-auth-note:empty { display:none; }
+  .about-su-btn {
+    appearance:none;
+    background:none;
+    border:1px solid #2a2a2a;
+    border-radius:4px;
+    color:#404040;
+    font-size:9px;
+    font-weight:600;
+    letter-spacing:0.05em;
+    line-height:1;
+    padding:3px 5px;
+    cursor:pointer;
+    flex-shrink:0;
+    margin-top:2px;
+    transition:color 0.15s, border-color 0.15s;
+  }
+  .about-su-btn:hover,
+  .about-su-btn:focus-visible {
+    color:#666;
+    border-color:#444;
+    outline:none;
+  }
+  .about-su-btn.active {
+    color:#7dd8f8;
+    border-color:rgba(80,200,255,0.35);
+  }
   .schedule-help-panel {
     width:min(680px, calc(100vw - 24px));
   }
@@ -1983,16 +2016,18 @@
         <a href="https://github.com/bernardbravenboer/afrikaburnmap-2026" target="_blank" rel="noopener noreferrer">Original interactive map project</a>
       </div>
       <div class="about-meta">
-        <div id="about-version">App version: —</div>
-        <div id="about-cache-version">Cache version: —</div>
+        <div class="about-meta-top">
+          <div>
+            <div id="about-version">App version: —</div>
+            <div id="about-cache-version">Cache version: —</div>
+          </div>
+          <button type="button" class="about-su-btn" id="live-auth-btn" title="Super user sign in">SU</button>
+        </div>
         <div class="about-meta-actions">
           <button type="button" class="about-refresh-btn" id="about-refresh-btn">Get latest revision</button>
           <span class="about-refresh-note" id="about-refresh-note">Use this while online if a cache bump has not shown up yet. Your custom changes stay in place; this only refreshes the bundled app data. Offline use keeps the current saved bundle.</span>
         </div>
-        <div class="about-meta-actions about-live-auth" id="about-live-auth">
-          <button type="button" class="about-refresh-btn" id="live-auth-btn">Live admin: sign in</button>
-          <span class="about-refresh-note" id="live-auth-note">Sign in to enable publishing events to the live schedule feed.</span>
-        </div>
+        <span class="about-refresh-note about-live-auth-note" id="live-auth-note"></span>
       </div>
     </div>
   </section>
@@ -2149,7 +2184,7 @@
 <script>
 (() => {
   const data = DATA_INLINE;
-  const APP_VERSION = "2026.04.23.9";
+  const APP_VERSION = "2026.04.23.10";
   const CACHE_NAME_PREFIX = "ab-map-";
   async function getInstalledCacheVersion() {
     if (!("caches" in window)) return null;
@@ -3018,24 +3053,30 @@
   function updateLiveAuthUi() {
     const btn = document.getElementById("live-auth-btn");
     const note = document.getElementById("live-auth-note");
-    if (!btn || !note) return;
-    if (isLiveAdmin) {
-      btn.textContent = "Live admin: sign out";
-      note.textContent = "You can publish events to the live schedule feed. Sign out to hide those controls.";
-    } else {
-      btn.textContent = "Live admin: sign in";
-      note.textContent = "Sign in to enable publishing events to the live schedule feed.";
+    if (!btn) return;
+    btn.classList.toggle("active", isLiveAdmin);
+    if (note) {
+      note.textContent = isLiveAdmin
+        ? "Live admin active — publish controls are visible. Tap SU again to sign out."
+        : "";
     }
   }
 
-  appVersion.textContent = `app ${APP_VERSION} · cache …`;
+  appVersion.textContent = `app ${APP_VERSION}`;
   aboutVersion.textContent = `App version: ${APP_VERSION}`;
-  aboutCacheVersion.textContent = `Cache version: …`;
-  getInstalledCacheVersion().then((v) => {
-    if (!v) return;
-    appVersion.textContent = `app ${APP_VERSION} · cache ${v}`;
-    aboutCacheVersion.textContent = `Cache version: ${v}`;
-  });
+  aboutCacheVersion.textContent = `Cache version: —`;
+  (async () => {
+    let v = await getInstalledCacheVersion();
+    if (!v && "serviceWorker" in navigator) {
+      // SW may still be installing; wait for it then retry once
+      await navigator.serviceWorker.ready.catch(() => null);
+      v = await getInstalledCacheVersion();
+    }
+    if (v) {
+      appVersion.textContent = `app ${APP_VERSION} · cache ${v}`;
+      aboutCacheVersion.textContent = `Cache version: ${v}`;
+    }
+  })();
   let plainMessageTimer = null;
 
   function showPlainMessage(text, durationMs = 1800) {
