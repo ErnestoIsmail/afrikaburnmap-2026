@@ -115,6 +115,12 @@
     border-radius:5px; padding:2px 8px; font-size:11px; line-height:1.25;
     cursor:pointer; white-space:nowrap;
   }
+  #about-top-btn {
+    margin-left:auto;
+    min-width:24px;
+    padding:2px 7px;
+    text-align:center;
+  }
   .schedule-btn:hover,
   .schedule-btn:focus-visible {
     background:#2a2a2a; border-color:#777; outline:none;
@@ -702,6 +708,18 @@
     box-shadow:0 14px 40px rgba(0,0,0,0.5);
     display:flex; flex-direction:column;
   }
+  #about-backdrop {
+    padding:0;
+  }
+  #about-backdrop .about-panel {
+    width:100vw;
+    max-width:none;
+    height:100dvh;
+    max-height:none;
+    border:0;
+    border-radius:0;
+    box-shadow:none;
+  }
   .about-head {
     display:flex; align-items:center; justify-content:space-between;
     gap:12px; padding:12px 14px; border-bottom:1px solid #333;
@@ -716,6 +734,12 @@
   .about-close:hover { background:#2b2b2b; border-color:#666; }
   .about-body {
     padding:14px; overflow:auto; line-height:1.45; font-size:13px;
+  }
+  .about-section-title {
+    margin:0 0 8px;
+    font-size:15px;
+    line-height:1.25;
+    color:#f2f2f2;
   }
   .about-body p { margin:0 0 12px; }
   .about-body a {
@@ -1134,6 +1158,21 @@
     margin:10px 0 0; font-size:12px; line-height:1.45; color:#ddd;
     white-space:pre-line;
   }
+  .schedule-detail-compare {
+    margin-top:10px;
+    padding:10px 12px;
+    border:1px solid rgba(157,223,255,0.26);
+    border-radius:8px;
+    background:rgba(90,170,255,0.06);
+    display:grid;
+    gap:6px;
+    font-size:11px;
+    line-height:1.45;
+    color:#cfd8e5;
+  }
+  .schedule-detail-compare-row strong {
+    color:#f0f4fa;
+  }
   .schedule-item-links,
   .schedule-detail-links {
     display:flex; flex-wrap:wrap; gap:6px; margin-top:10px;
@@ -1326,6 +1365,31 @@
     background:rgba(255,143,143,0.09);
     color:#ffc1c1;
   }
+  .share-manual-box {
+    display:grid;
+    gap:8px;
+    padding-top:2px;
+  }
+  .share-manual-box label {
+    font-size:12px;
+    color:#cfcfcf;
+  }
+  .share-manual-input {
+    width:100%;
+    min-height:88px;
+    resize:vertical;
+    border:1px solid #444;
+    border-radius:8px;
+    background:#111;
+    color:#eee;
+    padding:10px 11px;
+    font:12px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  .share-manual-input:focus-visible {
+    outline:none;
+    border-color:#777;
+    box-shadow:0 0 0 2px rgba(255,255,255,0.08);
+  }
   .schedule-editor {
     display:grid; gap:10px;
   }
@@ -1344,6 +1408,17 @@
   }
   .schedule-editor-field.full {
     grid-column:1 / -1;
+  }
+  .schedule-editor-static {
+    min-height:32px;
+    display:flex;
+    align-items:center;
+    padding:0 10px;
+    border:1px solid #3c3c3c;
+    border-radius:6px;
+    background:#121212;
+    color:#d9d9d9;
+    font-size:12px;
   }
   .schedule-editor-categories {
     display:flex; flex-wrap:wrap; gap:8px 10px;
@@ -1746,6 +1821,13 @@
       width:100vw; max-height:78vh; border-radius:8px 8px 0 0;
       border-left:0; border-right:0; border-bottom:0;
     }
+    #about-backdrop { align-items:stretch; }
+    #about-backdrop .about-panel {
+      height:100dvh;
+      max-height:none;
+      border:0;
+      border-radius:0;
+    }
     .schedule-help-panel { width:min(680px, calc(100vw - 24px)); }
     .usage-backdrop { align-items:center; padding:18px; }
     .usage-panel {
@@ -1822,6 +1904,7 @@
     <label class="gps-toggle"><input type="checkbox" id="f_locate" checked> GPS</label>
     <button type="button" class="schedule-btn" id="schedule-btn">Schedule</button>
     <span class="gps-status" id="gps-status">GPS off</span>
+    <button type="button" class="schedule-btn" id="about-top-btn" aria-label="Open about">?</button>
   </div>
   <div class="header-search">
     <span class="hint hint-search"><span class="hint-short">zoom · drag</span></span>
@@ -1872,6 +1955,12 @@
         <p><strong>Location warning:</strong> map locations may be incorrect, may change during the burn, and reality sometimes overwrites the map.</p>
         <p><strong>Event warning:</strong> some events, times, names, or links may be missing or wrong. Please treat the schedule as a helpful guide and double-check anything important on site or with the people running the event.</p>
       </div>
+      <h3 class="about-section-title">What this app does</h3>
+      <p>This app combines the map and schedule into one offline-friendly tool. You can browse camps, art, mutant vehicles, support services, toilets, plazas, and landmarks on the map, then jump into linked event details when there is a schedule connection.</p>
+      <p>It also gives you search, stars, visited markers, notes, GPS position, and a day-by-day schedule view in agenda or timeline format. The aim is to make it easier to find things, remember things, and get back to things without carrying the whole burn inside your phone.</p>
+      <h3 class="about-section-title">How to use it</h3>
+      <p>Pan and zoom the map, or search by name or code if you already know what you want. Tap a place or event to open its details, use stars for things you want to keep an eye on, and use the schedule filters to narrow the timeline or agenda to the kinds of events you care about.</p>
+      <p>You can add your own custom events in the schedule too. Those can be shared between phones with <strong>Share QR</strong> from the event details and imported from the <strong>Scan</strong> button in the schedule.</p>
       <p>Developed by Chris (AKA The Damn Dirty Hippie) from the <button type="button" class="about-inline-link" data-about-search="Greasemonkeys">Greasemonkeys</button>. Feel free to pop by and say hi in person. Feedback, suggestions, or bugs/issues can be sent by <a href="mailto:chris.laidler+ab@gmail.com">e-mail</a>, or find me at the burn, to help improve this or potential future interactive AB maps.</p>
       <p>The <a href="https://bernardbravenboer.github.io/afrikaburnmap-2026/" target="_blank" rel="noopener noreferrer">original interactive map</a> project was created by Bernard from <button type="button" class="about-inline-link" data-about-search="Camp 404">camp 404</button>.</p>
       <p>This is an independent helper tool. There are no guarantees, and some information may still be incomplete or incorrect, but care has been taken to make it as accurate and useful as possible. Live GPS includes a short recent-movement trail. Orientation / heading information is only as accurate as the phone; a mis-calibrated compass can lead to inaccurate heading display.</p>
@@ -1884,8 +1973,8 @@
         <div id="about-version">App version: —</div>
         <div id="about-cache-version">Cache version: —</div>
         <div class="about-meta-actions">
-          <button type="button" class="about-refresh-btn" id="about-refresh-btn">Refresh App Bundle</button>
-          <span class="about-refresh-note" id="about-refresh-note">Use this while online if a cache bump has not shown up yet. Offline use keeps the current saved bundle.</span>
+          <button type="button" class="about-refresh-btn" id="about-refresh-btn">Get latest revision</button>
+          <span class="about-refresh-note" id="about-refresh-note">Use this while online if a cache bump has not shown up yet. Your custom changes stay in place; this only refreshes the bundled app data. Offline use keeps the current saved bundle.</span>
         </div>
       </div>
     </div>
@@ -1932,12 +2021,12 @@
       <div class="schedule-title-row">
         <h2 id="schedule-title">Burn schedule</h2>
         <div class="schedule-actions">
-          <button type="button" class="schedule-nav" id="schedule-help-btn" aria-label="Open schedule help">?</button>
           <button type="button" class="schedule-nav" id="schedule-add">Add</button>
           <button type="button" class="schedule-nav" id="schedule-scan">Scan</button>
           <button type="button" class="schedule-nav" id="schedule-prev" aria-label="Previous burn day">‹</button>
           <button type="button" class="schedule-nav" id="schedule-today">Today</button>
           <button type="button" class="schedule-nav" id="schedule-next" aria-label="Next burn day">›</button>
+          <button type="button" class="schedule-nav" id="schedule-help-btn" aria-label="Open schedule help">?</button>
           <button type="button" class="schedule-close" id="schedule-close" aria-label="Close schedule">×</button>
         </div>
       </div>
@@ -2043,7 +2132,7 @@
 <script>
 (() => {
   const data = DATA_INLINE;
-  const APP_VERSION = "2026.04.23.5";
+  const APP_VERSION = "2026.04.23.6";
   const APP_CACHE_VERSION = "v55";
   const AUTO_REFRESH_SESSION_KEY = "ab-auto-refresh-cache-target";
   const projectDetails = typeof PROJECT_DETAILS !== "undefined" ? PROJECT_DETAILS : { byCode: {} };
@@ -2051,6 +2140,7 @@
   const baseScheduleData = typeof SCHEDULE_DATA !== "undefined" ? SCHEDULE_DATA : EMPTY_SCHEDULE_DATA;
   const SCHEDULE_STAR_STORAGE_KEY = "ab-schedule-stars";
   const SCHEDULE_CUSTOM_STORAGE_KEY = "ab-schedule-custom-events";
+  const SCHEDULE_OVERRIDE_STORAGE_KEY = "ab-schedule-base-overrides";
   const SCHEDULE_EDITOR_HEIGHT_STORAGE_KEY = "ab-schedule-editor-height";
   const USER_TRAIL_SETTING_STORAGE_KEY = "ab-user-trail-setting";
   const ABOUT_SEEN_STORAGE_KEY = "ab-about-seen";
@@ -2084,6 +2174,7 @@
   gpsStatus.setAttribute("aria-disabled", "true");
   gpsStatus.tabIndex = -1;
   const aboutBtn = document.getElementById("about-btn");
+  const aboutTopBtn = document.getElementById("about-top-btn");
   const scheduleBtn = document.getElementById("schedule-btn");
   const appVersion = document.getElementById("app-version");
   const aboutBackdrop = document.getElementById("about-backdrop");
@@ -2213,6 +2304,11 @@
     return `ab26-${datePart}-${startPart}-${namePart}`;
   }
 
+  function baseScheduleShareIdForItem(item) {
+    const baseEventId = String(item?.baseEventId || item?.id || "").trim();
+    return baseEventId ? `ab26-base-${baseEventId}` : "";
+  }
+
   function nextCustomShareId(baseId, excludeLocalId = null) {
     const taken = new Set(customScheduleItems
       .filter((item) => item && item.id !== excludeLocalId)
@@ -2231,6 +2327,19 @@
     const existing = String(item?.shareId || "").trim();
     if (existing) return existing;
     return nextCustomShareId(baseCustomShareIdForItem(item), excludeLocalId);
+  }
+
+  function ensureScheduleShareId(item, excludeLocalId = null) {
+    if (item?.isCustom || String(item?.id || "").startsWith("custom-")) {
+      return ensureCustomShareId(item, excludeLocalId);
+    }
+    return baseScheduleShareIdForItem(item);
+  }
+
+  function minutesToTimeValue(totalMinutes) {
+    if (!Number.isFinite(totalMinutes)) return "";
+    const minuteOfDay = ((Math.round(totalMinutes) % (24 * 60)) + (24 * 60)) % (24 * 60);
+    return `${pad2(Math.floor(minuteOfDay / 60))}:${pad2(minuteOfDay % 60)}`;
   }
 
   function normalizeEventText(value) {
@@ -2368,6 +2477,25 @@
     return `ABMAP2026:${encodeUtf8Base64Url(JSON.stringify(compactSharedEventPayload(item)))}`;
   }
 
+  async function copyShareText(value) {
+    const text = String(value || "").trim();
+    if (!text) return false;
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(text);
+      return true;
+    }
+    const area = document.createElement("textarea");
+    area.value = text;
+    area.setAttribute("readonly", "readonly");
+    area.style.position = "fixed";
+    area.style.left = "-9999px";
+    document.body.appendChild(area);
+    area.select();
+    const ok = document.execCommand("copy");
+    document.body.removeChild(area);
+    return ok;
+  }
+
   function parseSharedEventPayload(rawValue) {
     const raw = String(rawValue || "").trim();
     if (!raw.startsWith("ABMAP2026:")) throw new Error("This QR code is not an AfrikaBurn map event.");
@@ -2394,6 +2522,74 @@
     return normalized;
   }
 
+  function normalizeBaseScheduleOverrides(overrides) {
+    const byId = {};
+    for (const [baseEventId, raw] of Object.entries(overrides || {})) {
+      const title = String(raw?.title || "").trim();
+      const start = /^\d{2}:\d{2}$/.test(raw?.start || "") ? raw.start : "";
+      if (!baseEventId || !title || !start) continue;
+      const end = /^\d{2}:\d{2}$/.test(raw?.end || "") ? raw.end : "";
+      byId[baseEventId] = {
+        title,
+        start,
+        end,
+        endNextDay: Boolean(raw?.endNextDay) || (start && end && end <= start),
+        estimatedStart: Boolean(raw?.estimatedStart),
+        estimatedEnd: Boolean(raw?.estimatedEnd),
+        description: String(raw?.description || "").trim(),
+        linkedCodes: sanitizeLinkedCodes(raw?.linkedCodes),
+        categories: sanitizeScheduleCategories(raw?.categories),
+      };
+    }
+    return byId;
+  }
+
+  function runtimeScheduleItemWithOverride(baseItem, override) {
+    const shareId = baseScheduleShareIdForItem(baseItem);
+    if (!override) {
+      const start = minutesToTimeValue(baseItem.sortStart);
+      const hasExplicitEnd = Number.isFinite(baseItem.sortEnd);
+      const fallbackEndMinutes = hasExplicitEnd ? baseItem.sortEnd : baseItem.estimatedEnd;
+      const end = minutesToTimeValue(fallbackEndMinutes);
+      const endNextDay = Number.isFinite(baseItem.sortEnd) && baseItem.sortEnd >= 24 * 60;
+      return {
+        ...baseItem,
+        baseEventId: baseItem.id,
+        shareId,
+        start,
+        end,
+        endNextDay,
+        estimatedStart: Boolean(baseItem.estimatedStart),
+        estimatedEnd: !hasExplicitEnd && Number.isFinite(baseItem.estimatedEnd),
+      };
+    }
+    const startMinutes = eventTimeMinutes(override.start);
+    const endMinutesRaw = eventTimeMinutes(override.end);
+    const endNextDay = Boolean(override.endNextDay) || (Number.isFinite(startMinutes) && Number.isFinite(endMinutesRaw) && endMinutesRaw <= startMinutes);
+    const endMinutes = Number.isFinite(endMinutesRaw)
+      ? endMinutesRaw + (endNextDay ? 24 * 60 : 0)
+      : null;
+    return {
+      ...baseItem,
+      baseEventId: baseItem.id,
+      shareId,
+      title: override.title,
+      timeLabel: friendlyTimeLabel(override.start, override.end, endNextDay) || baseItem.timeLabel || "Updated time",
+      description: override.description,
+      linkedCodes: [...override.linkedCodes],
+      categories: [...override.categories],
+      sortStart: Number.isFinite(startMinutes) ? startMinutes : baseItem.sortStart,
+      sortEnd: Number.isFinite(endMinutes) ? endMinutes : null,
+      start: override.start,
+      end: override.end,
+      endNextDay,
+      estimatedStart: Boolean(override.estimatedStart),
+      estimatedEnd: Boolean(override.estimatedEnd),
+      isEditedBase: true,
+      sourceLabel: `${baseItem.sourceLabel} · local edit`,
+    };
+  }
+
   function normalizeCustomScheduleItems(items) {
     const dayMap = Object.fromEntries(baseScheduleData.days.map((day) => [day.date, day]));
     return (items || []).map((item) => {
@@ -2412,6 +2608,7 @@
         id,
         shareId,
         seriesId: id,
+        baseEventId: null,
         date: day.date,
         dayKey: day.key,
         dayLabel: day.label,
@@ -2437,11 +2634,11 @@
 
   function buildRuntimeScheduleData(staticData, customRaw) {
     const entries = [
-      ...(staticData.entries || []).map((item) => ({
+      ...(staticData.entries || []).map((item) => runtimeScheduleItemWithOverride({
         ...item,
         linkedCodes: [...(item.linkedCodes || [])],
         categories: [...(item.categories || [])],
-      })),
+      }, scheduleBaseOverrides[item.id])),
       ...normalizeCustomScheduleItems(customRaw),
     ];
 
@@ -2518,6 +2715,7 @@
 
   let starredScheduleIds = new Set(safeReadStorageJson(SCHEDULE_STAR_STORAGE_KEY, []));
   let customScheduleItems = safeReadStorageJson(SCHEDULE_CUSTOM_STORAGE_KEY, []);
+  let scheduleBaseOverrides = normalizeBaseScheduleOverrides(safeReadStorageJson(SCHEDULE_OVERRIDE_STORAGE_KEY, {}));
   let starredEntryKeys = new Set(safeReadStorageJson(STARRED_ENTRY_STORAGE_KEY, []));
   let visitedEntryKeys = new Set(safeReadStorageJson(VISITED_ENTRY_STORAGE_KEY, []));
   let entryNotesByKey = safeReadStorageJson(ENTRY_NOTE_STORAGE_KEY, {});
@@ -2543,6 +2741,10 @@
 
   function persistCustomScheduleItems() {
     safeWriteStorageJson(SCHEDULE_CUSTOM_STORAGE_KEY, customScheduleItems);
+  }
+
+  function persistScheduleBaseOverrides() {
+    safeWriteStorageJson(SCHEDULE_OVERRIDE_STORAGE_KEY, scheduleBaseOverrides);
   }
 
   function persistVisitedEntryKeys() {
@@ -2719,10 +2921,10 @@
     const canRefresh = navigator.onLine && "serviceWorker" in navigator;
     aboutRefreshBtn.disabled = !canRefresh;
     aboutRefreshBtn.title = canRefresh
-      ? "Clear the old cached bundle and reload the latest version"
+      ? "Get the latest revision of the bundled app data and reload"
       : "Refresh is only available while online";
     aboutRefreshNote.textContent = canRefresh
-      ? "Online: this clears the old cached bundle and reloads the latest version."
+      ? "Online: this refreshes the bundled app data and reloads the latest version. Your custom changes stay in place."
       : "Offline: the current saved bundle stays in place. Reconnect to fetch a newer version.";
   }
 
@@ -3046,6 +3248,7 @@
   }
 
   aboutBtn.addEventListener("click", openAbout);
+  aboutTopBtn?.addEventListener("click", openAbout);
   aboutClose.addEventListener("click", closeAbout);
   aboutRefreshBtn?.addEventListener("click", refreshAppBundle);
   window.addEventListener("online", () => {
@@ -4428,12 +4631,13 @@
     const enabled = SCHEDULE_CATEGORY_FILTERS.filter((filter) => scheduleCategoryState[filter.key]).map((filter) => filter.key);
     const starredMatch = scheduleStarredFilterEnabled && isScheduleItemStarred(item.id);
     const customMatch = scheduleCustomFilterEnabled && Boolean(item.isCustom);
+    const allCategoriesEnabled = enabled.length === SCHEDULE_CATEGORY_FILTERS.length;
     const categoryMatch =
-      enabled.length === SCHEDULE_CATEGORY_FILTERS.length
+      allCategoriesEnabled
         ? true
         : enabled.length === 0
           ? false
-          : !categories.length || categories.some((category) => enabled.includes(category));
+          : categories.length > 0 && categories.some((category) => enabled.includes(category));
     return categoryMatch || starredMatch || customMatch;
   }
 
@@ -4708,9 +4912,21 @@
   }
 
   function customScheduleFormValues(item = null) {
-    const endNextDay = Boolean(item?.endNextDay || (Number.isFinite(item?.sortStart) && Number.isFinite(item?.sortEnd) && item.sortEnd >= 24 * 60));
-    const endValue = item?.end || (Number.isFinite(item?.sortEnd) ? `${pad2(Math.floor((item.sortEnd % (24 * 60)) / 60))}:${pad2(item.sortEnd % 60)}` : "");
-    const startValue = item?.start || (Number.isFinite(item?.sortStart) ? `${pad2(Math.floor(item.sortStart / 60))}:${pad2(item.sortStart % 60)}` : "");
+    // item.end / item.start are pre-set strings for base items (from runtimeScheduleItemWithOverride)
+    // item.sortEnd covers explicit ends; item.estimatedEnd (number) covers soft estimates
+    // Fall back to the same heuristic estimateScheduleEnd uses so the form matches what the timeline shows
+    let endValue = item?.end || minutesToTimeValue(item?.sortEnd);
+    let estimatedEnd = Boolean(item?.estimatedEnd);
+    let endNextDay = Boolean(item?.endNextDay || (Number.isFinite(item?.sortStart) && Number.isFinite(item?.sortEnd) && item.sortEnd >= 24 * 60));
+    if (!endValue && Number.isFinite(item?.sortStart)) {
+      const heuristic = estimateScheduleEnd(item, item.sortStart);
+      if (Number.isFinite(heuristic.end)) {
+        endValue = minutesToTimeValue(heuristic.end);
+        estimatedEnd = true;
+        endNextDay = endNextDay || Boolean(heuristic.nextDay);
+      }
+    }
+    const startValue = item?.start || minutesToTimeValue(item?.sortStart);
     return {
       shareId: item?.shareId || "",
       title: item?.title || "",
@@ -4719,11 +4935,32 @@
       end: endValue,
       endNextDay,
       estimatedStart: Boolean(item?.estimatedStart),
-      estimatedEnd: Boolean(item?.estimatedEnd),
+      estimatedEnd,
       linkedCodes: (item?.linkedCodes || []).join(", "),
       categories: sanitizeScheduleCategories(item?.categories || []),
       description: item?.description || "",
     };
+  }
+
+  function originalBaseScheduleItem(item) {
+    const baseEventId = String(item?.baseEventId || item?.id || "").trim();
+    return baseEventId ? (baseScheduleData.entries || []).find((entry) => entry.id === baseEventId) || null : null;
+  }
+
+  function scheduleDetailComparisonHtml(item) {
+    if (!item?.isEditedBase) return "";
+    const original = originalBaseScheduleItem(item);
+    if (!original) return "";
+    const currentTime = friendlyTimeLabel(item.start, item.end, item.endNextDay) || item.timeLabel || "Custom time";
+    const originalTime = friendlyTimeLabel(minutesToTimeValue(original.sortStart), minutesToTimeValue(original.sortEnd), Number(original.sortEnd) >= 24 * 60) || original.timeLabel || "Original time";
+    const currentLinked = (item.linkedCodes || []).join(", ") || "None";
+    const originalLinked = (original.linkedCodes || []).join(", ") || "None";
+    return `
+      <div class="schedule-detail-compare">
+        <div class="schedule-detail-compare-row"><strong>Current:</strong> ${escapeHtml(item.title)} · ${escapeHtml(currentTime)} · ${escapeHtml(currentLinked)}</div>
+        <div class="schedule-detail-compare-row"><strong>Original:</strong> ${escapeHtml(original.title)} · ${escapeHtml(originalTime)} · ${escapeHtml(originalLinked)}</div>
+      </div>
+    `;
   }
 
   function scoreLinkableEntryOption(entry, query) {
@@ -4781,6 +5018,7 @@
     const values = customScheduleFormValues(scheduleEditorState?.item || null);
     const linkedOptions = scheduleLinkableEntryOptions(values.linkedCodes);
     const isEditing = Boolean(scheduleEditorState?.item);
+    const editingBaseItem = Boolean(scheduleEditorState?.item && !scheduleEditorState.item.isCustom);
     const editorHeight = Number.isFinite(scheduleDetailEditorHeight)
       ? scheduleDetailEditorHeight
       : Math.round(Math.min(Math.max(window.innerHeight * 0.42, 320), 520));
@@ -4791,9 +5029,9 @@
       <div class="schedule-detail-grip" data-schedule-detail-resize title="Drag to resize"></div>
       <div class="schedule-detail-head">
         <div>
-          <h3 class="schedule-detail-title">${isEditing ? "Edit custom event" : "Add custom event"}</h3>
+          <h3 class="schedule-detail-title">${isEditing ? (editingBaseItem ? "Edit schedule event" : "Edit custom event") : "Add custom event"}</h3>
           <div class="schedule-detail-meta">
-            <span class="schedule-live-chip">Personal</span>
+            <span class="schedule-live-chip">${editingBaseItem ? "Local override" : "Personal"}</span>
           </div>
         </div>
         <div class="schedule-detail-actions">
@@ -4808,9 +5046,11 @@
           </div>
           <div class="schedule-editor-field">
             <label for="schedule-editor-date">Day</label>
-            <select id="schedule-editor-date" name="date">
-              ${scheduleData.days.map((day) => `<option value="${escapeHtml(day.date)}"${day.date === values.date ? " selected" : ""}>${escapeHtml(day.longLabel)}</option>`).join("")}
-            </select>
+            ${editingBaseItem
+              ? `<input id="schedule-editor-date" name="date" type="hidden" value="${escapeHtml(values.date)}"><div class="schedule-editor-static">${escapeHtml(scheduleData.days.find((day) => day.date === values.date)?.longLabel || values.date)}</div>`
+              : `<select id="schedule-editor-date" name="date">
+                  ${scheduleData.days.map((day) => `<option value="${escapeHtml(day.date)}"${day.date === values.date ? " selected" : ""}>${escapeHtml(day.longLabel)}</option>`).join("")}
+                </select>`}
           </div>
           <div class="schedule-editor-field full">
             <div class="schedule-editor-times">
@@ -4944,19 +5184,36 @@
       const linkedCodes = sanitizeLinkedCodes(fd.get("linkedCodes") || "");
       const categories = sanitizeScheduleCategories(fd.getAll("categories"));
       if (!title || !date || !start) return;
-      const id = scheduleEditorState?.item?.id || `custom-${Date.now()}`;
-      const shareId = ensureCustomShareId({
-        shareId: scheduleEditorState?.item?.shareId || "",
-        title,
-        date,
-        start,
-      }, id);
-      customScheduleItems = customScheduleItems.filter((item) => item.id !== id);
-      customScheduleItems.push({ id, shareId, title, date, start, end, endNextDay, estimatedStart, estimatedEnd, description, linkedCodes, categories });
-      persistCustomScheduleItems();
+      const editingItem = scheduleEditorState?.item || null;
+      if (editingItem && !editingItem.isCustom) {
+        const baseEventId = editingItem.baseEventId || editingItem.id;
+        scheduleBaseOverrides[baseEventId] = {
+          title,
+          start,
+          end,
+          endNextDay,
+          estimatedStart,
+          estimatedEnd,
+          description,
+          linkedCodes,
+          categories,
+        };
+        persistScheduleBaseOverrides();
+      } else {
+        const id = editingItem?.id || `custom-${Date.now()}`;
+        const shareId = ensureCustomShareId({
+          shareId: editingItem?.shareId || "",
+          title,
+          date,
+          start,
+        }, id);
+        customScheduleItems = customScheduleItems.filter((item) => item.id !== id);
+        customScheduleItems.push({ id, shareId, title, date, start, end, endNextDay, estimatedStart, estimatedEnd, description, linkedCodes, categories });
+        persistCustomScheduleItems();
+      }
       refreshScheduleData();
       scheduleEditorState = null;
-      activeScheduleEventId = id;
+      activeScheduleEventId = editingItem?.id || customScheduleItems[customScheduleItems.length - 1]?.id || null;
       setScheduleDate(date);
       renderSchedule();
       syncUiHistory();
@@ -4988,6 +5245,7 @@
             <span>${escapeHtml(item.timeLabel)}</span>
             ${scheduleItemStartedNow(item) ? '<span class="schedule-live-chip">Started</span>' : ""}
             ${item.isCustom ? '<span>Personal</span>' : ""}
+            ${item.isEditedBase ? '<span>Edited</span>' : ""}
             ${item.estimatedStart ? '<span>Start est</span>' : ""}
             ${item.estimatedEnd ? '<span>End est</span>' : ""}
             ${item.linkedCodes.map((code) => `<span>${escapeHtml(code)}</span>`).join("")}
@@ -4997,10 +5255,14 @@
         </div>
         <div class="schedule-detail-actions">
           <button type="button" class="schedule-detail-btn star${isScheduleItemStarred(item.id) ? " active" : ""}" data-schedule-star="${escapeHtml(item.id)}">${isScheduleItemStarred(item.id) ? "★ Starred" : "☆ Star"}</button>
-          ${item.isCustom ? '<button type="button" class="schedule-detail-btn" data-schedule-share>Share QR</button><button type="button" class="schedule-detail-btn" data-schedule-edit>Edit</button><button type="button" class="schedule-detail-btn danger" data-schedule-delete>Delete</button>' : ""}
+          ${(item.isCustom || item.isEditedBase) ? '<button type="button" class="schedule-detail-btn" data-schedule-share>Share QR</button>' : ""}
+          <button type="button" class="schedule-detail-btn" data-schedule-edit>Edit</button>
+          ${item.isCustom ? '<button type="button" class="schedule-detail-btn danger" data-schedule-delete>Delete</button>' : ""}
+          ${item.isEditedBase ? '<button type="button" class="schedule-detail-btn danger" data-schedule-revert>Revert</button>' : ""}
         </div>
       </div>
       <p class="schedule-detail-description">${escapeHtml(item.description)}</p>
+      ${scheduleDetailComparisonHtml(item)}
       <div class="schedule-detail-links">
         ${scheduleLinkedButtons(item)}
       </div>
@@ -5028,6 +5290,14 @@
       persistStarredScheduleIds();
       refreshScheduleData();
       activeScheduleEventId = null;
+      renderSchedule();
+      syncUiHistory();
+    });
+    scheduleDetail.querySelector("[data-schedule-revert]")?.addEventListener("click", () => {
+      delete scheduleBaseOverrides[item.baseEventId];
+      persistScheduleBaseOverrides();
+      refreshScheduleData();
+      activeScheduleEventId = item.id;
       renderSchedule();
       syncUiHistory();
     });
@@ -5084,12 +5354,27 @@
 
   function importedEventMatch(incoming) {
     let best = null;
-    for (const item of customScheduleItems) {
+    for (const item of scheduleData.entries || []) {
       const match = duplicateMatchScore(item, incoming);
       if (!match) continue;
       if (!best || match.score > best.score) best = match;
     }
     return best;
+  }
+
+  function normalizeImportedBaseOverrideForStorage(incoming, existing = null, mode = "overwrite") {
+    const useExistingFallback = mode === "update" && existing;
+    return {
+      title: incoming.title || (useExistingFallback ? existing.title : ""),
+      start: incoming.start || (useExistingFallback ? (existing.start || minutesToTimeValue(existing.sortStart)) : ""),
+      end: incoming.end || (useExistingFallback ? (existing.end || minutesToTimeValue(existing.sortEnd)) : ""),
+      endNextDay: incoming.end ? Boolean(incoming.endNextDay) : (useExistingFallback ? Boolean(existing?.endNextDay) : Boolean(incoming.endNextDay)),
+      estimatedStart: incoming.estimatedStart || (useExistingFallback ? Boolean(existing?.estimatedStart) : false),
+      estimatedEnd: incoming.estimatedEnd || (useExistingFallback ? Boolean(existing?.estimatedEnd) : false),
+      description: incoming.description || (useExistingFallback ? String(existing?.description || "") : ""),
+      linkedCodes: incoming.linkedCodes?.length ? [...incoming.linkedCodes] : (useExistingFallback ? sanitizeLinkedCodes(existing?.linkedCodes) : []),
+      categories: incoming.categories?.length ? [...incoming.categories] : (useExistingFallback ? sanitizeScheduleCategories(existing?.categories) : []),
+    };
   }
 
   function normalizeImportedEventForStorage(incoming, existing = null, mode = "overwrite") {
@@ -5130,21 +5415,40 @@
   }
 
   function saveImportedEvent(incoming, choice, matched = null) {
-    let nextItem = null;
+    let nextItemId = null;
+    let nextDate = null;
     if (choice === "new") {
-      nextItem = createImportedCopy(incoming);
+      const nextItem = createImportedCopy(incoming);
       customScheduleItems.push(nextItem);
+      persistCustomScheduleItems();
+      nextItemId = nextItem.id;
+      nextDate = nextItem.date;
     } else {
       const target = matched?.item || null;
-      nextItem = normalizeImportedEventForStorage(incoming, target, choice);
-      if (!nextItem.shareId) nextItem.shareId = ensureCustomShareId(nextItem, target?.id || null);
-      customScheduleItems = customScheduleItems.filter((item) => item.id !== target?.id);
-      customScheduleItems.push(nextItem);
+      if (target?.isCustom) {
+        const nextItem = normalizeImportedEventForStorage(incoming, target, choice);
+        if (!nextItem.shareId) nextItem.shareId = ensureCustomShareId(nextItem, target?.id || null);
+        customScheduleItems = customScheduleItems.filter((item) => item.id !== target?.id);
+        customScheduleItems.push(nextItem);
+        persistCustomScheduleItems();
+        nextItemId = nextItem.id;
+        nextDate = nextItem.date;
+      } else if (target?.baseEventId) {
+        scheduleBaseOverrides[target.baseEventId] = normalizeImportedBaseOverrideForStorage(incoming, target, choice);
+        persistScheduleBaseOverrides();
+        nextItemId = target.id;
+        nextDate = target.date;
+      } else {
+        const nextItem = createImportedCopy(incoming);
+        customScheduleItems.push(nextItem);
+        persistCustomScheduleItems();
+        nextItemId = nextItem.id;
+        nextDate = nextItem.date;
+      }
     }
-    persistCustomScheduleItems();
     refreshScheduleData();
-    activeScheduleEventId = nextItem.id;
-    setScheduleDate(nextItem.date);
+    activeScheduleEventId = nextItemId;
+    setScheduleDate(nextDate);
     renderSchedule();
     syncUiHistory();
     closeShareModal();
@@ -5174,7 +5478,12 @@
           <div class="share-qr-wrap">
             <canvas class="share-qr-canvas" id="share-qr-canvas"></canvas>
           </div>
+          <div class="share-manual-box">
+            <label for="share-manual-export">Share text fallback</label>
+            <textarea class="share-manual-input" id="share-manual-export" readonly>${escapeHtml(payload)}</textarea>
+          </div>
           <div class="share-actions">
+            <button type="button" class="share-btn" id="share-copy-btn">Copy share text</button>
             <a class="share-btn primary" id="share-download-btn" download="${escapeHtml((item.shareId || "ab-event") + ".png")}" href="#">Download QR image</a>
             <button type="button" class="share-btn" id="share-close-btn">Done</button>
           </div>
@@ -5184,32 +5493,52 @@
       const download = document.getElementById("share-download-btn");
       QRCodeGenerator.renderToCanvas(canvas, payload, { level: "L", scale: 8, margin: 4, dark: "#111111", light: "#ffffff" });
       download.href = canvas.toDataURL("image/png");
+      document.getElementById("share-copy-btn")?.addEventListener("click", async () => {
+        try {
+          await copyShareText(payload);
+          showPlainMessage("Share text copied");
+        } catch {
+          showPlainMessage("Could not copy share text");
+        }
+      });
       document.getElementById("share-close-btn")?.addEventListener("click", closeShareModal);
       return;
     }
     if (shareModalState.mode === "scan") {
+      const canDetectQr = "BarcodeDetector" in window;
       shareBody.innerHTML = `
         <div class="share-card">
           <h3>Scan event QR</h3>
-          <p class="share-copy">Point your camera at a custom-event QR code generated from someone else's app (Share QR in event details), or pick a saved QR image from your phone.</p>
+          <p class="share-copy">Point your camera at a shared event QR code generated from someone else's app (Share QR in event details), or pick a saved QR image from your phone.</p>
           <video class="share-scan-video" id="share-scan-video" autoplay playsinline muted></video>
           <div class="share-actions">
             <label class="share-btn share-file-label">Scan saved image<input type="file" id="share-file-input" accept="image/*"></label>
-            <button type="button" class="share-btn" id="share-retry-scan">Retry camera</button>
+            <button type="button" class="share-btn" id="share-retry-scan"${canDetectQr ? "" : " disabled"}>Retry camera</button>
             <button type="button" class="share-btn" id="share-cancel-scan">Cancel</button>
           </div>
-          <div class="share-warning" id="share-scan-status">Starting camera…</div>
+          <div class="share-warning" id="share-scan-status">${canDetectQr ? "Starting camera…" : "This browser does not support in-app QR scanning here. Use the share text fallback below, or try on a phone browser with QR support."}</div>
+          <div class="share-manual-box">
+            <label for="share-manual-import">Paste share text</label>
+            <textarea class="share-manual-input" id="share-manual-import" placeholder="Paste ABMAP2026:... text here"></textarea>
+          </div>
+          <div class="share-actions">
+            <button type="button" class="share-btn primary" id="share-import-paste">Import pasted event</button>
+          </div>
         </div>
       `;
       document.getElementById("share-cancel-scan")?.addEventListener("click", closeShareModal);
       document.getElementById("share-retry-scan")?.addEventListener("click", () => {
         openShareModal({ mode: "scan" });
       });
+      document.getElementById("share-import-paste")?.addEventListener("click", () => {
+        const raw = document.getElementById("share-manual-import")?.value || "";
+        handleImportedQrText(raw);
+      });
       document.getElementById("share-file-input")?.addEventListener("change", async (ev) => {
         const file = ev.currentTarget.files?.[0];
         if (!file) return;
         try {
-          if (!("BarcodeDetector" in window)) throw new Error("QR scanning is not supported in this browser.");
+          if (!("BarcodeDetector" in window)) throw new Error("This browser cannot read QR images here. Ask the sender to use Copy share text and paste it below.");
           shareScanDetector ||= new BarcodeDetector({ formats: ["qr_code"] });
           const image = await createImageBitmap(file);
           const hits = await shareScanDetector.detect(image);
@@ -5226,14 +5555,14 @@
     if (shareModalState.mode === "resolve") {
       const { incoming, matched } = shareModalState;
       const warning = matched?.type === "exact"
-        ? "An existing custom event with the same shared ID was found."
+        ? "An existing event with the same shared ID was found."
         : `${matched?.label || "Possible duplicate"} detected at ${matched?.score || 0}% match.`;
       const matchReasons = matched?.type === "exact"
         ? "Shared event ID matches exactly."
         : `Title ${matched?.reasons?.title || 0}% · Time ${matched?.reasons?.time || 0}% · Location ${matched?.reasons?.location || 0}%`;
       shareBody.innerHTML = `
         <div class="share-card">
-          <h3>Import custom event</h3>
+          <h3>Import shared event</h3>
           <div class="share-warning">${escapeHtml(warning)}</div>
           <p class="share-copy">${escapeHtml(matchReasons)}</p>
           <div class="share-preview-grid">
@@ -5261,7 +5590,7 @@
       const incoming = shareModalState.incoming;
       shareBody.innerHTML = `
         <div class="share-card">
-          <h3>Import custom event</h3>
+          <h3>Import shared event</h3>
           <p class="share-copy">This event is ready to import into your local schedule.</p>
           ${sharePreviewHtml(incoming)}
           <div class="share-choice-actions">
@@ -5297,7 +5626,7 @@
     const video = document.getElementById("share-scan-video");
     stopShareScan();
     if (!("BarcodeDetector" in window)) {
-      if (status) status.textContent = "QR scanning is not supported in this browser. Try a newer Chrome/Safari build on your phone.";
+      if (status) status.textContent = "This browser does not support in-app QR scanning here. Use the share text fallback below, or try on a phone browser with QR support.";
       return;
     }
     try {
