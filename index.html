@@ -1017,12 +1017,12 @@
   .schedule-filter-all-none {
     appearance:none; background:none;
     border:1px solid #2e2e2e; border-radius:3px;
-    color:#444; font-size:8.5px; font-weight:700; letter-spacing:0.04em;
-    padding:2px 4px; cursor:pointer; flex-shrink:0; line-height:1.1;
-    width:28px; text-align:center;
+    color:#555; font-size:13px; font-weight:400; line-height:1;
+    padding:1px 5px; cursor:pointer; flex-shrink:0;
+    text-align:center;
   }
   .schedule-filter-all-none:hover, .schedule-filter-all-none:focus-visible {
-    color:#777; border-color:#555; outline:none;
+    color:#999; border-color:#555; outline:none;
   }
   .schedule-category-filter.burn span { color:#ffc15a; }
   .schedule-category-filter.music span,
@@ -1050,8 +1050,9 @@
   }
   .schedule-detail.editor-mode {
     max-height:none;
-    height:clamp(320px, 42vh, 520px);
-    overflow:auto;
+    height:clamp(300px, 40vh, 480px);
+    overflow-y:auto;
+    overflow-x:hidden;
   }
   .schedule-detail.editor-mode .schedule-detail-grip {
     position:sticky;
@@ -1104,6 +1105,15 @@
     border-color:rgba(98,255,132,0.72);
     box-shadow:0 0 0 1px rgba(98,255,132,0.24), 0 0 18px rgba(98,255,132,0.12);
   }
+  .schedule-item.personal {
+    border-color:rgba(145,193,255,0.4);
+    background:#121a24;
+  }
+  .schedule-item.edited-base {
+    border-color:rgba(180,120,255,0.42);
+    background:#17111f;
+  }
+
   .schedule-item-row {
     display:grid; grid-template-columns:minmax(0, 1fr) auto; align-items:stretch;
   }
@@ -1226,6 +1236,14 @@
     font-size:11px;
     line-height:1.45;
     color:#cfd8e5;
+  }
+  .schedule-detail-compare.live-compare {
+    border-color:rgba(255,190,80,0.32);
+    background:rgba(255,160,40,0.06);
+    color:#e8d5b0;
+  }
+  .schedule-detail-compare.live-compare strong {
+    color:#f5e4c0;
   }
   .schedule-detail-compare-row strong {
     color:#f0f4fa;
@@ -1448,15 +1466,15 @@
     box-shadow:0 0 0 2px rgba(255,255,255,0.08);
   }
   .schedule-editor {
-    display:grid; gap:10px;
+    display:grid; gap:6px;
   }
   .schedule-editor-grid {
-    display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:10px;
+    display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:6px;
   }
   .schedule-editor-times {
     display:grid;
     grid-template-columns:minmax(0, 1fr) minmax(0, 1fr) auto;
-    gap:8px;
+    gap:5px;
     align-items:end;
   }
   .schedule-editor-field {
@@ -1476,6 +1494,9 @@
     background:#121212;
     color:#d9d9d9;
     font-size:12px;
+  }
+  .schedule-editor-kind-row {
+    display:flex; gap:14px; align-items:center; min-height:32px;
   }
   .schedule-editor-categories {
     display:flex; flex-wrap:wrap; gap:8px 10px;
@@ -1506,10 +1527,10 @@
   .schedule-editor-field textarea {
     width:100%;
     background:#1d1d1d; color:#eee; border:1px solid #444;
-    border-radius:6px; padding:7px 8px; font-size:12px;
+    border-radius:6px; padding:5px 7px; font-size:12px;
   }
   .schedule-editor-field textarea {
-    min-height:74px; resize:vertical;
+    min-height:52px; resize:vertical;
   }
   .schedule-editor-picker {
     display:none;
@@ -1765,6 +1786,20 @@
     border-color:rgba(255,214,92,0.84);
     box-shadow:0 0 0 1px rgba(255,214,92,0.24), 0 0 12px rgba(255,214,92,0.1);
   }
+  .schedule-timeline-card.edited-base {
+    border-color:rgba(180,120,255,0.72);
+    background:rgba(150,80,255,0.14);
+    box-shadow:0 0 0 1px rgba(180,120,255,0.18);
+  }
+  .schedule-timeline-card.event-kind.edited-base.starred,
+  .schedule-timeline-card.open-kind.edited-base.starred {
+    background:
+      linear-gradient(180deg, rgba(255,214,92,0.34) 0 3px, rgba(180,120,255,0.22) 3px 6px, transparent 6px),
+      rgba(150,80,255,0.11);
+    border-color:rgba(255,214,92,0.82);
+    box-shadow:0 0 0 1px rgba(255,214,92,0.24), 0 0 10px rgba(255,214,92,0.08);
+  }
+
   .schedule-timeline-card.selected {
     border-color:rgba(98,255,132,0.8);
     box-shadow:0 0 0 1px rgba(98,255,132,0.24), 0 0 12px rgba(98,255,132,0.12);
@@ -1993,6 +2028,7 @@
 <div class="bottom-status">
   <div class="zoom-label" id="zlabel">100%</div>
   <span class="app-version" id="app-version">app — · cache —</span>
+  <span class="app-version" id="live-version" style="display:none"></span>
 </div>
 <div class="offline-badge" id="offline-badge">✓ saved for offline</div>
 <div id="tip" role="tooltip"></div>
@@ -2072,8 +2108,14 @@
       </div>
       <p>Some time markers are estimates. If a card has a striped, zig-zag looking edge in the timeline, that edge is uncertain. A striped left edge means the start time is estimated. A striped right edge means the end time is estimated. That usually happens when the original wording was fuzzy and had to be interpreted into something drawable. For example, a start like <strong>sunset</strong>, <strong>after dark</strong>, or <strong>4 pm-ish</strong> gets turned into an estimated start time, and an end like <strong>late</strong> gets turned into an estimated finish so the event can actually appear in the timeline.</p>
       <p>If timing matters, read the camp or artwork blurb and the original wording that fed the estimate. Those are usually linked at the bottom. The details panel and the <a href="https://www.afrikaburn.org/binnekringblog/afrikaburn-2026-wtf/" target="_blank" rel="noopener noreferrer">official WTF Guide</a> will usually give you the fuller wording that this schedule had to condense.</p>
-      <p>There was not much confirmed information available ahead of the burn for major sound cars, some music lineups, or the actual burn schedule itself. Those things tend to become real on site. <button type="button" class="about-inline-link" data-schedule-help-entry="ART">Arteria</button> is one of the main places to get the updated version, and once you have that information you can use the <strong>Add</strong> button here to create your own custom events inside the app.</p>
-      <p>The aim of this section is to help people find things to do and then go do them. Participation and interaction are one of the main things that make the burn so beautiful, you won't find those in your phone, so says the Damn Dirty Hippie.</p>
+      <p>There was not much confirmed information available ahead of the burn for major sound cars, some music lineups, or the actual burn schedule itself. Those things tend to become real on site. <button type="button" class="about-inline-link" data-schedule-help-entry="ART">Arteria</button> is one of the main places to get the updated information, and once you have that information you can use the <strong>Add</strong> button here to create your own custom events inside the app.</p>
+      <h3>Sharing events</h3>
+      <p>Custom events you create can be shared with other people's phones using a QR code. Open the event details and tap <strong>Share QR</strong> — show the code to whoever wants it and they scan it from the <strong>Scan</strong> button at the top of the schedule. The event will appear in their schedule as a personal event. This works completely offline, no Wi-Fi or data needed.</p>
+      <h3>Live updates</h3>
+      <p>There may be a map Wi-Fi at OCC and/or the Greasemonkeys camp. If you connect to one of these networks and open the offline app/page (downloaded from this network), it will automatically pull in the latest times and events, if there are any. Look for a <strong>live</strong> timestamp at the bottom of the main screen — that tells you how fresh the information is.</p>
+      <p>Events that came in via a live update show a cyan border and a <strong>Live</strong> badge. These may be more reliable than the pre-burn estimates — someone on the ground confirmed them, or got them from <button type="button" class="about-inline-link" data-schedule-help-entry="ART">Arteria</button>. If an event time looks different from what you remember seeing before, a live update may have changed it.</p>
+      <p>To get live updates, just connect to the Wi-Fi, open the app or switch back to it, and it will refresh automatically.</p>
+      <p>The aim of this schedule is to help people find things to do and then go do them. Participation and interaction are one of the main things that make the burn so beautiful, you won't find those in your phone, so says the Damn Dirty Hippie.</p>
     </div>
   </section>
 </div>
@@ -2195,7 +2237,7 @@
 <script>
 (() => {
   const data = DATA_INLINE;
-  const APP_VERSION = "2026.04.23.10";
+  const APP_VERSION = "2026.04.24.1";
   const CACHE_NAME_PREFIX = "ab-map-";
   async function getInstalledCacheVersion() {
     if (!("caches" in window)) return null;
@@ -2212,6 +2254,7 @@
   const SCHEDULE_STAR_STORAGE_KEY = "ab-schedule-stars";
   const SCHEDULE_CUSTOM_STORAGE_KEY = "ab-schedule-custom-events";
   const SCHEDULE_OVERRIDE_STORAGE_KEY = "ab-schedule-base-overrides";
+  const SCHEDULE_PINNED_LIVE_KEY = "ab-schedule-pinned-live";
   const SCHEDULE_EDITOR_HEIGHT_STORAGE_KEY = "ab-schedule-editor-height";
   const USER_TRAIL_SETTING_STORAGE_KEY = "ab-user-trail-setting";
   const ABOUT_SEEN_STORAGE_KEY = "ab-about-seen";
@@ -2221,6 +2264,8 @@
   const LIVE_ADMIN_PIN_SESSION_KEY = "ab-live-admin-pin";
   const LIVE_SERVER_URL_SESSION_KEY = "ab-live-server-url";
   const LIVE_UPDATES_POLL_INTERVAL = 2 * 60 * 1000;
+  const LIVE_UPDATES_STALE_MS = 30 * 1000; // don't re-fetch if we did so within this window
+  const LIVE_AUTH_PING_INTERVAL_MS = 5 * 60 * 1000;
   const SCHEDULE_CATEGORY_OPTIONS = [
     { key: "Burn", label: "Burn", shortLabel: "Burn" },
     { key: "Music", label: "Music", shortLabel: "Music" },
@@ -2234,6 +2279,8 @@
   ];
   let scheduleData = baseScheduleData;
   let liveScheduleUpdates = [];
+  let liveLastFetchTime = 0;
+  let liveFetchToken = 0;
   let isLiveAdmin = Boolean(sessionStorage.getItem(LIVE_ADMIN_PIN_SESSION_KEY));
   let liveServerBase = sessionStorage.getItem(LIVE_SERVER_URL_SESSION_KEY) || "";
   const oldWtfDetails = typeof OLD_WTF_DETAILS !== "undefined" ? OLD_WTF_DETAILS : { byCode: {} };
@@ -2254,6 +2301,7 @@
   const aboutTopBtn = document.getElementById("about-top-btn");
   const scheduleBtn = document.getElementById("schedule-btn");
   const appVersion = document.getElementById("app-version");
+  const liveVersionEl = document.getElementById("live-version");
   const aboutBackdrop = document.getElementById("about-backdrop");
   const aboutClose = document.getElementById("about-close");
   const aboutVersion = document.getElementById("about-version");
@@ -2518,7 +2566,7 @@
   }
 
   function compactSharedEventPayload(item) {
-    return {
+    const payload = {
       v: 1,
       t: "ab-event",
       i: String(item.shareId || "").trim(),
@@ -2533,6 +2581,9 @@
       l: sanitizeLinkedCodes(item.linkedCodes),
       c: sanitizeScheduleCategories(item.categories),
     };
+    if (item.kind === "open") payload.k = 1;
+    if (item.isLive && item.id) { payload.q = String(item.id); payload.p = 1; }
+    return payload;
   }
 
   function encodeUtf8Base64Url(text) {
@@ -2592,6 +2643,9 @@
       description: String(payload.o || "").trim(),
       linkedCodes: sanitizeLinkedCodes(payload.l),
       categories: sanitizeScheduleCategories(payload.c),
+      kind: payload.k ? "open" : "event",
+      liveId: String(payload.q || "").trim() || null,
+      isPinnedLive: Boolean(payload.p),
     };
     if (!normalized.shareId || !normalized.title || !normalized.date || !normalized.start) {
       throw new Error("This event QR code is missing required fields.");
@@ -2690,8 +2744,8 @@
         dayKey: day.key,
         dayLabel: day.label,
         title: String(item.title || "").trim(),
-        kind: "event",
-        kindLabel: "Event",
+        kind: item.kind === "open" ? "open" : "event",
+        kindLabel: item.kind === "open" ? "Open time" : "Event",
         linkedCodes,
         timeLabel: friendlyTimeLabel(start, end, endNextDay) || (isLive ? "Live update" : "Custom time"),
         description: String(item.description || "").trim(),
@@ -2710,7 +2764,7 @@
     }).filter((item) => item && item.title);
   }
 
-  function buildRuntimeScheduleData(staticData, customRaw, liveUpdates = []) {
+  function buildRuntimeScheduleData(staticData, customRaw, liveUpdates = [], pinnedRaw = []) {
     const liveDeleteIds = new Set(
       (liveUpdates || []).filter((u) => u.action === "delete").map((u) => String(u.id))
     );
@@ -2721,9 +2775,13 @@
     const customNormalized = normalizeCustomScheduleItems(customRaw);
     const customIds = new Set(customNormalized.map((item) => String(item.id)));
 
+    // Pinned live items: scanned from a live QR. Lower priority than live feed — live updates override them.
+    const pinnedNormalized = normalizeCustomScheduleItems(pinnedRaw || [], { isLive: true });
+    const pinnedIds = new Set(pinnedNormalized.map((item) => String(item.id)));
+
     const entries = [
       ...(staticData.entries || [])
-        .filter((item) => !liveDeleteIds.has(String(item.id)) && !liveUpsertIds.has(String(item.id)) && !customIds.has(String(item.id)))
+        .filter((item) => !liveDeleteIds.has(String(item.id)) && !liveUpsertIds.has(String(item.id)) && !customIds.has(String(item.id)) && !pinnedIds.has(String(item.id)))
         .map((item) => runtimeScheduleItemWithOverride({
           ...item,
           linkedCodes: [...(item.linkedCodes || [])],
@@ -2731,6 +2789,8 @@
         }, scheduleBaseOverrides[item.id])),
       ...customNormalized.filter((item) => !liveDeleteIds.has(String(item.id))),
       ...normalizeCustomScheduleItems(liveUpserts, { isLive: true }).filter((item) => !liveDeleteIds.has(String(item.id)) && !customIds.has(String(item.id))),
+      // Pinned items only show when not already in the live feed or custom items
+      ...pinnedNormalized.filter((item) => !liveDeleteIds.has(String(item.id)) && !liveUpsertIds.has(String(item.id)) && !customIds.has(String(item.id))),
     ];
 
     entries.sort((a, b) =>
@@ -2807,6 +2867,7 @@
 
   let starredScheduleIds = new Set(safeReadStorageJson(SCHEDULE_STAR_STORAGE_KEY, []));
   let customScheduleItems = safeReadStorageJson(SCHEDULE_CUSTOM_STORAGE_KEY, []);
+  let pinnedLiveItems = (safeReadStorageJson(SCHEDULE_PINNED_LIVE_KEY, []) || []).filter((item) => item?.id && item?.date && item?.start && item?.title);
   let scheduleBaseOverrides = normalizeBaseScheduleOverrides(safeReadStorageJson(SCHEDULE_OVERRIDE_STORAGE_KEY, {}));
   let starredEntryKeys = new Set(safeReadStorageJson(STARRED_ENTRY_STORAGE_KEY, []));
   let visitedEntryKeys = new Set(safeReadStorageJson(VISITED_ENTRY_STORAGE_KEY, []));
@@ -2825,7 +2886,7 @@
     safeWriteStorageJson(SCHEDULE_CUSTOM_STORAGE_KEY, customScheduleItems);
   }
 
-  scheduleData = buildRuntimeScheduleData(baseScheduleData, customScheduleItems, liveScheduleUpdates);
+  scheduleData = buildRuntimeScheduleData(baseScheduleData, customScheduleItems, liveScheduleUpdates, pinnedLiveItems);
 
   function persistStarredScheduleIds() {
     safeWriteStorageJson(SCHEDULE_STAR_STORAGE_KEY, [...starredScheduleIds]);
@@ -2833,6 +2894,10 @@
 
   function persistCustomScheduleItems() {
     safeWriteStorageJson(SCHEDULE_CUSTOM_STORAGE_KEY, customScheduleItems);
+  }
+
+  function persistPinnedLiveItems() {
+    safeWriteStorageJson(SCHEDULE_PINNED_LIVE_KEY, pinnedLiveItems);
   }
 
   function persistScheduleBaseOverrides() {
@@ -2971,7 +3036,7 @@
   }
 
   function refreshScheduleData() {
-    scheduleData = buildRuntimeScheduleData(baseScheduleData, customScheduleItems, liveScheduleUpdates);
+    scheduleData = buildRuntimeScheduleData(baseScheduleData, customScheduleItems, liveScheduleUpdates, pinnedLiveItems);
     if (!scheduleData.byDate?.[activeScheduleDate]) {
       activeScheduleDate = scheduleData.days[0]?.date || null;
     }
@@ -2980,18 +3045,72 @@
     }
   }
 
+  function liveDataVersion(updates) {
+    return (updates.find((u) => u.action === "_version") || {})?._version || 0;
+  }
+
+  function updateLiveVersionDisplay() {
+    if (!liveVersionEl) return;
+    const v = liveDataVersion(liveScheduleUpdates);
+    if (!v) { liveVersionEl.style.display = "none"; return; }
+    const d = new Date(v);
+    const day = d.toLocaleDateString([], { weekday: "short" });
+    const time = d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    liveVersionEl.textContent = `live ${day} ${time}`;
+    liveVersionEl.style.display = "";
+  }
+
+  function fetchLiveUpdatesIfStale() {
+    if (Date.now() - liveLastFetchTime > LIVE_UPDATES_STALE_MS) fetchLiveUpdates(true);
+  }
+
   async function fetchLiveUpdates(silent = false) {
+    liveLastFetchTime = Date.now();
+    const myToken = ++liveFetchToken;
     try {
-      const resp = await fetch(`${liveServerBase}/schedule-updates.json`);
+      const base = liveServerBase || "";
+      const resp = await fetch(`${base}/schedule-updates.json`, { cache: "no-store" });
       if (!resp.ok) return;
-      const data = await resp.json();
-      if (!Array.isArray(data)) return;
-      const changed = JSON.stringify(data) !== JSON.stringify(liveScheduleUpdates);
-      liveScheduleUpdates = data;
+      const serverData = await resp.json();
+      if (!Array.isArray(serverData)) return;
+      if (liveFetchToken !== myToken) return; // a newer fetch is in flight — discard this response
+
+      const serverVersion = liveDataVersion(serverData);
+      const myVersion = liveDataVersion(liveScheduleUpdates);
+
+      // Only auto-sync when the server is version-aware (serverVersion > 0) and our
+      // copy is genuinely older by more than a clock-rounding margin. If the server
+      // has no version we always take its data — it just published something authoritative.
+      if (serverVersion > 0 && myVersion > serverVersion && liveScheduleUpdates.length > 1) {
+        // Our cached copy is newer — push it to the server silently.
+        // The server will only accept it if its own version check passes.
+        fetch(`${base}/api/updates`, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain" },
+          body: JSON.stringify({ action: "sync", updates: liveScheduleUpdates }),
+        }).catch(() => {});
+        return; // keep displaying our newer data
+      }
+
+      // Detect live upserts that conflict with local edits and actually changed content.
+      const conflicted = serverData.filter((u) => {
+        if (u.action !== "upsert" || !u.id) return false;
+        if (!customScheduleItems.some((c) => String(c.id) === String(u.id))) return false;
+        const prev = liveScheduleUpdates.find((p) => String(p.id) === String(u.id));
+        return !prev || JSON.stringify(prev) !== JSON.stringify(u);
+      });
+      if (conflicted.length > 0) {
+        const title = conflicted[0].title || "an event";
+        showPlainMessage(`Live update: "${title}" may have changed — open it to compare with your edit.`, 5000);
+      }
+
+      const changed = JSON.stringify(serverData) !== JSON.stringify(liveScheduleUpdates);
+      liveScheduleUpdates = serverData;
+      updateLiveVersionDisplay();
       if (changed) {
         refreshScheduleData();
         renderSchedule();
-        if (!silent) showPlainMessage("Live schedule updated.");
+        if (!silent && conflicted.length === 0) showPlainMessage("Live schedule updated.");
       }
     } catch {
       // offline or Pi not reachable — keep current data
@@ -3012,7 +3131,13 @@
       });
       if (resp.status === 401) {
         sessionStorage.removeItem(LIVE_ADMIN_PIN_SESSION_KEY);
-        showPlainMessage("Wrong password — not published.");
+        sessionStorage.removeItem(LIVE_SERVER_URL_SESSION_KEY);
+        isLiveAdmin = false;
+        liveServerBase = "";
+        stopLiveAuthPing();
+        updateLiveAuthUi();
+        renderSchedule();
+        showPlainMessage("Wrong password — not published. Signed out of live admin.");
         return false;
       }
       if (!resp.ok) {
@@ -3021,6 +3146,7 @@
       }
       sessionStorage.setItem(LIVE_ADMIN_PIN_SESSION_KEY, pin);
       isLiveAdmin = true;
+      startLiveAuthPing();
       updateLiveAuthUi();
       // Remove local copy — live version is now canonical
       const publishedId = update.id;
@@ -3060,7 +3186,13 @@
       });
       if (resp.status === 401) {
         sessionStorage.removeItem(LIVE_ADMIN_PIN_SESSION_KEY);
-        showPlainMessage("Wrong password.");
+        sessionStorage.removeItem(LIVE_SERVER_URL_SESSION_KEY);
+        isLiveAdmin = false;
+        liveServerBase = "";
+        stopLiveAuthPing();
+        updateLiveAuthUi();
+        renderSchedule();
+        showPlainMessage("Wrong password — not removed. Signed out of live admin.");
         return false;
       }
       if (!resp.ok) {
@@ -3069,6 +3201,7 @@
       }
       sessionStorage.setItem(LIVE_ADMIN_PIN_SESSION_KEY, pin);
       isLiveAdmin = true;
+      startLiveAuthPing();
       updateLiveAuthUi();
       await fetchLiveUpdates(true);
       showPlainMessage("Removed from live feed.");
@@ -3093,6 +3226,43 @@
         ? `Live admin active (${liveServerBase || "same origin"}) — tap SU to sign out.`
         : "";
     }
+  }
+
+  let liveAuthPingTimer = null;
+
+  function stopLiveAuthPing() {
+    if (liveAuthPingTimer) { window.clearInterval(liveAuthPingTimer); liveAuthPingTimer = null; }
+  }
+
+  async function pingLiveAuth() {
+    if (!isLiveAdmin) { stopLiveAuthPing(); return; }
+    const pin = sessionStorage.getItem(LIVE_ADMIN_PIN_SESSION_KEY) || "";
+    const base = liveServerBase;
+    if (!pin || !base) return;
+    try {
+      const resp = await fetch(`${base}/api/updates`, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain" },
+        body: JSON.stringify({ action: "ping", id: "_ping", auth: pin }),
+      });
+      if (resp.status === 401) {
+        sessionStorage.removeItem(LIVE_ADMIN_PIN_SESSION_KEY);
+        sessionStorage.removeItem(LIVE_SERVER_URL_SESSION_KEY);
+        isLiveAdmin = false;
+        liveServerBase = "";
+        stopLiveAuthPing();
+        updateLiveAuthUi();
+        renderSchedule();
+        showPlainMessage("SU session expired — signed out of live admin.");
+      }
+    } catch {
+      // Network error — keep SU mode, will retry next interval
+    }
+  }
+
+  function startLiveAuthPing() {
+    stopLiveAuthPing();
+    liveAuthPingTimer = window.setInterval(pingLiveAuth, LIVE_AUTH_PING_INTERVAL_MS);
   }
 
   appVersion.textContent = `app ${APP_VERSION} · cache …`;
@@ -3472,6 +3642,7 @@
       sessionStorage.removeItem(LIVE_SERVER_URL_SESSION_KEY);
       isLiveAdmin = false;
       liveServerBase = "";
+      stopLiveAuthPing();
       updateLiveAuthUi();
       showPlainMessage("Signed out of live admin.");
       renderSchedule();
@@ -3506,6 +3677,7 @@
       sessionStorage.setItem(LIVE_ADMIN_PIN_SESSION_KEY, pin);
       isLiveAdmin = true;
       updateLiveAuthUi();
+      startLiveAuthPing();
       fetchLiveUpdates(true);
       showPlainMessage("Signed in as live admin.");
       renderSchedule();
@@ -3520,7 +3692,12 @@
   window.addEventListener("online", () => {
     updateAboutRefreshAvailability();
     maybeAutoRefreshAppBundle();
+    fetchLiveUpdatesIfStale();
   });
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") fetchLiveUpdatesIfStale();
+  });
+  window.addEventListener("focus", fetchLiveUpdatesIfStale);
   window.addEventListener("online", updateAboutRefreshAvailability);
   window.addEventListener("offline", updateAboutRefreshAvailability);
   aboutBackdrop.addEventListener("click", (ev) => {
@@ -4668,6 +4845,7 @@
     scheduleBackdrop.setAttribute("aria-hidden", "false");
     renderSchedule();
     scrollScheduleSelectionIntoView();
+    fetchLiveUpdatesIfStale();
   }
 
   function jumpToScheduleEntry(code) {
@@ -4897,7 +5075,7 @@
     const categories = item.categories || [];
     const enabled = SCHEDULE_CATEGORY_FILTERS.filter((filter) => scheduleCategoryState[filter.key]).map((filter) => filter.key);
     const starredMatch = scheduleStarredFilterEnabled && isScheduleItemStarred(item.id);
-    const customMatch = scheduleCustomFilterEnabled && Boolean(item.isCustom);
+    const customMatch = scheduleCustomFilterEnabled && Boolean(item.isCustom || item.isEditedBase);
     const liveMatch = scheduleLiveFilterEnabled && Boolean(item.isLive);
     const allCategoriesEnabled = enabled.length === SCHEDULE_CATEGORY_FILTERS.length;
     const categoryMatch =
@@ -4945,18 +5123,14 @@
     ` : "";
     const topRowKeys = ["Burn", "Music", "Performance", "Food & Drink"];
     const bottomRowKeys = ["Service", "Community", "Workshop", "Wellness", "Movement"];
-    const topRowAllChecked = topRowKeys.every((k) => scheduleCategoryState[k]);
-    const bottomRowAllChecked = bottomRowKeys.every((k) => scheduleCategoryState[k]);
-    const allNoneBtn = (row, allChecked) =>
-      `<button type="button" class="schedule-filter-all-none" data-filter-row="${row}" title="${allChecked ? "Deselect all" : "Select all"}">${allChecked ? "None" : "All"}</button>`;
     const topRowHtml = topRowKeys.map((key) => filterHtml(byKey[key])).join("");
     const bottomRowHtml = bottomRowKeys.map((key) => filterHtml(byKey[key])).join("");
     scheduleCategoryFilters.innerHTML = `
       <div class="schedule-category-filter-row">
-        ${allNoneBtn(0, topRowAllChecked)}${topRowHtml}
+        <button type="button" class="schedule-filter-all-none" data-filter-all title="Select all filters">+</button>${starredHtml}${customHtml}${liveHtml}${topRowHtml}
       </div>
       <div class="schedule-category-filter-row">
-        ${allNoneBtn(1, bottomRowAllChecked)}${bottomRowHtml}${starredHtml}${customHtml}${liveHtml}
+        <button type="button" class="schedule-filter-all-none" data-filter-none title="Deselect all filters">−</button>${bottomRowHtml}
       </div>
     `;
     for (const input of scheduleCategoryFilters.querySelectorAll("[data-schedule-category]")) {
@@ -4982,16 +5156,25 @@
       renderSchedule();
       scrollScheduleSelectionIntoView();
     });
-    for (const btn of scheduleCategoryFilters.querySelectorAll("[data-filter-row]")) {
-      btn.addEventListener("click", () => {
-        const rowKeys = btn.dataset.filterRow === "0" ? topRowKeys : bottomRowKeys;
-        const allOn = rowKeys.every((k) => scheduleCategoryState[k]);
-        for (const k of rowKeys) scheduleCategoryState[k] = !allOn;
-        renderScheduleCategoryFilters();
-        renderSchedule();
-        scrollScheduleSelectionIntoView();
-      });
-    }
+    const allKeys = [...topRowKeys, ...bottomRowKeys];
+    scheduleCategoryFilters.querySelector("[data-filter-all]")?.addEventListener("click", () => {
+      for (const k of allKeys) scheduleCategoryState[k] = true;
+      scheduleStarredFilterEnabled = true;
+      scheduleCustomFilterEnabled = true;
+      scheduleLiveFilterEnabled = true;
+      renderScheduleCategoryFilters();
+      renderSchedule();
+      scrollScheduleSelectionIntoView();
+    });
+    scheduleCategoryFilters.querySelector("[data-filter-none]")?.addEventListener("click", () => {
+      for (const k of allKeys) scheduleCategoryState[k] = false;
+      scheduleStarredFilterEnabled = false;
+      scheduleCustomFilterEnabled = false;
+      scheduleLiveFilterEnabled = false;
+      renderScheduleCategoryFilters();
+      renderSchedule();
+      scrollScheduleSelectionIntoView();
+    });
   }
 
   function renderScheduleViewToggle() {
@@ -5009,7 +5192,8 @@
 
   const WTF_HOURS_SOURCE = "WTF Guide 2026 — operating hours";
   function isWtfHoursItem(item) {
-    const label = String(item?.sourceLabel || "").trim();
+    if (item?.wtfHours) return true;
+    const label = String(item?.sourceLabel || "").trim().replace(/\s·\s.*$/, "");
     return label === "WTF Guide 2026 — operating hours" || label === "WTF Guide 2026 — open hours";
   }
   function scheduleRecordMatchesNowFilter(record) {
@@ -5074,7 +5258,7 @@
       return;
     }
     scheduleContent.innerHTML = items.map((item) => `
-      <article class="schedule-item ${escapeHtml(item.kind)}-kind${scheduleItemHasBurnCategory(item) ? " burn-category" : ""}${item.id === activeScheduleEventId ? " selected" : ""}${isScheduleItemStarred(item.id) ? " starred" : ""}${scheduleItemStartedNow(item) ? " started-now" : ""}${isWtfHoursItem(item) ? " wtf-hours" : ""}" data-schedule-id="${escapeHtml(item.id)}" data-source="${escapeHtml(item.sourceLabel || '')}">
+      <article class="schedule-item ${escapeHtml(item.kind)}-kind${scheduleItemHasBurnCategory(item) ? " burn-category" : ""}${item.id === activeScheduleEventId ? " selected" : ""}${isScheduleItemStarred(item.id) ? " starred" : ""}${scheduleItemStartedNow(item) ? " started-now" : ""}${item.isCustom ? " personal" : ""}${item.isEditedBase ? " edited-base" : ""}${item.isLive ? " live-item" : ""}${isWtfHoursItem(item) ? " wtf-hours" : ""}" data-schedule-id="${escapeHtml(item.id)}" data-source="${escapeHtml(item.sourceLabel || '')}">
         <div class="schedule-item-row">
           <button type="button" class="schedule-item-summary" data-schedule-toggle="${escapeHtml(item.id)}">
             <span class="schedule-item-time">${escapeHtml(item.timeLabel)}</span>
@@ -5192,9 +5376,11 @@
               const starred = isScheduleItemStarred(record.item.id) ? " starred" : "";
               const startedNow = scheduleItemStartedNow(record.item) ? " started-now" : "";
               const personal = record.item.isCustom ? " personal" : "";
+              const editedBase = record.item.isEditedBase ? " edited-base" : "";
+              const liveItem = record.item.isLive ? " live-item" : "";
               const wtfHours = record.isWtfHours ? " wtf-hours" : "";
               return `
-                <button type="button" class="schedule-timeline-card ${escapeHtml(record.item.kind)}-kind${burnCategory}${selected}${openEnded}${uncertainStart}${uncertainEnd}${starred}${startedNow}${personal}${wtfHours}" data-schedule-toggle="${escapeHtml(record.item.id)}" data-schedule-id="${escapeHtml(record.item.id)}" data-source="${escapeHtml(record.item.sourceLabel || '')}" style="top:${top}px; left:${left}px; width:${width}px; height:${height}px;">
+                <button type="button" class="schedule-timeline-card ${escapeHtml(record.item.kind)}-kind${burnCategory}${selected}${openEnded}${uncertainStart}${uncertainEnd}${starred}${startedNow}${personal}${editedBase}${liveItem}${wtfHours}" data-schedule-toggle="${escapeHtml(record.item.id)}" data-schedule-id="${escapeHtml(record.item.id)}" data-source="${escapeHtml(record.item.sourceLabel || '')}" style="top:${top}px; left:${left}px; width:${width}px; height:${height}px;">
                   <div class="schedule-timeline-title">${escapeHtml(record.item.title)}</div>
                 </button>
               `;
@@ -5233,6 +5419,7 @@
       linkedCodes: (item?.linkedCodes || []).join(", "),
       categories: sanitizeScheduleCategories(item?.categories || []),
       description: item?.description || "",
+      kind: item?.kind === "open" ? "open" : "event",
     };
   }
 
@@ -5242,19 +5429,37 @@
   }
 
   function scheduleDetailComparisonHtml(item) {
-    if (!item?.isEditedBase) return "";
-    const original = originalBaseScheduleItem(item);
-    if (!original) return "";
-    const currentTime = friendlyTimeLabel(item.start, item.end, item.endNextDay) || item.timeLabel || "Custom time";
-    const originalTime = friendlyTimeLabel(minutesToTimeValue(original.sortStart), minutesToTimeValue(original.sortEnd), Number(original.sortEnd) >= 24 * 60) || original.timeLabel || "Original time";
-    const currentLinked = (item.linkedCodes || []).join(", ") || "None";
-    const originalLinked = (original.linkedCodes || []).join(", ") || "None";
-    return `
-      <div class="schedule-detail-compare">
-        <div class="schedule-detail-compare-row"><strong>Current:</strong> ${escapeHtml(item.title)} · ${escapeHtml(currentTime)} · ${escapeHtml(currentLinked)}</div>
-        <div class="schedule-detail-compare-row"><strong>Original:</strong> ${escapeHtml(original.title)} · ${escapeHtml(originalTime)} · ${escapeHtml(originalLinked)}</div>
-      </div>
-    `;
+    if (item?.isEditedBase) {
+      const original = originalBaseScheduleItem(item);
+      if (!original) return "";
+      const currentTime = friendlyTimeLabel(item.start, item.end, item.endNextDay) || item.timeLabel || "Custom time";
+      const originalTime = friendlyTimeLabel(minutesToTimeValue(original.sortStart), minutesToTimeValue(original.sortEnd), Number(original.sortEnd) >= 24 * 60) || original.timeLabel || "Original time";
+      const currentLinked = (item.linkedCodes || []).join(", ") || "None";
+      const originalLinked = (original.linkedCodes || []).join(", ") || "None";
+      return `
+        <div class="schedule-detail-compare">
+          <div class="schedule-detail-compare-row"><strong>Your edit:</strong> ${escapeHtml(item.title)} · ${escapeHtml(currentTime)} · ${escapeHtml(currentLinked)}</div>
+          <div class="schedule-detail-compare-row"><strong>Original:</strong> ${escapeHtml(original.title)} · ${escapeHtml(originalTime)} · ${escapeHtml(originalLinked)}</div>
+        </div>
+      `;
+    }
+    if (item?.isCustom) {
+      const live = liveUpdateForId(item.id);
+      if (!live) return "";
+      const localTime = friendlyTimeLabel(item.start, item.end, item.endNextDay) || item.timeLabel || "—";
+      const liveTime = friendlyTimeLabel(live.start, live.end, live.endNextDay) || "—";
+      const localLinked = (item.linkedCodes || []).join(", ") || "—";
+      const liveLinked = (live.linkedCodes || []).join(", ") || "—";
+      // Only show if something actually differs
+      if (item.title === live.title && localTime === liveTime && localLinked === liveLinked) return "";
+      return `
+        <div class="schedule-detail-compare live-compare">
+          <div class="schedule-detail-compare-row"><strong>Your edit:</strong> ${escapeHtml(item.title)} · ${escapeHtml(localTime)}${localLinked !== "—" ? ` · ${escapeHtml(localLinked)}` : ""}</div>
+          <div class="schedule-detail-compare-row"><strong>Live version:</strong> ${escapeHtml(live.title)} · ${escapeHtml(liveTime)}${liveLinked !== "—" ? ` · ${escapeHtml(liveLinked)}` : ""}</div>
+        </div>
+      `;
+    }
+    return "";
   }
 
   function scoreLinkableEntryOption(entry, query) {
@@ -5347,6 +5552,20 @@
                   ${scheduleData.days.map((day) => `<option value="${escapeHtml(day.date)}"${day.date === values.date ? " selected" : ""}>${escapeHtml(day.longLabel)}</option>`).join("")}
                 </select>`}
           </div>
+          ${!editingBaseItem ? `
+          <div class="schedule-editor-field">
+            <label>Type</label>
+            <div class="schedule-editor-kind-row">
+              <label class="schedule-editor-check">
+                <input type="radio" name="kind" value="event"${values.kind !== "open" ? " checked" : ""}>
+                <span>Event</span>
+              </label>
+              <label class="schedule-editor-check">
+                <input type="radio" name="kind" value="open"${values.kind === "open" ? " checked" : ""}>
+                <span>Open time</span>
+              </label>
+            </div>
+          </div>` : ""}
           <div class="schedule-editor-field full">
             <div class="schedule-editor-times">
               <div class="schedule-editor-field">
@@ -5478,6 +5697,7 @@
       const description = String(fd.get("description") || "").trim();
       const linkedCodes = sanitizeLinkedCodes(fd.get("linkedCodes") || "");
       const categories = sanitizeScheduleCategories(fd.getAll("categories"));
+      const kind = fd.get("kind") === "open" ? "open" : "event";
       if (!title || !date || !start) return;
       const editingItem = scheduleEditorState?.item || null;
       if (editingItem && !editingItem.isCustom && !editingItem.isLive) {
@@ -5496,7 +5716,7 @@
           title, date, start,
         }, id);
         customScheduleItems = customScheduleItems.filter((item) => item.id !== id);
-        customScheduleItems.push({ id, shareId, title, date, start, end, endNextDay, estimatedStart, estimatedEnd, description, linkedCodes, categories });
+        customScheduleItems.push({ id, shareId, title, date, start, end, endNextDay, estimatedStart, estimatedEnd, description, linkedCodes, categories, kind });
         persistCustomScheduleItems();
       }
       refreshScheduleData();
@@ -5548,7 +5768,7 @@
         </div>
         <div class="schedule-detail-actions">
           <button type="button" class="schedule-detail-btn star${isScheduleItemStarred(item.id) ? " active" : ""}" data-schedule-star="${escapeHtml(item.id)}">${isScheduleItemStarred(item.id) ? "★ Starred" : "☆ Star"}</button>
-          ${(item.isCustom || item.isEditedBase) ? '<button type="button" class="schedule-detail-btn" data-schedule-share>Share QR</button>' : ""}
+          ${(item.isCustom || item.isEditedBase || item.isLive) ? '<button type="button" class="schedule-detail-btn" data-schedule-share>Share QR</button>' : ""}
           <button type="button" class="schedule-detail-btn" data-schedule-edit>Edit</button>
           ${(isLiveAdmin && (item.isCustom || item.isEditedBase)) ? `<button type="button" class="schedule-detail-btn publish" data-schedule-publish>${isInLiveFeed ? "Update live" : "Publish to live"}</button>` : ""}
           ${(isLiveAdmin && isInLiveFeed) ? '<button type="button" class="schedule-detail-btn danger" data-schedule-remove-live>Remove from live</button>' : ""}
@@ -5623,6 +5843,8 @@
         description: item.description,
         linkedCodes: item.linkedCodes || [],
         categories: item.categories || [],
+        kind: item.kind === "open" ? "open" : "event",
+        ...(isWtfHoursItem(item) ? { wtfHours: true } : {}),
         sourceLabel: item.isEditedBase ? "Live update (edited)" : "Live update",
       };
     }
@@ -5728,6 +5950,7 @@
       description: incoming.description || (useExistingFallback ? String(existing?.description || "") : ""),
       linkedCodes: incoming.linkedCodes?.length ? [...incoming.linkedCodes] : (useExistingFallback ? sanitizeLinkedCodes(existing?.linkedCodes) : []),
       categories: incoming.categories?.length ? [...incoming.categories] : (useExistingFallback ? sanitizeScheduleCategories(existing?.categories) : []),
+      kind: incoming.kind === "open" ? "open" : (useExistingFallback ? (existing?.kind || "event") : "event"),
     };
   }
 
@@ -5747,6 +5970,7 @@
       description: incoming.description,
       linkedCodes: [...incoming.linkedCodes],
       categories: [...incoming.categories],
+      kind: incoming.kind === "open" ? "open" : "event",
     };
   }
 
@@ -5941,6 +6165,26 @@
       });
       return;
     }
+    if (shareModalState.mode === "pinned-live") {
+      const incoming = shareModalState.incoming;
+      const dateLabel = scheduleData.days.find((day) => day.date === incoming.date)?.longLabel || incoming.date || "Unknown day";
+      const timeLabel = friendlyTimeLabel(incoming.start, incoming.end, incoming.endNextDay) || incoming.start || "Unknown time";
+      const alreadyLive = liveScheduleUpdates.some((u) => u.action === "upsert" && String(u.id) === String(incoming.liveId));
+      shareBody.innerHTML = `
+        <div class="share-card">
+          <h3>Save live event</h3>
+          ${alreadyLive ? '<p class="share-copy">This event is already in your live feed. Saving it keeps a local copy so it shows offline too — live updates will still override it.</p>' : '<p class="share-copy">Save this live event to your schedule. If you later connect to the event Wi-Fi, any updates will override this saved copy automatically.</p>'}
+          ${sharePreviewHtml({ ...incoming, timeLabel })}
+          <div class="share-choice-actions">
+            <button type="button" class="share-btn" id="share-pinned-cancel">Cancel</button>
+            <button type="button" class="share-btn primary" id="share-pinned-save">Save to schedule</button>
+          </div>
+        </div>
+      `;
+      document.getElementById("share-pinned-cancel")?.addEventListener("click", closeShareModal);
+      document.getElementById("share-pinned-save")?.addEventListener("click", () => savePinnedLiveItem(incoming));
+      return;
+    }
     if (shareModalState.mode === "error") {
       shareBody.innerHTML = `
         <div class="share-card">
@@ -5995,9 +6239,42 @@
     }
   }
 
+  function savePinnedLiveItem(incoming) {
+    const id = incoming.liveId;
+    pinnedLiveItems = pinnedLiveItems.filter((item) => item.id !== id);
+    pinnedLiveItems.push({
+      id,
+      shareId: incoming.shareId,
+      title: incoming.title,
+      date: incoming.date,
+      start: incoming.start,
+      end: incoming.end,
+      endNextDay: incoming.endNextDay,
+      estimatedStart: incoming.estimatedStart,
+      estimatedEnd: incoming.estimatedEnd,
+      description: incoming.description,
+      linkedCodes: [...incoming.linkedCodes],
+      categories: [...incoming.categories],
+      kind: incoming.kind === "open" ? "open" : "event",
+      sourceLabel: "Live update",
+    });
+    persistPinnedLiveItems();
+    refreshScheduleData();
+    activeScheduleEventId = id;
+    setScheduleDate(incoming.date);
+    renderSchedule();
+    syncUiHistory();
+    closeShareModal();
+    showPlainMessage("Live event saved to schedule");
+  }
+
   function handleImportedQrText(rawValue) {
     try {
       const incoming = parseSharedEventPayload(rawValue);
+      if (incoming.isPinnedLive && incoming.liveId) {
+        openShareModal({ mode: "pinned-live", incoming });
+        return;
+      }
       const matched = importedEventMatch(incoming);
       if (matched) openShareModal({ mode: "resolve", incoming, matched });
       else openShareModal({ mode: "imported", incoming });
@@ -8443,6 +8720,8 @@
     window.setTimeout(() => {
       maybeAutoRefreshAppBundle();
     }, 900);
+    // If already in SU mode from a previous session, start the auth ping
+    if (isLiveAdmin) startLiveAuthPing();
     // Fetch live schedule updates from the Pi server (silently on first load)
     window.setTimeout(() => {
       fetchLiveUpdates(true);

@@ -715,6 +715,7 @@ const SCHEDULE_DATA = (() => {
     linkedCodes: ["PAN"],
     summaryLabel: "Daily 9 am-11 am · Pancakes",
     description: "Morning pancakes filled with love at The Pancake People.",
+    excludeCategories: ["Service"],
   });
   addSeries({
     id: "sps-burlesque",

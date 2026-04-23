@@ -8,13 +8,20 @@ power users can push live schedule additions/edits/deletions to connected client
 Usage:
     python3 pi_server.py [--port 8080] [--password secret]
 
-API — all via POST /api/updates, password in JSON body (no auth header needed):
+API — all via POST /api/updates:
+    { "action": "sync", "updates": [...] }
+        — version-gated full replacement; no auth required; only accepted if
+          the incoming _version entry is newer than the server's current version.
+          Any client that has a newer copy will call this automatically.
+
     { "auth": "<password>", "action": "upsert", "id": "...", ...eventFields }
         — add or replace an event in the live feed
     { "auth": "<password>", "action": "delete", "id": "..." }
         — add a tombstone that suppresses that ID on all clients
     { "auth": "<password>", "action": "remove", "id": "..." }
         — remove an entry from the live feed entirely (undo upsert or delete)
+    { "auth": "<password>", "action": "ping" }
+        — verify credentials without making changes
 
 Public:
     GET /schedule-updates.json  — served by the static file handler
@@ -22,6 +29,7 @@ Public:
 
 import argparse
 import json
+import time
 import threading
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 from pathlib import Path
@@ -29,6 +37,13 @@ from pathlib import Path
 UPDATES_FILE = "schedule-updates.json"
 _lock = threading.Lock()
 _password = "password"
+
+
+def _get_version(updates):
+    for u in updates:
+        if isinstance(u, dict) and u.get("action") == "_version":
+            return int(u.get("_version", 0))
+    return 0
 
 
 def _read_updates():
@@ -39,8 +54,11 @@ def _read_updates():
 
 
 def _write_updates(updates):
+    """Write updates, always stamping a fresh _version as the first entry."""
+    payload = [u for u in updates if not (isinstance(u, dict) and u.get("action") == "_version")]
+    payload = [{"action": "_version", "_version": int(time.time() * 1000)}] + payload
     Path(UPDATES_FILE).write_text(
-        json.dumps(updates, indent=2, ensure_ascii=False), encoding="utf-8"
+        json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8"
     )
 
 
@@ -59,27 +77,50 @@ class Handler(SimpleHTTPRequestHandler):
         if not isinstance(data, dict):
             self.send_error(400, "Expected JSON object")
             return
+
+        action = str(data.get("action", "upsert"))
+
+        # Sync — no auth required, version-gated only.
+        # Any client with a newer copy calls this automatically.
+        if action == "sync":
+            incoming = data.get("updates")
+            if not isinstance(incoming, list):
+                self.send_error(400, "Expected updates list")
+                return
+            with _lock:
+                current = _read_updates()
+                current_v = _get_version(current)
+                incoming_v = _get_version(incoming)
+                if incoming_v > current_v:
+                    _write_updates(incoming)
+                    self._json_response(200, b'{"ok":true,"accepted":true}')
+                    print(f"[sync] accepted v{incoming_v} (was v{current_v})")
+                else:
+                    self._json_response(200, b'{"ok":true,"accepted":false}')
+                    print(f"[sync] rejected v{incoming_v} (have v{current_v})")
+            return
+
+        # All other actions require auth.
         if data.get("auth") != _password:
             self._json_response(401, b'{"error":"Unauthorized"}')
             return
+
+        if action == "ping":
+            self._json_response(200, b'{"ok":true}')
+            return
+
         event_id = str(data.get("id", "")).strip()
         if not event_id:
             self.send_error(400, "Missing or empty id field")
             return
-        action = str(data.get("action", "upsert"))
-        if action == "ping":
-            self._json_response(200, b'{"ok":true}')
-            return
-        # Strip the auth field before storing
+
         entry = {k: v for k, v in data.items() if k != "auth"}
         with _lock:
             updates = _read_updates()
-            # Always remove existing entry with same id first
-            updates = [u for u in updates if str(u.get("id", "")) != event_id]
-            if action == "remove":
-                # "remove" just deletes from the file — don't append anything
-                pass
-            else:
+            updates = [u for u in updates if not (isinstance(u, dict) and (
+                u.get("action") == "_version" or str(u.get("id", "")) == event_id
+            ))]
+            if action != "remove":
                 updates.append(entry)
             _write_updates(updates)
         self._json_response(200, b'{"ok":true}')
