@@ -5525,7 +5525,7 @@
     }
     const existingLiveEntry = liveUpdateForId(item.id);
     const isInLiveFeed = Boolean(existingLiveEntry);
-    const canPublish = isLiveAdmin && (item.isCustom || item.isEditedBase) && !isInLiveFeed;
+
     scheduleDetail.innerHTML = `
       <div class="schedule-detail-head">
         <div>
@@ -5550,8 +5550,7 @@
           <button type="button" class="schedule-detail-btn star${isScheduleItemStarred(item.id) ? " active" : ""}" data-schedule-star="${escapeHtml(item.id)}">${isScheduleItemStarred(item.id) ? "★ Starred" : "☆ Star"}</button>
           ${(item.isCustom || item.isEditedBase) ? '<button type="button" class="schedule-detail-btn" data-schedule-share>Share QR</button>' : ""}
           <button type="button" class="schedule-detail-btn" data-schedule-edit>Edit</button>
-          ${canPublish ? '<button type="button" class="schedule-detail-btn publish" data-schedule-publish>Publish to live</button>' : ""}
-          ${(isLiveAdmin && isInLiveFeed) ? '<button type="button" class="schedule-detail-btn publish" data-schedule-publish-update>Update live</button>' : ""}
+          ${(isLiveAdmin && (item.isCustom || item.isEditedBase)) ? `<button type="button" class="schedule-detail-btn publish" data-schedule-publish>${isInLiveFeed ? "Update live" : "Publish to live"}</button>` : ""}
           ${(isLiveAdmin && isInLiveFeed) ? '<button type="button" class="schedule-detail-btn danger" data-schedule-remove-live>Remove from live</button>' : ""}
           ${item.isCustom ? '<button type="button" class="schedule-detail-btn danger" data-schedule-delete>Delete</button>' : ""}
           ${item.isEditedBase ? '<button type="button" class="schedule-detail-btn danger" data-schedule-revert>Revert</button>' : ""}
@@ -5629,12 +5628,6 @@
     }
 
     scheduleDetail.querySelector("[data-schedule-publish]")?.addEventListener("click", async () => {
-      const payload = buildPublishPayload();
-      if (!payload) return;
-      await publishLiveUpdate(payload);
-      renderScheduleDetail(scheduleOccurrenceById(item.id) || null);
-    });
-    scheduleDetail.querySelector("[data-schedule-publish-update]")?.addEventListener("click", async () => {
       const payload = buildPublishPayload();
       if (!payload) return;
       await publishLiveUpdate(payload);
