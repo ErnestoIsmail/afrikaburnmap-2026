@@ -538,6 +538,16 @@
   .detail-source a { color:#9edcff; text-decoration:none; }
   .detail-source a:hover { text-decoration:underline; }
   .detail-schedule-links { display:flex; flex-wrap:wrap; gap:6px; margin-top:6px; }
+  .detail-notes-box {
+    width:100%; min-height:88px; resize:vertical; box-sizing:border-box;
+    border:1px solid #4a4a4a; border-radius:6px; background:#151515; color:#e7e7e7;
+    padding:8px 9px; font:inherit; line-height:1.35;
+  }
+  .detail-notes-box:focus-visible {
+    outline:none; border-color:#777; box-shadow:0 0 0 2px rgba(255,255,255,0.08);
+  }
+  .detail-note-actions { display:flex; gap:6px; margin-top:7px; flex-wrap:wrap; }
+  .detail-note-status { margin-top:6px; font-size:11px; color:#9f9f9f; }
   .detail-schedule-link {
     appearance:none; background:#222; color:#ddd; border:1px solid #444;
     border-radius:5px; padding:4px 8px; font-size:11px; line-height:1.25;
@@ -973,6 +983,8 @@
   .schedule-item + .schedule-item { margin-top:8px; }
   .schedule-item.event-kind { border-color:rgba(255,61,138,0.28); }
   .schedule-item.open-kind { border-color:rgba(0,160,215,0.28); }
+  .schedule-item.open-kind.wtf-hours { border-color:rgba(0,210,200,0.35); }
+  .schedule-item.open-kind.wtf-hours.selected { border-color:rgba(0,210,200,0.6); }
   .schedule-item.burn-category {
     border-color:rgba(255,189,88,0.38);
     box-shadow:0 0 0 1px rgba(255,173,51,0.08);
@@ -1079,6 +1091,9 @@
   .schedule-detail-meta {
     display:flex; gap:6px; flex-wrap:wrap; align-items:center;
     margin-top:6px; font-size:11px; color:#aaa;
+  }
+  .schedule-source-label {
+    margin-left:auto; font-size:10px; color:#666; font-style:italic;
   }
   .schedule-detail-description {
     margin:10px 0 0; font-size:12px; line-height:1.45; color:#ddd;
@@ -1347,6 +1362,18 @@
   .schedule-timeline-card.open-kind {
     background:rgba(0,160,215,0.14);
     border-color:rgba(0,160,215,0.38);
+  }
+  .schedule-timeline-card.open-kind.wtf-hours {
+    background:rgba(0,210,200,0.10);
+    border-color:rgba(0,210,200,0.32);
+  }
+  .schedule-timeline-card.open-kind.wtf-hours .schedule-timeline-title {
+    color:rgba(0,230,220,0.85);
+  }
+  .schedule-timeline-section-divider {
+    position:absolute; left:0; right:0; height:0;
+    border-top:1px dashed rgba(0,210,200,0.25);
+    pointer-events:none;
   }
   .schedule-timeline-card.event-kind.starred {
     background:
@@ -1698,6 +1725,10 @@
               <input type="checkbox" id="schedule-filter-open" checked>
               <span>Open times</span>
             </label>
+            <label class="schedule-kind-filter">
+              <input type="checkbox" id="schedule-filter-hours">
+              <span>Operating hours</span>
+            </label>
           </div>
         </div>
         <div class="schedule-category-filters" id="schedule-category-filters" aria-label="Schedule categories"></div>
@@ -1769,8 +1800,8 @@
 <script>
 (() => {
   const data = DATA_INLINE;
-  const APP_VERSION = "2026.04.22.8";
-  const APP_CACHE_VERSION = "v50";
+  const APP_VERSION = "2026.04.23.1";
+  const APP_CACHE_VERSION = "v51";
   const projectDetails = typeof PROJECT_DETAILS !== "undefined" ? PROJECT_DETAILS : { byCode: {} };
   const EMPTY_SCHEDULE_DATA = { days: [], entries: [], byDate: {}, byLinkedCode: {}, series: [], seriesById: {}, seriesByLinkedCode: {} };
   const baseScheduleData = typeof SCHEDULE_DATA !== "undefined" ? SCHEDULE_DATA : EMPTY_SCHEDULE_DATA;
@@ -1781,6 +1812,7 @@
   const ABOUT_SEEN_STORAGE_KEY = "ab-about-seen";
   const VISITED_ENTRY_STORAGE_KEY = "ab-map-visited-entries";
   const STARRED_ENTRY_STORAGE_KEY = "ab-map-starred-entries";
+  const ENTRY_NOTE_STORAGE_KEY = "ab-map-entry-notes";
   const SCHEDULE_CATEGORY_OPTIONS = [
     { key: "Burn", label: "Burn", shortLabel: "Burn" },
     { key: "Music", label: "Music", shortLabel: "Music" },
@@ -1833,6 +1865,7 @@
   const scheduleCategoryFilters = document.getElementById("schedule-category-filters");
   const scheduleFilterEvents = document.getElementById("schedule-filter-events");
   const scheduleFilterOpen = document.getElementById("schedule-filter-open");
+  const scheduleFilterHours = document.getElementById("schedule-filter-hours");
   const detailsPanel = document.getElementById("details-panel");
   const detailsCard = detailsPanel.querySelector(".details-card");
   const detailsGrip = document.getElementById("details-grip");
@@ -2027,6 +2060,7 @@
   let customScheduleItems = safeReadStorageJson(SCHEDULE_CUSTOM_STORAGE_KEY, []);
   let starredEntryKeys = new Set(safeReadStorageJson(STARRED_ENTRY_STORAGE_KEY, []));
   let visitedEntryKeys = new Set(safeReadStorageJson(VISITED_ENTRY_STORAGE_KEY, []));
+  let entryNotesByKey = safeReadStorageJson(ENTRY_NOTE_STORAGE_KEY, {});
   scheduleData = buildRuntimeScheduleData(baseScheduleData, customScheduleItems);
 
   function persistStarredScheduleIds() {
@@ -2043,6 +2077,10 @@
 
   function persistStarredEntryKeys() {
     safeWriteStorageJson(STARRED_ENTRY_STORAGE_KEY, [...starredEntryKeys]);
+  }
+
+  function persistEntryNotes() {
+    safeWriteStorageJson(ENTRY_NOTE_STORAGE_KEY, entryNotesByKey);
   }
 
   function isScheduleItemStarred(itemId) {
@@ -2076,7 +2114,7 @@
   }
 
   function isTrackableStarEntry(entryLike) {
-    return ["theme", "art"].includes(String(entryLike?.section || "").toLowerCase());
+    return ["theme", "art", "support"].includes(String(entryLike?.section || "").toLowerCase());
   }
 
   function entryCenterLogicalPoint(entryLike) {
@@ -2110,12 +2148,21 @@
     return geoDistanceMeters(currentUserGeoPoint(), entryCenterGeoPoint(entryLike));
   }
 
+  function visitThresholdMetersForEntry(entryLike) {
+    const section = String(entryLike?.section || "").toLowerCase();
+    return section === "theme" ? 100 : 50;
+  }
+
+  function visitThresholdLabelForEntry(entryLike) {
+    return `Move within about ${visitThresholdMetersForEntry(entryLike)}m to mark this item`;
+  }
+
   function canMarkVisitedForEntry(entryLike) {
     if (!isTrackableVisitEntry(entryLike)) return false;
     const key = visitKeyForEntry(entryLike);
     if (visitedEntryKeys.has(key)) return true;
     const distance = visitDistanceMetersForEntry(entryLike);
-    return Number.isFinite(distance) && distance <= 50;
+    return Number.isFinite(distance) && distance <= visitThresholdMetersForEntry(entryLike);
   }
 
   function setEntryVisited(entryLike, visited) {
@@ -2137,6 +2184,21 @@
     persistStarredEntryKeys();
     refreshVisitedMarkers();
     syncStarControls();
+    return true;
+  }
+
+  function noteForEntry(entryLike) {
+    const key = visitKeyForEntry(entryLike);
+    return key ? String(entryNotesByKey[key] || "") : "";
+  }
+
+  function setEntryNote(entryLike, note) {
+    const key = visitKeyForEntry(entryLike);
+    if (!key) return false;
+    const clean = String(note || "").trim();
+    if (clean) entryNotesByKey[key] = clean;
+    else delete entryNotesByKey[key];
+    persistEntryNotes();
     return true;
   }
 
@@ -2523,21 +2585,36 @@
   let currentRaster = null;
   let cachedGeoAffine = null;
 
+  function detailGridMatchesEntry(detailEntry, entryLike) {
+    const grid = String(entryLike?.grid || "").trim().toLowerCase();
+    if (!grid) return false;
+    const detailText = String(detailEntry?.additionalDetails || "").toLowerCase();
+    return detailText.includes(`map grid: ${grid}`);
+  }
+
+  function oldWtfForMapEntry(entryLike) {
+    const match = oldWtfDetails.byCode?.[entryLike?.code] || null;
+    if (!match) return null;
+    const entryNameKey = normalizeLinkName(entryLike?.name || "");
+    const matchNameKey = normalizeLinkName(match.title || match.name || "");
+    if (entryNameKey && matchNameKey && entryNameKey !== matchNameKey) return null;
+    return match;
+  }
+
   function projectDetailForMapEntry(entryLike) {
     const nameKey = normalizeLinkName(entryLike?.name || "");
     if (nameKey && Array.isArray(projectDetails.entries)) {
-      const exactMatch = projectDetails.entries.find((entry) => {
-        if (normalizeLinkName(entry.title) !== nameKey) return false;
-        if (!entryLike?.code || !entry.code) return true;
-        return entry.code === entryLike.code;
-      });
-      if (exactMatch) return exactMatch;
+      const exactNameMatches = projectDetails.entries.filter((entry) => normalizeLinkName(entry.title || entry.name || "") === nameKey);
+      if (exactNameMatches.length === 1) return exactNameMatches[0];
+      if (exactNameMatches.length > 1) {
+        return exactNameMatches.find((entry) => detailGridMatchesEntry(entry, entryLike)) || exactNameMatches[0];
+      }
     }
     return projectDetails.byCode?.[entryLike?.code] || null;
   }
   const curatedDetailTagSets = [
-    ["ABnB", ["chill"]],
-    ["Garden of Weeden", ["chill", "music", "dance"]],
+    ["ABnB", ["chill", "lounge"]],
+    ["Garden of Weeden", ["chill", "lounge", "music", "dance"]],
     ["Greasemonkeys", ["workshop"]],
     ["HeartSpace", ["chill", "workshop", "wellness"]],
     ["Radio Free Tankwa", ["music", "radio", "info"]],
@@ -2546,7 +2623,7 @@
     ["Department of Mutant Vehicles", ["mutant-vehicle", "info", "volunteer"]],
     ["Volunteers", ["volunteer", "info"]],
     ["Medics", ["medical", "safety"]],
-    ["Sanctuary", ["chill", "wellness", "harm-reduction", "safety"]],
+    ["Sanctuary", ["wellness", "harm-reduction", "safety"]],
     ["Rangers", ["safety", "info"]],
     ["Lost & Found", ["lost-and-found", "info"]],
     ["Ice", ["ice"]],
@@ -2574,6 +2651,7 @@
     "drink": ["drinks", "beverages", "bar"],
     "game": ["games"],
     "chill": ["relax", "relaxing", "lounge", "quiet space", "safe haven"],
+    "lounge": ["lounging", "daytime lounge", "sunset lounge", "sky lounge", "safe haven"],
   };
   const derivedDetailTagRules = [
     { tag: "music", regex: /\b(music|tunes|dj|djs|jamming|jam\b|sound system|stage|beats?)\b/i },
@@ -2587,6 +2665,7 @@
     { tag: "meditation", regex: /\b(meditation|meditations)\b/i },
     { tag: "healing", regex: /\b(heal|healing)\b/i },
     { tag: "chill", regex: /\b(chill|lounge|safe haven|quiet|cosy|cozy|relax|relaxing|break from overwhelm)\b/i },
+    { tag: "lounge", regex: /\b(lounge|lounging)\b/i },
     { tag: "food", regex: /\b(food|fries|pancake|breakfast|boerewors|snack|snacks|cereal|munchies|hot food)\b/i },
     { tag: "drink", regex: /\b(drink|drinks|cocktail|cocktails|beer|juice|elixir|elixirs|hydrating|beverage|beverages)\b/i },
     { tag: "coffee", regex: /\bcoffee\b/i },
@@ -2613,7 +2692,7 @@
 
   function detailTagInfoForMapEntry(entryLike) {
     const current = projectDetailForMapEntry(entryLike);
-    const oldWtf = oldWtfDetails.byCode?.[entryLike?.code] || null;
+    const oldWtf = oldWtfForMapEntry(entryLike);
     const infos = [];
     const seen = new Set();
     const push = (label, aliases = []) => {
@@ -2974,6 +3053,7 @@
     return acc;
   }, {});
   const linkedMapEntriesByEntry = new WeakMap();
+  const explicitDetailLinkCandidatesByEntry = new WeakMap();
   const mapEntriesByCode = new Map();
   const mapEntriesByNormalizedName = new Map();
   const detailLinkEntryByAlias = new Map();
@@ -3071,6 +3151,12 @@
         rememberDetailLinkAlias("Volunteer Booth", entry);
         rememberDetailLinkAlias("The Volunteer Booth", entry);
       }
+      if (entry.code === "MHV") {
+        rememberDetailLinkAlias("Mad Hatter", entry);
+        rememberDetailLinkAlias("Mad Hatters", entry);
+        rememberDetailLinkAlias("Mad Hatter's Village", entry);
+        rememberDetailLinkAlias("Mad Hatter Village", entry);
+      }
     }
   }
 
@@ -3088,6 +3174,21 @@
       linkedMapEntriesByEntry.set(sourceEntry, list);
     }
     if (!list.includes(targetEntry)) list.push(targetEntry);
+  }
+
+  function addExplicitDetailLinkCandidate(sourceEntry, alias, targetEntry) {
+    if (!sourceEntry || !targetEntry) return;
+    if (sameMapEntryIdentity(sourceEntry, targetEntry)) return;
+    const cleanAlias = String(alias || "").trim();
+    if (!cleanAlias) return;
+    let list = explicitDetailLinkCandidatesByEntry.get(sourceEntry);
+    if (!list) {
+      list = [];
+      explicitDetailLinkCandidatesByEntry.set(sourceEntry, list);
+    }
+    if (list.some((candidate) => candidate.alias === cleanAlias && sameMapEntryIdentity(candidate.entry, targetEntry))) return;
+    list.push({ alias: cleanAlias, entry: targetEntry });
+    list.sort((a, b) => b.alias.length - a.alias.localeCompare(b.alias));
   }
 
   function resolveMapEntries(ref) {
@@ -3129,6 +3230,9 @@
       for (const targetEntry of resolveMapEntries(ref)) {
         addLinkedEntry(sourceEntry, targetEntry);
         addLinkedEntry(targetEntry, sourceEntry);
+        for (const alias of [ref?.name, ref?.title, ref?.label]) {
+          addExplicitDetailLinkCandidate(sourceEntry, alias, targetEntry);
+        }
       }
     }
   }
@@ -3147,7 +3251,7 @@
     if (!targetEl) return;
     highlightIndexForEntry(entry);
     openDetails(targetEl, detailsMode === "full" ? "full" : "fit");
-    frameHits([targetEl]);
+    frameJumpTarget(targetEl);
     syncUiHistory();
   }
 
@@ -3160,6 +3264,7 @@
   let activeScheduleView = "timeline";
   let scheduleShowEvents = true;
   let scheduleShowOpen = true;
+  let scheduleShowHours = false;
   let scheduleStarredFilterEnabled = true;
   let scheduleTimelineNeedsMorningAnchor = true;
   let scheduleNowTimer = null;
@@ -3796,14 +3901,22 @@
     }
     scheduleFilterEvents.checked = scheduleShowEvents;
     scheduleFilterOpen.checked = scheduleShowOpen;
+    scheduleFilterHours.checked = scheduleShowHours;
     renderScheduleCategoryFilters();
   }
 
+  const WTF_HOURS_SOURCE = "WTF Guide 2026 — operating hours";
+  function isWtfHoursItem(item) {
+    const label = String(item?.sourceLabel || "").trim();
+    return label === "WTF Guide 2026 — operating hours" || label === "WTF Guide 2026 — open hours";
+  }
   function scheduleItemsForCurrentFilters(items) {
     return items.filter((item) => {
+      const isWtfHours = isWtfHoursItem(item);
       const kindVisible = (
         (item.kind === "event" && scheduleShowEvents) ||
-        (item.kind === "open" && scheduleShowOpen)
+        (item.kind === "open" && !isWtfHours && scheduleShowOpen) ||
+        (item.kind === "open" && isWtfHours && scheduleShowHours)
       );
       if (!kindVisible) return false;
       if (!scheduleItemMatchesCategoryFilters(item)) return false;
@@ -3819,19 +3932,13 @@
       }
       return "Enable one or more category filters to see schedule entries for this burn day.";
     }
-    if (!scheduleShowEvents && !scheduleShowOpen) {
-      return "Enable Events or Open times to see schedule entries for this burn day.";
+    if (!scheduleShowEvents && !scheduleShowOpen && !scheduleShowHours) {
+      return "Enable Events, Open times, or Operating hours to see schedule entries for this burn day.";
     }
     if (scheduleStarredFilterEnabled) {
       return "No schedule items match the current tag filters and starred selection for this burn day.";
     }
-    if (!scheduleShowEvents) {
-      return "No open times have been linked for this burn day yet.";
-    }
-    if (!scheduleShowOpen) {
-      return "No events have been linked for this burn day yet.";
-    }
-    return "No timed events or openings have been linked for this burn day yet.";
+    return "No items match the active filters for this burn day.";
   }
 
   function renderScheduleAgenda(items) {
@@ -3840,7 +3947,7 @@
       return;
     }
     scheduleContent.innerHTML = items.map((item) => `
-      <article class="schedule-item ${escapeHtml(item.kind)}-kind${scheduleItemHasBurnCategory(item) ? " burn-category" : ""}${item.id === activeScheduleEventId ? " selected" : ""}${isScheduleItemStarred(item.id) ? " starred" : ""}${scheduleItemStartedNow(item) ? " started-now" : ""}" data-schedule-id="${escapeHtml(item.id)}">
+      <article class="schedule-item ${escapeHtml(item.kind)}-kind${scheduleItemHasBurnCategory(item) ? " burn-category" : ""}${item.id === activeScheduleEventId ? " selected" : ""}${isScheduleItemStarred(item.id) ? " starred" : ""}${scheduleItemStartedNow(item) ? " started-now" : ""}${isWtfHoursItem(item) ? " wtf-hours" : ""}" data-schedule-id="${escapeHtml(item.id)}" data-source="${escapeHtml(item.sourceLabel || '')}">
         <div class="schedule-item-row">
           <button type="button" class="schedule-item-summary" data-schedule-toggle="${escapeHtml(item.id)}">
             <span class="schedule-item-time">${escapeHtml(item.timeLabel)}</span>
@@ -3892,12 +3999,15 @@
     const laneHeight = timelineLanePx();
     const labelStep = timelineLabelStepHours();
     const eventItems = records.filter((record) => record.item.kind === "event");
-    const openItems = records.filter((record) => record.item.kind === "open");
+    const curatedOpenItems = records.filter((record) => record.item.kind === "open" && !isWtfHoursItem(record.item));
+    const wtfOpenItems = records.filter((record) => record.item.kind === "open" && isWtfHoursItem(record.item));
     const eventLayout = computeTimelineLayout(eventItems);
-    const openLayout = computeTimelineLayout(openItems);
+    const curatedOpenLayout = computeTimelineLayout(curatedOpenItems);
+    const wtfOpenLayout = computeTimelineLayout(wtfOpenItems);
     const eventLaneCount = eventLayout.items.length ? eventLayout.laneCount : 0;
-    const openLaneCount = openLayout.items.length ? openLayout.laneCount : 0;
-    const totalHeight = Math.max(1, eventLaneCount + openLaneCount) * laneHeight;
+    const curatedOpenLaneCount = curatedOpenLayout.items.length ? curatedOpenLayout.laneCount : 0;
+    const wtfOpenLaneCount = wtfOpenLayout.items.length ? wtfOpenLayout.laneCount : 0;
+    const totalHeight = Math.max(1, eventLaneCount + curatedOpenLaneCount + wtfOpenLaneCount) * laneHeight;
     const nowInfo = currentScheduleNowInfo();
     const sunMarkers = scheduleSunMarkers(activeScheduleDate);
     const nowLeft = nowInfo
@@ -3928,11 +4038,16 @@
             ${Array.from({ length: ((TIMELINE_END_MIN - TIMELINE_START_MIN) / 60) + 1 }, (_, i) => `
               <div class="schedule-timeline-vline" style="left:${Math.round(i * 60 * pxPerMinute)}px"></div>
             `).join("")}
-            ${Array.from({ length: Math.max(1, eventLaneCount + openLaneCount) + 1 }, (_, i) => `
+            ${Array.from({ length: Math.max(1, eventLaneCount + curatedOpenLaneCount + wtfOpenLaneCount) + 1 }, (_, i) => `
               <div class="schedule-timeline-hline" style="top:${Math.round(i * laneHeight)}px"></div>
             `).join("")}
+            ${(curatedOpenLaneCount > 0 && wtfOpenLaneCount > 0) ? `<div class="schedule-timeline-section-divider" style="top:${Math.round((eventLaneCount + curatedOpenLaneCount) * laneHeight)}px"></div>` : ""}
             ${nowInfo ? `<div class="schedule-timeline-now-line" style="left:${nowLeft}px"></div>` : ""}
-            ${[...eventLayout.items, ...openLayout.items.map((record) => ({ ...record, lane: record.lane + eventLaneCount }))].map((record) => {
+            ${[
+              ...eventLayout.items,
+              ...curatedOpenLayout.items.map((record) => ({ ...record, lane: record.lane + eventLaneCount })),
+              ...wtfOpenLayout.items.map((record) => ({ ...record, lane: record.lane + eventLaneCount + curatedOpenLaneCount, isWtfHours: true })),
+            ].map((record) => {
               const top = Math.round(record.lane * laneHeight + 1);
               const height = Math.max(18, Math.round(laneHeight - 2));
               const left = Math.round((record.start - TIMELINE_START_MIN) * pxPerMinute + 1);
@@ -3944,8 +4059,9 @@
               const starred = isScheduleItemStarred(record.item.id) ? " starred" : "";
               const startedNow = scheduleItemStartedNow(record.item) ? " started-now" : "";
               const personal = record.item.isCustom ? " personal" : "";
+              const wtfHours = record.isWtfHours ? " wtf-hours" : "";
               return `
-                <button type="button" class="schedule-timeline-card ${escapeHtml(record.item.kind)}-kind${burnCategory}${selected}${openEnded}${uncertainStart}${starred}${startedNow}${personal}" data-schedule-toggle="${escapeHtml(record.item.id)}" data-schedule-id="${escapeHtml(record.item.id)}" style="top:${top}px; left:${left}px; width:${width}px; height:${height}px;">
+                <button type="button" class="schedule-timeline-card ${escapeHtml(record.item.kind)}-kind${burnCategory}${selected}${openEnded}${uncertainStart}${starred}${startedNow}${personal}${wtfHours}" data-schedule-toggle="${escapeHtml(record.item.id)}" data-schedule-id="${escapeHtml(record.item.id)}" data-source="${escapeHtml(record.item.sourceLabel || '')}" style="top:${top}px; left:${left}px; width:${width}px; height:${height}px;">
                   <div class="schedule-timeline-title">${escapeHtml(record.item.title)}</div>
                 </button>
               `;
@@ -4219,6 +4335,7 @@
             ${item.isCustom ? '<span>Personal</span>' : ""}
             ${item.linkedCodes.map((code) => `<span>${escapeHtml(code)}</span>`).join("")}
             ${scheduleCategoryHtml(item)}
+            ${item.sourceLabel ? `<span class="schedule-source-label" data-source="${escapeHtml(item.sourceLabel)}">${escapeHtml(item.sourceLabel)}</span>` : ""}
           </div>
         </div>
         <div class="schedule-detail-actions">
@@ -4399,6 +4516,11 @@
     renderSchedule();
     scrollScheduleSelectionIntoView();
   });
+  scheduleFilterHours.addEventListener("change", () => {
+    scheduleShowHours = scheduleFilterHours.checked;
+    renderSchedule();
+    scrollScheduleSelectionIntoView();
+  });
   scheduleContent.addEventListener("wheel", (ev) => {
     if (activeScheduleView !== "timeline" || !scheduleBackdrop.classList.contains("open")) return;
     if (!ev.ctrlKey && !ev.metaKey) return;
@@ -4523,7 +4645,14 @@
             }
             refreshHighlights([target]);
             showTip(ev);
-            openDetails(target, "half");
+            if (!isMobileDetails() && (ev.ctrlKey || ev.metaKey)) {
+              ensureCurrentUiParentHistoryState();
+              jumpToLinkedEntry(entry);
+              ev.stopPropagation();
+              return;
+            } else {
+              openDetails(target, "half");
+            }
             syncUiHistory();
             ev.stopPropagation();
           });
@@ -4600,7 +4729,7 @@
       ? `Remove ${isTrackableVisitEntry(entry) && String(entry.section).toLowerCase() === "art" ? "Seen" : "Visited"}`
       : canMark
         ? `Mark as ${String(entry.section || "").toLowerCase() === "art" ? "Seen" : "Visited"}`
-        : "Move within about 50m to mark this item";
+        : visitThresholdLabelForEntry(entry);
   }
 
   function syncStarControls() {
@@ -4874,11 +5003,20 @@
   function linkifyDetailText(text, sourceEntry, linkState) {
     const raw = String(text || "");
     if (!raw) return "";
+    const explicitCandidates = sourceEntry ? (explicitDetailLinkCandidatesByEntry.get(sourceEntry) || []) : [];
     let html = "";
     let cursor = 0;
     while (cursor < raw.length) {
       let matched = null;
+      for (const candidate of explicitCandidates) {
+        if (sameMapEntryIdentity(sourceEntry, candidate.entry)) continue;
+        if (detailLinkMatchesAt(raw, cursor, candidate.alias)) {
+          matched = candidate;
+          break;
+        }
+      }
       for (const candidate of detailLinkCandidates) {
+        if (matched) break;
         if (sameMapEntryIdentity(sourceEntry, candidate.entry)) continue;
         if (detailLinkMatchesAt(raw, cursor, candidate.alias)) {
           matched = candidate;
@@ -4915,7 +5053,7 @@
     `;
   }
   function detailScheduleSection(mapEntry) {
-    const linkedSeries = scheduleSeriesForMapEntry(mapEntry);
+    const linkedSeries = scheduleSeriesForMapEntry(mapEntry).filter((item) => !isWtfHoursItem(item));
     if (!linkedSeries.length) return "";
     const buttons = linkedSeries.map((item) => `
       <button type="button" class="detail-schedule-link" data-schedule-series="${escapeHtml(item.id)}">
@@ -4926,6 +5064,22 @@
       <section class="detail-section">
         <div class="detail-label">Schedule</div>
         <div class="detail-schedule-links">${buttons}</div>
+      </section>
+    `;
+  }
+  function detailNotesSection(entryLike) {
+    const key = visitKeyForEntry(entryLike);
+    if (!key) return "";
+    const value = noteForEntry(entryLike);
+    return `
+      <section class="detail-section">
+        <div class="detail-label">Your notes</div>
+        <textarea class="detail-notes-box" data-detail-note="${escapeHtml(key)}" placeholder="Add your own notes for this item...">${escapeHtml(value)}</textarea>
+        <div class="detail-note-actions">
+          <button type="button" class="detail-schedule-link" data-detail-note-save="${escapeHtml(key)}">Save note</button>
+          <button type="button" class="detail-schedule-link" data-detail-note-clear="${escapeHtml(key)}">Clear</button>
+        </div>
+        <div class="detail-note-status" data-detail-note-status="${escapeHtml(key)}">${value ? "Saved on this device." : "Saved locally on this device."}</div>
       </section>
     `;
   }
@@ -4972,10 +5126,16 @@
   function detailFor(el) {
     const current = projectDetailForMapEntry({
       code: el.dataset.code,
+      grid: el.dataset.grid,
       name: el.dataset.name,
       section: el.dataset.section,
     });
-    const oldWtf = oldWtfDetails.byCode?.[el.dataset.code] || null;
+    const oldWtf = oldWtfForMapEntry({
+      code: el.dataset.code,
+      grid: el.dataset.grid,
+      name: el.dataset.name,
+      section: el.dataset.section,
+    });
     if (!current && !oldWtf) return null;
     if (!current) {
       return {
@@ -5240,8 +5400,11 @@
         <span>Star</span>
       </label>
     ` : "";
+    const visitControlTitle = isVisited
+      ? `Remove ${visitLabel}`
+      : (canMarkVisited ? `Mark as ${visitLabel}` : visitThresholdLabelForEntry(mapEntry || { section }));
     const visitControlHtml = isTrackableVisitEntry(mapEntry || { section }) ? `
-      <label class="details-visit-toggle${canMarkVisited || isVisited ? "" : " locked"}" title="${escapeHtml(isVisited ? `Remove ${visitLabel}` : (canMarkVisited ? `Mark as ${visitLabel}` : "Move within about 50m to mark this item"))}">
+      <label class="details-visit-toggle${canMarkVisited || isVisited ? "" : " locked"}" title="${escapeHtml(visitControlTitle)}">
         <input type="checkbox" data-map-visit-toggle="${escapeHtml(visitKey)}"${isVisited ? " checked" : ""}${canMarkVisited || isVisited ? "" : " disabled"}>
         <span>${escapeHtml(visitLabel)}</span>
       </label>
@@ -5257,11 +5420,34 @@
       ${sourceHtml}
       ${scheduleSectionHtml}
       ${tagsSectionHtml}
+      ${detailNotesSection(detailLinkSourceEntry)}
     ` : `
       <p class="details-empty">No ${escapeHtml(sourceTag)} details have been linked for this item yet.</p>
       ${scheduleSectionHtml}
       ${tagsSectionHtml}
+      ${detailNotesSection(detailLinkSourceEntry)}
     `;
+    for (const saveButton of detailsBody.querySelectorAll("[data-detail-note-save]")) {
+      saveButton.addEventListener("click", () => {
+        const key = saveButton.dataset.detailNoteSave;
+        const textarea = detailsBody.querySelector(`[data-detail-note="${CSS.escape(key)}"]`);
+        const status = detailsBody.querySelector(`[data-detail-note-status="${CSS.escape(key)}"]`);
+        if (!textarea) return;
+        setEntryNote(detailLinkSourceEntry, textarea.value);
+        if (status) status.textContent = textarea.value.trim() ? "Saved on this device." : "Note cleared.";
+      });
+    }
+    for (const clearButton of detailsBody.querySelectorAll("[data-detail-note-clear]")) {
+      clearButton.addEventListener("click", () => {
+        const key = clearButton.dataset.detailNoteClear;
+        const textarea = detailsBody.querySelector(`[data-detail-note="${CSS.escape(key)}"]`);
+        const status = detailsBody.querySelector(`[data-detail-note-status="${CSS.escape(key)}"]`);
+        if (!textarea) return;
+        textarea.value = "";
+        setEntryNote(detailLinkSourceEntry, "");
+        if (status) status.textContent = "Note cleared.";
+      });
+    }
     const detailsActions = detailsPanel.querySelector(".details-actions");
     if (detailsActions) {
       const existingStarToggle = detailsActions.querySelector(".details-star-toggle");
@@ -5605,6 +5791,16 @@
   }
 
   const USER_LOCATION_FRAME_SCALE = 3.5;
+  const DESKTOP_JUMP_RELATIVE_ZOOM = 3;
+  const MOBILE_JUMP_RELATIVE_ZOOM = 5;
+
+  function jumpRelativeZoom() {
+    return isMobileDetails() ? MOBILE_JUMP_RELATIVE_ZOOM : DESKTOP_JUMP_RELATIVE_ZOOM;
+  }
+
+  function frameJumpTarget(targetEl) {
+    frameHits([targetEl], { relativeZoom: jumpRelativeZoom() });
+  }
 
   function maybeFrameInitialGps(logicalPoint) {
     if (initialGpsFrameDone || !allowInitialGpsFrame) return;
@@ -6386,7 +6582,7 @@
         } else {
           const target = result.el;
           openDetails(target, isMobileDetails() ? "half" : "fit");
-          frameHits([target]);
+          frameJumpTarget(target);
         }
         syncUiHistory();
       });
@@ -6444,14 +6640,14 @@
     syncSearchUi();
     if (qs && hits.length === 1) {
       openDetails(hits[0], isMobileDetails() ? "half" : "fit");
-      frameHits(hits);
+      frameJumpTarget(hits[0]);
     } else if (hits.length >= 1 && hits.length <= 12) {
       // If exactly one hit, fly to it. If a few hits, frame them.
       frameHits(hits);
     }
   }
 
-  function frameHits(hits) {
+  function frameHits(hits, options = {}) {
     // Compute bounding box of hit hotspots in natural coords
     let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
     for (const el of hits) {
@@ -6469,7 +6665,12 @@
     const targetScale = Math.min(visibleW / rw, visibleH / rh);
     const minS = fitScale();
     const maxFrameScale = singleHit ? minS * 5 : MAX_SCALE;
-    const ns = Math.max(minS, Math.min(maxFrameScale, targetScale));
+    const requestedSingleHitScale = singleHit && Number.isFinite(options.relativeZoom)
+      ? minS * options.relativeZoom
+      : null;
+    const ns = requestedSingleHitScale != null
+      ? Math.max(minS, Math.min(maxFrameScale, requestedSingleHitScale))
+      : Math.max(minS, Math.min(maxFrameScale, targetScale));
     scl = ns;
     // Center the region
     const cx = (minX + maxX) / 2, cy = (minY + maxY) / 2;
