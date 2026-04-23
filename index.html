@@ -851,7 +851,7 @@
   .schedule-day-list::-webkit-scrollbar { display:none; }
   .schedule-day {
     appearance:none; background:#1c1c1c; color:#cfcfcf; border:1px solid #333;
-    border-radius:999px; padding:4px 8px; font-size:10.5px; line-height:1.15;
+    border-radius:999px; padding:5px 9px; font-size:11px; line-height:1.15;
     white-space:nowrap; cursor:pointer;
   }
   .schedule-day:hover,
@@ -1724,7 +1724,7 @@
       max-height:min(34vh, 270px);
     }
     .schedule-day-list { gap:3px; padding-top:7px; }
-    .schedule-day { padding:3px 6.5px; font-size:9.5px; }
+    .schedule-day { padding:4px 7.5px; font-size:10px; }
     .schedule-view-row {
       gap:8px;
       align-items:flex-start;
@@ -2184,18 +2184,95 @@
       .replace(/\s+/g, " ");
   }
 
-  function eventLooksSimilar(existing, incoming) {
-    if (!existing || !incoming) return false;
-    const sameDate = String(existing.date || "") === String(incoming.date || "");
-    const sameStart = String(existing.start || "") === String(incoming.start || "");
-    const existingTitle = normalizeEventText(existing.title);
-    const incomingTitle = normalizeEventText(incoming.title);
-    const sameTitle = existingTitle && incomingTitle && (
-      existingTitle === incomingTitle
-      || existingTitle.includes(incomingTitle)
-      || incomingTitle.includes(existingTitle)
-    );
-    return (sameDate && sameStart && sameTitle) || (sameDate && sameTitle);
+  function eventTimeMinutes(value) {
+    const match = String(value || "").trim().match(/^(\d{2}):(\d{2})$/);
+    if (!match) return null;
+    return Number(match[1]) * 60 + Number(match[2]);
+  }
+
+  function eventDurationMinutes(item) {
+    const start = eventTimeMinutes(item?.start);
+    const end = eventTimeMinutes(item?.end);
+    if (!Number.isFinite(start) || !Number.isFinite(end)) return null;
+    const wraps = Boolean(item?.endNextDay) || end <= start;
+    return (wraps ? end + 24 * 60 : end) - start;
+  }
+
+  function titleSimilarityScore(existingTitleRaw, incomingTitleRaw) {
+    const existingTitle = normalizeEventText(existingTitleRaw);
+    const incomingTitle = normalizeEventText(incomingTitleRaw);
+    if (!existingTitle || !incomingTitle) return 0;
+    if (existingTitle === incomingTitle) return 1;
+    if (existingTitle.includes(incomingTitle) || incomingTitle.includes(existingTitle)) return 0.92;
+    const existingTokens = new Set(existingTitle.split(/[^a-z0-9]+/).filter(Boolean));
+    const incomingTokens = new Set(incomingTitle.split(/[^a-z0-9]+/).filter(Boolean));
+    if (!existingTokens.size || !incomingTokens.size) return 0;
+    let shared = 0;
+    for (const token of existingTokens) {
+      if (incomingTokens.has(token)) shared += 1;
+    }
+    return shared / Math.max(existingTokens.size, incomingTokens.size);
+  }
+
+  function timeProximityScore(existing, incoming) {
+    const existingStart = eventTimeMinutes(existing?.start);
+    const incomingStart = eventTimeMinutes(incoming?.start);
+    if (!Number.isFinite(existingStart) || !Number.isFinite(incomingStart)) return 0;
+    const startDelta = Math.abs(existingStart - incomingStart);
+    let score = 0;
+    if (startDelta === 0) score = 1;
+    else if (startDelta <= 15) score = 0.92;
+    else if (startDelta <= 30) score = 0.8;
+    else if (startDelta <= 60) score = 0.58;
+    else if (startDelta <= 120) score = 0.32;
+    const existingDuration = eventDurationMinutes(existing);
+    const incomingDuration = eventDurationMinutes(incoming);
+    if (Number.isFinite(existingDuration) && Number.isFinite(incomingDuration)) {
+      const durationDelta = Math.abs(existingDuration - incomingDuration);
+      if (durationDelta <= 15) score += 0.12;
+      else if (durationDelta <= 30) score += 0.08;
+      else if (durationDelta <= 60) score += 0.04;
+    }
+    return Math.min(1, score);
+  }
+
+  function linkedCodeProximityScore(existing, incoming) {
+    const existingCodes = new Set(sanitizeLinkedCodes(existing?.linkedCodes));
+    const incomingCodes = new Set(sanitizeLinkedCodes(incoming?.linkedCodes));
+    if (!existingCodes.size || !incomingCodes.size) return 0;
+    let overlap = 0;
+    for (const code of existingCodes) {
+      if (incomingCodes.has(code)) overlap += 1;
+    }
+    return overlap / Math.max(existingCodes.size, incomingCodes.size);
+  }
+
+  function duplicateMatchScore(existing, incoming) {
+    if (!existing || !incoming) return null;
+    if (String(existing.date || "") !== String(incoming.date || "")) return null;
+    const titleScore = titleSimilarityScore(existing.title, incoming.title);
+    const timeScore = timeProximityScore(existing, incoming);
+    const locationScore = linkedCodeProximityScore(existing, incoming);
+    const exactId = String(existing.shareId || "") && String(existing.shareId || "") === String(incoming.shareId || "");
+    const weighted = exactId
+      ? 1
+      : (titleScore * 0.5) + (timeScore * 0.28) + (locationScore * 0.22);
+    if (!exactId && weighted < 0.42) return null;
+    let label = "Possible duplicate";
+    if (exactId) label = "Exact shared event";
+    else if (weighted >= 0.82) label = "Very likely duplicate";
+    else if (weighted >= 0.64) label = "Likely duplicate";
+    return {
+      type: exactId ? "exact" : "similar",
+      item: existing,
+      score: Math.round(weighted * 100),
+      label,
+      reasons: {
+        title: Math.round(titleScore * 100),
+        time: Math.round(timeScore * 100),
+        location: Math.round(locationScore * 100),
+      },
+    };
   }
 
   function compactSharedEventPayload(item) {
@@ -4541,7 +4618,6 @@
           <h3 class="schedule-detail-title">${isEditing ? "Edit custom event" : "Add custom event"}</h3>
           <div class="schedule-detail-meta">
             <span class="schedule-live-chip">Personal</span>
-            ${values.shareId ? `<span class="share-code-chip">${escapeHtml(values.shareId)}</span>` : ""}
           </div>
         </div>
         <div class="schedule-detail-actions">
@@ -4726,7 +4802,6 @@
             <span>${escapeHtml(item.timeLabel)}</span>
             ${scheduleItemStartedNow(item) ? '<span class="schedule-live-chip">Started</span>' : ""}
             ${item.isCustom ? '<span>Personal</span>' : ""}
-            ${item.isCustom && item.shareId ? `<span class="share-code-chip">${escapeHtml(item.shareId)}</span>` : ""}
             ${item.linkedCodes.map((code) => `<span>${escapeHtml(code)}</span>`).join("")}
             ${scheduleCategoryHtml(item)}
             ${item.sourceLabel ? `<span class="schedule-source-label" data-source="${escapeHtml(item.sourceLabel)}">${escapeHtml(item.sourceLabel)}</span>` : ""}
@@ -4774,16 +4849,14 @@
     if (!item) return "";
     const dateLabel = scheduleData.days.find((day) => day.date === item.date)?.longLabel || item.date || "Unknown day";
     const timeLabel = friendlyTimeLabel(item.start, item.end, item.endNextDay) || item.timeLabel || "Custom time";
+    const linkedText = (item.linkedCodes || []).filter(Boolean).join(", ");
+    const categoryText = (item.categories || []).filter(Boolean).join(", ");
     return `
       <div class="share-preview-block">
         <div class="share-preview-title">${escapeHtml(item.title)}</div>
-        <div class="share-meta">
-          <span class="share-chip">${escapeHtml(dateLabel)}</span>
-          <span class="share-chip">${escapeHtml(timeLabel)}</span>
-          ${item.shareId ? `<span class="share-code-chip">${escapeHtml(item.shareId)}</span>` : ""}
-          ${(item.linkedCodes || []).map((code) => `<span class="share-chip">${escapeHtml(code)}</span>`).join("")}
-          ${(item.categories || []).map((category) => `<span class="share-chip">${escapeHtml(category)}</span>`).join("")}
-        </div>
+        <div class="share-preview-notes">${escapeHtml(`${dateLabel} · ${timeLabel}`)}</div>
+        ${linkedText ? `<div class="share-preview-notes"><strong>Linked:</strong> ${escapeHtml(linkedText)}</div>` : ""}
+        ${categoryText ? `<div class="share-preview-notes"><strong>Tags:</strong> ${escapeHtml(categoryText)}</div>` : ""}
         ${item.description ? `<div class="share-preview-notes">${escapeHtml(item.description)}</div>` : ""}
       </div>
     `;
@@ -4817,11 +4890,13 @@
   }
 
   function importedEventMatch(incoming) {
-    const exact = customScheduleItems.find((item) => String(item.shareId || "") === String(incoming.shareId || ""));
-    if (exact) return { type: "exact", item: exact };
-    const similar = customScheduleItems.find((item) => eventLooksSimilar(item, incoming));
-    if (similar) return { type: "similar", item: similar };
-    return null;
+    let best = null;
+    for (const item of customScheduleItems) {
+      const match = duplicateMatchScore(item, incoming);
+      if (!match) continue;
+      if (!best || match.score > best.score) best = match;
+    }
+    return best;
   }
 
   function normalizeImportedEventForStorage(incoming, existing = null, mode = "overwrite") {
@@ -4887,15 +4962,13 @@
     if (shareModalState.mode === "share") {
       const item = shareModalState.item;
       const payload = serializeSharedEventPayload(item);
+      const dateLabel = scheduleData.days.find((day) => day.date === item.date)?.longLabel || item.date || "Unknown day";
+      const timeLabel = item.timeLabel || friendlyTimeLabel(item.start, item.end, item.endNextDay) || "Custom time";
       shareBody.innerHTML = `
         <div class="share-card">
           <h3>${escapeHtml(item.title)}</h3>
-          <p class="share-copy">Show this QR on one phone and scan it from the map app on another phone. The event keeps its shared ID so later revisions can update the same event instead of duplicating it.</p>
-          <div class="share-meta">
-            <span class="share-code-chip">${escapeHtml(item.shareId || "")}</span>
-            <span class="share-chip">${escapeHtml(item.dayLabel || (scheduleData.days.find((day) => day.date === item.date)?.label || item.date || ""))}</span>
-            <span class="share-chip">${escapeHtml(item.timeLabel || friendlyTimeLabel(item.start, item.end, item.endNextDay) || "Custom time")}</span>
-          </div>
+          <p class="share-copy">${escapeHtml(dateLabel)} · ${escapeHtml(timeLabel)}</p>
+          <p class="share-copy">Show this QR on one phone and scan it from the map app on another phone.</p>
           <div class="share-qr-wrap">
             <canvas class="share-qr-canvas" id="share-qr-canvas"></canvas>
           </div>
@@ -4904,7 +4977,6 @@
             <button type="button" class="share-btn" id="share-close-btn">Done</button>
           </div>
         </div>
-        ${sharePreviewHtml(item)}
       `;
       const canvas = document.getElementById("share-qr-canvas");
       const download = document.getElementById("share-download-btn");
@@ -4917,7 +4989,7 @@
       shareBody.innerHTML = `
         <div class="share-card">
           <h3>Scan event QR</h3>
-          <p class="share-copy">Point your camera at a custom-event QR code, or pick a saved QR image from your phone.</p>
+          <p class="share-copy">Point your camera at a custom-event QR code generated from someone else's app (Share QR in event details), or pick a saved QR image from your phone.</p>
           <video class="share-scan-video" id="share-scan-video" autoplay playsinline muted></video>
           <div class="share-actions">
             <label class="share-btn share-file-label">Scan saved image<input type="file" id="share-file-input" accept="image/*"></label>
@@ -4953,11 +5025,15 @@
       const { incoming, matched } = shareModalState;
       const warning = matched?.type === "exact"
         ? "An existing custom event with the same shared ID was found."
-        : "A similar custom event was found locally.";
+        : `${matched?.label || "Possible duplicate"} detected at ${matched?.score || 0}% match.`;
+      const matchReasons = matched?.type === "exact"
+        ? "Shared event ID matches exactly."
+        : `Title ${matched?.reasons?.title || 0}% · Time ${matched?.reasons?.time || 0}% · Location ${matched?.reasons?.location || 0}%`;
       shareBody.innerHTML = `
         <div class="share-card">
           <h3>Import custom event</h3>
           <div class="share-warning">${escapeHtml(warning)}</div>
+          <p class="share-copy">${escapeHtml(matchReasons)}</p>
           <div class="share-preview-grid">
             <div>
               <h4>Incoming event</h4>
