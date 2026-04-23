@@ -915,15 +915,16 @@
   .schedule-category-filter {
     display:inline-flex; align-items:center; gap:4px;
     flex:0 0 auto;
-    font-size:10px; color:#bbb;
+    font-size:10.75px; color:#bbb;
     cursor:pointer;
     white-space:nowrap;
-    padding:2px 0;
+    padding:3px 0;
   }
   .schedule-category-filter input {
-    margin:0; width:12px; height:12px;
+    margin:0; width:13px; height:13px;
   }
   .schedule-category-filter.starred-filter span { color:#ffd65b; }
+  .schedule-category-filter.custom-filter span { color:#7de38f; }
   .schedule-category-filter.burn span { color:#ffc15a; }
   .schedule-category-filter.music span,
   .schedule-category-filter.performance span { color:#f6a3d8; }
@@ -1744,7 +1745,7 @@
       justify-content:flex-start;
     }
     .schedule-category-filter {
-      font-size:9px;
+      font-size:9.5px;
     }
     .schedule-view-hint { display:none; }
     .schedule-item-summary { gap:8px; padding:9px 10px; }
@@ -1990,8 +1991,8 @@
 <script>
 (() => {
   const data = DATA_INLINE;
-  const APP_VERSION = "2026.04.23.3";
-  const APP_CACHE_VERSION = "v53";
+  const APP_VERSION = "2026.04.23.4";
+  const APP_CACHE_VERSION = "v54";
   const projectDetails = typeof PROJECT_DETAILS !== "undefined" ? PROJECT_DETAILS : { byCode: {} };
   const EMPTY_SCHEDULE_DATA = { days: [], entries: [], byDate: {}, byLinkedCode: {}, series: [], seriesById: {}, seriesByLinkedCode: {} };
   const baseScheduleData = typeof SCHEDULE_DATA !== "undefined" ? SCHEDULE_DATA : EMPTY_SCHEDULE_DATA;
@@ -3700,6 +3701,7 @@
   let scheduleShowHours = false;
   let scheduleShowNow = false;
   let scheduleStarredFilterEnabled = true;
+  let scheduleCustomFilterEnabled = true;
   let scheduleTimelineNeedsMorningAnchor = true;
   let scheduleNowTimer = null;
   let scheduleTimelineZoom = 1;
@@ -4283,13 +4285,14 @@
     const categories = item.categories || [];
     const enabled = SCHEDULE_CATEGORY_FILTERS.filter((filter) => scheduleCategoryState[filter.key]).map((filter) => filter.key);
     const starredMatch = scheduleStarredFilterEnabled && isScheduleItemStarred(item.id);
+    const customMatch = scheduleCustomFilterEnabled && Boolean(item.isCustom);
     const categoryMatch =
       enabled.length === SCHEDULE_CATEGORY_FILTERS.length
         ? true
         : enabled.length === 0
           ? false
           : !categories.length || categories.some((category) => enabled.includes(category));
-    return categoryMatch || starredMatch;
+    return categoryMatch || starredMatch || customMatch;
   }
 
   function scheduleCategoryHtml(item) {
@@ -4314,13 +4317,19 @@
         <span>Starred</span>
       </label>
     `;
+    const customHtml = `
+      <label class="schedule-category-filter custom-filter" title="Show custom events">
+        <input type="checkbox" data-schedule-custom-only${scheduleCustomFilterEnabled ? " checked" : ""}>
+        <span>Custom</span>
+      </label>
+    `;
     const topRowKeys = ["Burn", "Music", "Performance", "Food & Drink"];
     const bottomRowKeys = ["Service", "Community", "Workshop", "Wellness", "Movement"];
     const topRowHtml = topRowKeys.map((key) => filterHtml(byKey[key])).join("");
     const bottomRowHtml = bottomRowKeys.map((key) => filterHtml(byKey[key])).join("");
     scheduleCategoryFilters.innerHTML = `
       <div class="schedule-category-filter-row">
-        ${starredHtml}${topRowHtml}
+        ${starredHtml}${customHtml}${topRowHtml}
       </div>
       <div class="schedule-category-filter-row">
         ${bottomRowHtml}
@@ -4335,6 +4344,11 @@
     }
     scheduleCategoryFilters.querySelector("[data-schedule-starred-only]")?.addEventListener("change", (ev) => {
       scheduleStarredFilterEnabled = ev.currentTarget.checked;
+      renderSchedule();
+      scrollScheduleSelectionIntoView();
+    });
+    scheduleCategoryFilters.querySelector("[data-schedule-custom-only]")?.addEventListener("change", (ev) => {
+      scheduleCustomFilterEnabled = ev.currentTarget.checked;
       renderSchedule();
       scrollScheduleSelectionIntoView();
     });
@@ -4385,8 +4399,14 @@
   function scheduleEmptyMessage() {
     const noCategories = SCHEDULE_CATEGORY_FILTERS.every((filter) => !scheduleCategoryState[filter.key]);
     if (noCategories) {
+      if (scheduleStarredFilterEnabled && scheduleCustomFilterEnabled) {
+        return "No starred or custom items match this burn day yet.";
+      }
       if (scheduleStarredFilterEnabled) {
         return "No starred items have been saved for this burn day yet.";
+      }
+      if (scheduleCustomFilterEnabled) {
+        return "No custom events match this burn day yet.";
       }
       return "Enable one or more category filters to see schedule entries for this burn day.";
     }
@@ -4396,8 +4416,14 @@
     if (scheduleShowNow) {
       return "No schedule items are open now or opening within the next 15 minutes for this schedule view.";
     }
+    if (scheduleStarredFilterEnabled && scheduleCustomFilterEnabled) {
+      return "No schedule items match the current tag filters, starred selection, or custom-event selection for this burn day.";
+    }
     if (scheduleStarredFilterEnabled) {
       return "No schedule items match the current tag filters and starred selection for this burn day.";
+    }
+    if (scheduleCustomFilterEnabled) {
+      return "No schedule items match the current tag filters and custom-event selection for this burn day.";
     }
     return "No items match the active filters for this burn day.";
   }
