@@ -15,8 +15,8 @@ const PROJECT_DETAILS = (() => {
     ],
     "familyFriendly": "YES",
     "times": "Day Time",
-    "description": "Associated Artwork: The Hut of Echoes\nArtist: Lana Cavernelis\nKaggen Meets Rainbow Dancers is an indigenous-inspired Theme Camp rooted in storytelling, ceremony, living heritage, and fireside gathering. The story of the camp is framed as a meeting between the True North and the Aboriginal South, growing into a village of wisdom keepers, artists, activists, water bearers, musicians, shamans, First Nation elders, People of the Soil, seekers, and lovers of life.\n\nThrough ritual, craft, conversation, song, and campfire jams, the camp honours ancestral memory while co-creating a vibrant space of connection, culture, and conscious celebration. Bring your instruments and let the Hut of Echoes be a guide as the camp listens for the songs the land wants to hear.\n\nThere are openings for 2026 if you feel called to join this offering. Connect directly with Lana Cavernelis if you want to be part of it.\nMorning: 7am(ish)-11am(ish) Day Time: 11am(ish)-sunset Night Time: sunset-2am(ish) All Night: sunset-sunrise",
-    "additionalDetails": "Family friendly: YES\nOperating times: Day Time\nCamp note: ceremony, song, and fireside jams are central to the camp.\n2026 note: openings available for aligned participants and musicians; connect with Lana Cavernelis.",
+    "description": "Associated Artwork: The Hut of Echoes\nArtist: Lana Cavernelis\nKaggen Meets Rainbow Dancers is an indigenous-inspired Theme Camp rooted in storytelling, ceremony, living heritage, and fireside gathering. The story of the camp is framed as a meeting between the True North and the Aboriginal South, growing into a village of wisdom keepers, artists, activists, water bearers, musicians, shamans, First Nation elders, People of the Soil, seekers, and lovers of life.\n\nThrough ritual, craft, conversation, song, and campfire jams, the camp honours ancestral memory while co-creating a vibrant space of connection, culture, and conscious celebration. Bring your instruments and let the Hut of Echoes be a guide as the camp listens for the songs the land wants to hear.",
+    "additionalDetails": "Family friendly: YES\nOperating times: Day Time\nCamp note: ceremony, song, and fireside jams are central to the camp.",
     "links": [
       {
         "label": "WTF Guide 2026",
@@ -2316,8 +2316,8 @@ const PROJECT_DETAILS = (() => {
     ],
     "familyFriendly": "NO",
     "times": "Morning",
-    "description": "Sunrisers will return with 40 to 45 like-minded sunnies to present coffee to burners on three selected mornings. We are introducing our very own Coffee Rave. Pretty much like the Friday and Saturday mornings last year. Warm brewed coffee, from 9 am (yes, we need sleep) till 12 midday.",
-    "additionalDetails": "Family friendly: NO\nOperating times: Morning",
+    "description": "Sunrisers will return with 40 to 45 like-minded sunnies to present coffee to burners from 9 am till 12 midday. Friday and Saturday mornings tip into their very own Coffee Rave, turning the regular coffee window into a proper morning jol.",
+    "additionalDetails": "Family friendly: NO\nOperating times: Morning\nCoffee from 9 am-12 midday, Monday to Saturday. Coffee Rave on Friday and Saturday mornings.",
     "links": [
       {
         "label": "WTF Guide 2026",
@@ -6208,6 +6208,12 @@ const PROJECT_DETAILS = (() => {
         "label": "WTF Guide 2026",
         "url": "./WTF-%202026%20-%20Through%20The%20Prism.pdf"
       }
+    ],
+    "relatedCamps": [
+      {
+        "name": "Rat Pie Camp",
+        "type": "Support Camp"
+      }
     ]
   },
   {
@@ -8351,6 +8357,13 @@ const PROJECT_DETAILS = (() => {
       {
         "label": "WTF Guide 2026",
         "url": "./WTF-%202026%20-%20Through%20The%20Prism.pdf"
+      }
+    ],
+    "relatedCamps": [
+      {
+        "code": "RFT",
+        "name": "Radio Free Tankwa",
+        "type": "OCC Service"
       }
     ]
   },
