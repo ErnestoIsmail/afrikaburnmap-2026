@@ -11,15 +11,17 @@ const ASSETS = [
   "./old_wtf_details.js",
   "./qrcode.js",
   "./icon-32.png",
+  "./icon-180.png",
+  "./icon-192.png",
+  "./icon-512.png",
+  "./favicon.ico",
+  "./favicon-16x16.png",
   "./2026_AfrikaBurnMap-scaled.jpg",
   "./2026_Site_map_highres.jpg",
   "./2026_Site_map_highres_overview.jpg",
   "./2026_Site_map_highres_tiny.jpg",
   "./2026_Site_map_highres_mobile.jpg",
   "./manifest.json",
-  "./icon-192.png",
-  "./icon-512.png",
-  "./icon-180.png",
 ];
 
 self.addEventListener("install", (event) => {

@@ -1,4 +1,9 @@
-work/
+node_modules/
+www/
+*.apk
+android/app/build/
+android/.gradle/
+android/build/
 .DS_Store
 *.log
 schedule-updates.json
