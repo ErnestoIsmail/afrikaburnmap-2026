@@ -3361,10 +3361,15 @@
   (async () => {
     let v = await getInstalledCacheVersion();
     if (!v && "serviceWorker" in navigator) {
-      // SW may still be installing; wait for it then retry once
-      await navigator.serviceWorker.ready.catch(() => null);
+      // SW may still be installing; wait up to 10 s then retry
+      await Promise.race([
+        navigator.serviceWorker.ready,
+        new Promise((r) => setTimeout(r, 10000)),
+      ]).catch(() => null);
       v = await getInstalledCacheVersion();
     }
+    // Still nothing — fetch sw.js directly to show the expected version
+    if (!v) v = await fetchLiveCacheVersion().catch(() => null);
     appVersion.textContent = `app ${APP_VERSION} · cache ${v || "—"}`;
     aboutCacheVersion.textContent = `Cache version: ${v || "—"}`;
   })();
