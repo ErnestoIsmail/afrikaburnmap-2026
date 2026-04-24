@@ -2064,6 +2064,12 @@
           <button type="button" class="about-refresh-btn" id="about-refresh-btn">Get latest revision</button>
           <span class="about-refresh-note" id="about-refresh-note">Use this while online if a cache bump has not shown up yet. Your custom changes stay in place; this only refreshes the bundled app data. Offline use keeps the current saved bundle.</span>
         </div>
+        <div class="about-meta-actions" style="margin-top:8px">
+          <button type="button" class="about-refresh-btn" id="about-export-btn">Export my data</button>
+          <button type="button" class="about-refresh-btn" id="about-import-btn">Import my data</button>
+          <input type="file" id="about-import-file" accept=".json" style="display:none" aria-hidden="true">
+          <span class="about-refresh-note">Save stars, custom events, notes and edits to a file — then import it on the burn Wi-Fi version to bring everything across.</span>
+        </div>
         <span class="about-refresh-note about-live-auth-note" id="live-auth-note"></span>
       </div>
     </div>
@@ -2227,7 +2233,7 @@
 <script>
 (() => {
   const data = DATA_INLINE;
-  const APP_VERSION = "2026.04.24.1";
+  const APP_VERSION = "2026.04.24.2";
   const CACHE_NAME_PREFIX = "ab-map-";
   async function getInstalledCacheVersion() {
     if (!("caches" in window)) return null;
@@ -2905,6 +2911,97 @@
 
   function persistEntryNotes() {
     safeWriteStorageJson(ENTRY_NOTE_STORAGE_KEY, entryNotesByKey);
+  }
+
+  function exportPersonalData() {
+    const bundle = {
+      v: 1,
+      app: "ab-map-2026",
+      exported: Date.now(),
+      scheduleStars: [...starredScheduleIds],
+      customEvents: customScheduleItems,
+      baseOverrides: scheduleBaseOverrides,
+      pinnedLive: pinnedLiveItems,
+      mapStars: [...starredEntryKeys],
+      visited: [...visitedEntryKeys],
+      notes: entryNotesByKey,
+    };
+    const blob = new Blob([JSON.stringify(bundle, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `ab-map-data-${new Date().toISOString().slice(0, 10)}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showPlainMessage("Personal data exported.");
+  }
+
+  function importPersonalData(file) {
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        const bundle = JSON.parse(String(ev.target?.result || ""));
+        if (!bundle || bundle.app !== "ab-map-2026" || bundle.v !== 1) {
+          showPlainMessage("Not a valid AB map export file.");
+          return;
+        }
+        // Schedule stars — union
+        if (Array.isArray(bundle.scheduleStars)) {
+          for (const id of bundle.scheduleStars) starredScheduleIds.add(String(id));
+          persistStarredScheduleIds();
+        }
+        // Custom events — imported item wins on ID conflict
+        if (Array.isArray(bundle.customEvents) && bundle.customEvents.length) {
+          for (const item of bundle.customEvents) {
+            if (!item?.id) continue;
+            customScheduleItems = customScheduleItems.filter((e) => String(e.id) !== String(item.id));
+            customScheduleItems.push(item);
+          }
+          persistCustomScheduleItems();
+        }
+        // Base overrides — imported wins on conflict
+        if (bundle.baseOverrides && typeof bundle.baseOverrides === "object" && !Array.isArray(bundle.baseOverrides)) {
+          scheduleBaseOverrides = normalizeBaseScheduleOverrides({ ...scheduleBaseOverrides, ...bundle.baseOverrides });
+          persistScheduleBaseOverrides();
+        }
+        // Pinned live items — imported wins on ID conflict
+        if (Array.isArray(bundle.pinnedLive) && bundle.pinnedLive.length) {
+          for (const item of bundle.pinnedLive) {
+            if (!item?.id) continue;
+            pinnedLiveItems = pinnedLiveItems.filter((e) => String(e.id) !== String(item.id));
+            pinnedLiveItems.push(item);
+          }
+          persistPinnedLiveItems();
+        }
+        // Map stars — union
+        if (Array.isArray(bundle.mapStars)) {
+          for (const key of bundle.mapStars) starredEntryKeys.add(String(key));
+          persistStarredEntryKeys();
+        }
+        // Visited — union
+        if (Array.isArray(bundle.visited)) {
+          for (const key of bundle.visited) visitedEntryKeys.add(String(key));
+          persistVisitedEntryKeys();
+        }
+        // Notes — imported wins on conflict, keeps keys not in import
+        if (bundle.notes && typeof bundle.notes === "object" && !Array.isArray(bundle.notes)) {
+          entryNotesByKey = { ...entryNotesByKey, ...bundle.notes };
+          persistEntryNotes();
+        }
+        refreshScheduleData();
+        renderSchedule();
+        refreshHighlights();
+        syncStarControls();
+        syncVisitedControls();
+        showPlainMessage("Personal data imported.");
+      } catch {
+        showPlainMessage("Could not read import file — is it the right file?");
+      }
+    };
+    reader.onerror = () => showPlainMessage("Could not read the file.");
+    reader.readAsText(file);
   }
 
   function isScheduleItemStarred(itemId) {
@@ -3682,6 +3779,13 @@
   aboutTopBtn?.addEventListener("click", openAbout);
   aboutClose.addEventListener("click", closeAbout);
   aboutRefreshBtn?.addEventListener("click", refreshAppBundle);
+  document.getElementById("about-export-btn")?.addEventListener("click", exportPersonalData);
+  const aboutImportFile = document.getElementById("about-import-file");
+  document.getElementById("about-import-btn")?.addEventListener("click", () => aboutImportFile?.click());
+  aboutImportFile?.addEventListener("change", () => {
+    const file = aboutImportFile.files?.[0];
+    if (file) { importPersonalData(file); aboutImportFile.value = ""; }
+  });
   window.addEventListener("online", () => {
     updateAboutRefreshAvailability();
     maybeAutoRefreshAppBundle();
