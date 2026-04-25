@@ -10,7 +10,7 @@ echo "==> Copying web assets to www/..."
 mkdir -p www
 for f in \
   index.html data.js sw.js manifest.json \
-  project_details.js schedule_data.js old_wtf_details.js \
+  project_details.js schedule_data.js old_wtf_details.js qrcode.js schedule-updates.json \
   2026_AfrikaBurnMap-scaled.jpg \
   2026_Site_map_highres.jpg \
   2026_Site_map_highres_overview.jpg \
